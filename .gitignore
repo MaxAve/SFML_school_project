@@ -1,0 +1,4 @@
+include/SFML/*
+game.exe
+lib/*
+bin/*
