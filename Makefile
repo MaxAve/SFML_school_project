@@ -1,1 +1,1 @@
-g++ -o game src/main.cpp -IC:\SFML\include -LC:\SFML\lib -lsfml-graphics -lsfml-window -lsfml-system
+g++ -o game src/main.cpp src/player.cpp src/physics.cpp src/bullet.cpp -IC:\SFML\include -LC:\SFML\lib -lsfml-graphics -lsfml-window -lsfml-system
