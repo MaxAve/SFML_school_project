@@ -8,10 +8,18 @@
 class Bullet
 {
 public:
+	static std::vector<Bullet*> pool; // Should contain every bullet instance
+	static constexpr float MAX_RANGE = 1000.0; // Bullets should despawn once they traveled beyond this distance
+	
+	static void updateAll(); // Updates every bullet in the pool
+	static void drawAll(sf::RenderWindow& window);
+
     const float DEFAULT_SIZE = 20;
 
     sf::RectangleShape sprite;
     sf::Vector2f velocity;
+	float speed;
+	float distanceTraveled; // The distance traveled from the bullet's starting position
 
     Bullet(sf::Vector2f position, float speed, float direction);
 
@@ -19,7 +27,5 @@ public:
 
     void update();
 };
-
-class 
 
 #endif
