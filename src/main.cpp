@@ -16,14 +16,13 @@ int main()
     
     sf::RectangleShape box(sf::Vector2f(50.f, 50.f));
     box.setFillColor(sf::Color::Red);
-    box.setPosition(100.f, 240.f);
+    box.setPosition({ 100.f, 240.f });
 
     while (window.isOpen())
     {
-        sf::Event event;
-        while(window.pollEvent(event))
+        while(const std::optional event = window.pollEvent())
         {
-            if(event.type == sf::Event::Closed)
+            if(event->is<sf::Event::Closed>())
                 window.close();
         }
         
