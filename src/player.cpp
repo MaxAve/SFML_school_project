@@ -3,7 +3,7 @@
 Player::Player(sf::RenderWindow& window)
 {
     this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
-    this->sprite.setFillColor(sf::Color::Green);
+    this->sprite.setFillColor(sf::Color::Blue); // changed from Green to blue, so i can deffer better from the grid. Hope you dont get angry >:)
     this->sprite.setPosition({ window.getSize().x / 2 - 25.f, window.getSize().y / 2 - 50.f });
     this->view = sf::View({800.f, 300.f}, {800.f, 600.f});
     this->speed = 300.0f;

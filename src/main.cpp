@@ -4,11 +4,14 @@
 #include "../include/physics.h"
 #include "../include/bullet.h"
 #include "../include/window.h"
+#include "../include/TileMap.hpp"
 
 int main() 
 {
     Physics::init();
     sf::Clock deltaClock;
+
+    TileMap tileMap(20,20, 50.f);
 
     Player player(window);
 	float fireRate = 10.0f;
@@ -63,7 +66,7 @@ int main()
         window.clear(sf::Color::Black);
 
         window.setView(player.view);
-
+        tileMap.drawAll(window);
 		Bullet::drawAll(window);
         player.draw(window);
         window.draw(box);

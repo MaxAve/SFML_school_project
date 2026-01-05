@@ -3,3 +3,4 @@ game.exe
 lib
 bin
 .vscode
+Makefile
