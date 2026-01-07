@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include "physics.h"
+#include "Physics.h"
 
 class Bullet
 {

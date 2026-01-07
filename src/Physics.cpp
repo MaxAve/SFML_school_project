@@ -1,4 +1,4 @@
-#include "../include/physics.h"
+#include "../include/Physics.h"
 
 float Physics::deltaTime;
 

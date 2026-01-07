@@ -1,8 +1,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "../include/player.h"
-#include "../include/physics.h"
-#include "../include/bullet.h"
+#include "../include/Player.h"
+#include "../include/Physics.h"
+#include "../include/Bullet.h"
 #include "../include/window.h"
 #include "../include/TileMap.hpp"
 
@@ -54,7 +54,7 @@ int main()
 				Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x/2 - 10, player.sprite.getPosition().y + player.sprite.getSize().y/2 - 10}, 2000, angle);
 				timeSinceLastShot = 0.0f;
 				
-				std::cout << Bullet::pool.size() << " - " << Bullet::pool[0]->distanceTraveled << "\n";
+				//std::cout << Bullet::pool.size() << " - " << Bullet::pool[0]->distanceTraveled << "\n";
 			}
         }
 
