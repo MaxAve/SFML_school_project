@@ -1,6 +1,6 @@
 #include "../include/window.h"
 
-sf::RenderWindow window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Project");
+sf::RenderWindow window = sf::RenderWindow(sf::VideoMode({ WINDOW_WIDTH, WINDOW_HEIGHT }), "SFML Project");
 
 sf::Vector2i getMousePos()
 {

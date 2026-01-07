@@ -4,11 +4,14 @@
 #include "../include/physics.h"
 #include "../include/bullet.h"
 #include "../include/window.h"
+#include "../include/TileMap.hpp"
 
 int main() 
 {
     Physics::init();
     sf::Clock deltaClock;
+
+    TileMap tileMap(20,20, 50.f);
 
     Player player(window);
 	float fireRate = 10.0f;
@@ -16,14 +19,13 @@ int main()
     
     sf::RectangleShape box(sf::Vector2f(50.f, 50.f));
     box.setFillColor(sf::Color::Red);
-    box.setPosition(100.f, 240.f);
+    box.setPosition({ 100.f, 240.f });
 
     while (window.isOpen())
     {
-        sf::Event event;
-        while(window.pollEvent(event))
+        while(const std::optional event = window.pollEvent())
         {
-            if(event.type == sf::Event::Closed)
+            if(event->is<sf::Event::Closed>())
                 window.close();
         }
         
@@ -64,7 +66,7 @@ int main()
         window.clear(sf::Color::Black);
 
         window.setView(player.view);
-
+        tileMap.drawAll(window);
 		Bullet::drawAll(window);
         player.draw(window);
         window.draw(box);
