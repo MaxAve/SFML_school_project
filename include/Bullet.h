@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "Physics.h"
+#include "Zombie.h"
 
 class Bullet
 {

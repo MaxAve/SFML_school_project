@@ -9,11 +9,14 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer)
     this->sprite.setFillColor(sf::Color::Red);
     this->sprite.setOutlineThickness(2.0f);
     this->sprite.setOutlineColor(sf::Color(100, 0, 0));
+    
     this->speed = 200.0f + (float)(rand() % 50);
-
     this->velocity = sf::Vector2f(0,0);
     this->displacementVelocity = sf::Vector2f(0,0);
     this->targetPlayer = targetPlayer;
+    this->hitboxRadius = 60.0f;
+    this->healthBar = HealthBar(100);
+
     Zombie::pool.push_back(this);
 }
 
@@ -70,9 +73,12 @@ void Zombie::update()
         this->sprite.move({(this->velocity.x + this->displacementVelocity.x) * Physics::deltaTime, 
                            (this->velocity.y + this->displacementVelocity.y) * Physics::deltaTime});
     }
+
+    this->healthBar.setPosition({this->sprite.getPosition().x + 25, this->sprite.getPosition().y - 10});
 }
 
 void Zombie::draw(sf::RenderWindow &window)
 {
     window.draw(this->sprite);
+    this->healthBar.draw(window);
 }

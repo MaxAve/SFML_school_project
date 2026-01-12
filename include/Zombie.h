@@ -8,6 +8,7 @@
 #include "player.h"
 #include "physics.h"
 #include "utils.h"
+#include "HealthBar.h"
 
 class Zombie
 {
@@ -24,6 +25,8 @@ public:
     sf::Vector2f displacementVelocity;
     float speed;
     Player* targetPlayer;
+    float hitboxRadius;
+    HealthBar healthBar;
 
     Zombie(sf::Vector2f position, Player* targetPlayer);
     void update();

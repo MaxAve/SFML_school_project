@@ -14,5 +14,6 @@ add_executable(game src/main.cpp
 					src/window.cpp
 					src/Textures.cpp
 					src/Zombie.cpp
-					src/utils.cpp)
+					src/utils.cpp
+					src/HealthBar.cpp)
 target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)
