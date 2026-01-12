@@ -1,11 +1,17 @@
 #pragma once
+#include "Textures.hpp"
 #include <SFML/Graphics.hpp>
 
-
 struct Tile {
-    sf::RectangleShape shape;
+    sf::Sprite sprite;
 
-    Tile() = default;
+    Tile();
 
-    Tile(const sf::Color& color);
+    void setSize(const sf::Vector2f&);
+
+    void setPosition(const sf::Vector2f&);
+
+private:
+    size_t id;
+    static size_t tileCnt;
 };
