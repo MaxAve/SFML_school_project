@@ -9,9 +9,10 @@
 int main() 
 {
     Physics::init();
+    Textures::initTextures();
     sf::Clock deltaClock;
 
-    TileMap tileMap(20,20, 50.f);
+    TileMap tileMap(20, 20, 150.f);
 
     Player player(window);
 	float fireRate = 10.0f;
