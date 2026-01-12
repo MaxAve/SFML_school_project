@@ -49,6 +49,11 @@ void Zombie::updateAll()
     for(int i = 0; i < Zombie::pool.size(); i++)
     {
         Zombie::pool[i]->update();
+        if(Zombie::pool[i]->healthBar.currentHealth == 0)
+        {
+            Zombie::pool.erase(Zombie::pool.begin() + i);
+            i--;
+        }
     }
 }
 
@@ -81,4 +86,9 @@ void Zombie::draw(sf::RenderWindow &window)
 {
     window.draw(this->sprite);
     this->healthBar.draw(window);
+}
+
+sf::Vector2f Zombie::getHitboxPosition()
+{
+    return {this->sprite.getSize().x/2 + this->sprite.getPosition().x, this->sprite.getSize().y/2 + this->sprite.getPosition().y};
 }

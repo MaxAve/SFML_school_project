@@ -31,6 +31,7 @@ public:
     Zombie(sf::Vector2f position, Player* targetPlayer);
     void update();
     void draw(sf::RenderWindow& window);
+    sf::Vector2f getHitboxPosition();
 };
 
 #endif
