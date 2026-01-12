@@ -1,5 +1,6 @@
 #pragma once
 #include "Tile.hpp"
+#include "Textures.hpp"
 #include <SFML/Graphics.hpp>
 
 class TileMap {
