@@ -1,6 +1,6 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "Tile.hpp"
+#include <SFML/Graphics.hpp>
 
 class TileMap {
     // in amount of tiles
@@ -19,5 +19,4 @@ public:
     void drawAll(sf::RenderWindow& window);
 
     void drawAll(sf::RenderWindow& window, size_t fromX, size_t toX, size_t fromY, size_t toY);
-
 };
