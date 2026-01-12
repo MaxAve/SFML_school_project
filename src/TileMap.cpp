@@ -1,12 +1,15 @@
 #include "../include/TileMap.hpp"
 #include <iostream>
 
+
+
 TileMap::TileMap(size_t _mapWidth, size_t _mapHeight, float _gridSize)
     : WIDTH{_mapWidth}, HEIGHT{_mapHeight}, gridSizeF{_gridSize} {
     tileMap.resize(WIDTH);
     for (size_t x = 0; x < WIDTH; x++) {
         tileMap[x].resize(HEIGHT);
         for (size_t y = 0; y < HEIGHT; y++) {
+            tileMap[x][y].setTexture(Textures::TextureType::Wood);
             // tileMap[x][y].setSize({gridSizeF, gridSizeF});
             tileMap[x][y].setPosition({x * gridSizeF, y * gridSizeF});
         }
