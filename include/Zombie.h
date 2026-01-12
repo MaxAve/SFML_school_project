@@ -1,0 +1,33 @@
+#ifndef ZOMBIE_H
+#define ZOMBIE_H
+
+#include <SFML/Graphics.hpp>
+#include <cmath>
+#include <vector>
+#include "window.h"
+#include "player.h"
+#include "physics.h"
+#include "utils.h"
+
+class Zombie
+{
+public:
+    static std::vector<Zombie*> pool;
+    inline const static float MIN_CROWD_DISTANCE = 80.0f;
+    inline const static float CROWD_DISPLACMENET_STRENGTH = 0.2f;
+    static void pushAwayFromOthers(); // Get pushed away from other zombies to make sure they don't converge to the same spot
+    static void updateAll();
+    static void drawAll(sf::RenderWindow& window);
+
+    sf::RectangleShape sprite; // Replace with sprite
+    sf::Vector2f velocity;
+    sf::Vector2f displacementVelocity;
+    float speed;
+    Player* targetPlayer;
+
+    Zombie(sf::Vector2f position, Player* targetPlayer);
+    void update();
+    void draw(sf::RenderWindow& window);
+};
+
+#endif

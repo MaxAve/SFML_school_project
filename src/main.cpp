@@ -5,9 +5,11 @@
 #include "../include/Bullet.h"
 #include "../include/window.h"
 #include "../include/TileMap.hpp"
+#include "../include/Zombie.h"
 
 int main() 
 {
+    srand(time(NULL));
     Physics::init();
     sf::Clock deltaClock;
 
@@ -16,10 +18,12 @@ int main()
     Player player(window);
 	float fireRate = 10.0f;
 	float timeSinceLastShot = 0.0f;
-    
-    sf::RectangleShape box(sf::Vector2f(50.f, 50.f));
-    box.setFillColor(sf::Color::Red);
-    box.setPosition({ 100.f, 240.f });
+
+    Zombie testZombie1({0, 0}, &player);
+    Zombie testZombie2({100, 0}, &player);
+    Zombie testZombie3({200, 0}, &player);
+    Zombie testZombie4({300, 0}, &player);
+    Zombie testZombie5({400, 0}, &player);
 
     while (window.isOpen())
     {
@@ -62,14 +66,16 @@ int main()
 
 		Bullet::updateAll();
 		player.update();
+        Zombie::updateAll();
 
         window.clear(sf::Color::Black);
 
         window.setView(player.view);
         tileMap.drawAll(window);
 		Bullet::drawAll(window);
+        Zombie::drawAll(window);
+
         player.draw(window);
-        window.draw(box);
 
         window.display();
 
