@@ -12,8 +12,8 @@ add_executable(game src/main.cpp
 					src/Tile.cpp 
 					src/TileMap.cpp 
 					src/window.cpp
-					src/Textures.cpp)
+					src/Textures.cpp
 					src/Zombie.cpp
 					src/utils.cpp)
-target_link_libraries(test PRIVATE SFML::System SFML::Window SFML::Graphics)
+target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)
 
