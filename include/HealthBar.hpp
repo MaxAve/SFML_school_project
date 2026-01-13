@@ -1,5 +1,4 @@
-#ifndef HEALTHBAR_H
-#define HEALTHBAR_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 
@@ -21,5 +20,3 @@ public:
     void setHealth(int newHealth);
     void setPosition(sf::Vector2f pos);
 };
-
-#endif

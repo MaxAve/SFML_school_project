@@ -31,7 +31,7 @@ void Zombie::pushAwayFromOthers()
             if(i == j)
                 continue;
 
-            float d = utils::distance(Zombie::pool[i]->sprite.getPosition(), Zombie::pool[j]->sprite.getPosition());
+            float d = Utils::distance(Zombie::pool[i]->sprite.getPosition(), Zombie::pool[j]->sprite.getPosition());
             if(d < MIN_CROWD_DISTANCE)
             {
                 float angle = std::atan2(Zombie::pool[i]->sprite.getPosition().y - Zombie::pool[j]->sprite.getPosition().y,
@@ -73,7 +73,7 @@ void Zombie::update()
     this->velocity.x = std::cos(angle) * this->speed;
     this->velocity.y = std::sin(angle) * this->speed;
 
-    if(utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f)
+    if(Utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f)
     {
         this->sprite.move({(this->velocity.x + this->displacementVelocity.x) * Physics::deltaTime, 
                            (this->velocity.y + this->displacementVelocity.y) * Physics::deltaTime});

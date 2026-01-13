@@ -1,5 +1,4 @@
-#ifndef ZOMBIE_H
-#define ZOMBIE_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -9,8 +8,9 @@
 #include "physics.hpp"
 #include "utils.hpp"
 #include "HealthBar.hpp"
+#include "Entity.hpp"
 
-class Zombie
+class Zombie : public Entity
 {
 public:
     static std::vector<Zombie*> pool;
@@ -20,8 +20,6 @@ public:
     static void updateAll();
     static void drawAll(sf::RenderWindow& window);
 
-    sf::RectangleShape sprite; // Replace with sprite
-    sf::Vector2f velocity;
     sf::Vector2f displacementVelocity;
     float speed;
     Player* targetPlayer;
@@ -33,5 +31,3 @@ public:
     void draw(sf::RenderWindow& window);
     sf::Vector2f getHitboxPosition();
 };
-
-#endif

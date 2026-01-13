@@ -60,12 +60,12 @@ void Bullet::updateAll()
 
 bool Bullet::hit(Zombie *zombie)
 {
-	float a = utils::distance(zombie->getHitboxPosition(), this->sprite.getPosition());
+	float a = Utils::distance(zombie->getHitboxPosition(), this->sprite.getPosition());
 	if(a < zombie->hitboxRadius)
 		return true;
 	// TODO: fix
-	// float c = utils::distance(zombie->getHitboxPosition(), this->prevPosition);
-	// float b = utils::distance(this->sprite.getPosition(), this->prevPosition);
+	// float c = Utils::distance(zombie->getHitboxPosition(), this->prevPosition);
+	// float b = Utils::distance(this->sprite.getPosition(), this->prevPosition);
 	// float s = (a + b + c) / 2;
 	// float A = std::sqrt(s * (s-a) * (s-b) * (s-c));
 	// float h = 2 * A / b;

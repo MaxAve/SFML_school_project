@@ -17,7 +17,7 @@ Player::Player(sf::RenderWindow& window)
 void Player::update()
 {
 	this->gunSprite.setPosition(sf::Vector2f(this->sprite.getPosition().x + this->sprite.getSize().x/2, this->sprite.getPosition().y + this->sprite.getSize().y/2));
-	sf::Vector2i mousePos = getMousePosFromCenter();
+	sf::Vector2i mousePos = Window::getMousePosFromCenter();
 	this->gunSprite.setRotation(sf::degrees(std::atan2(mousePos.y, mousePos.x) / M_PI * 180.f));
 }
 

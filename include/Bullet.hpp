@@ -1,5 +1,4 @@
-#ifndef BULLET_H
-#define BULLET_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -28,5 +27,3 @@ public:
     void update();
     bool hit(Zombie* zombie); // Returns true if the bullet touched or went through the zombie in the current frame
 };
-
-#endif

@@ -1,12 +1,10 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
-namespace utils
+class Utils
 {
-float distance(sf::Vector2f a, sf::Vector2f b);
-}
-
-#endif
+public:
+    static float distance(sf::Vector2f a, sf::Vector2f b);
+};
