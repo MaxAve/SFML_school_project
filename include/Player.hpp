@@ -3,15 +3,16 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "Window.hpp"
-#include "Entity.hpp"
 
 #ifndef M_PI
 #define M_PI 3.1415926535
 #endif
 
-class Player : public Entity
+class Player
 {
 public:
+    sf::RectangleShape sprite;
+    sf::Vector2f velocity;
     sf::View view;
     float speed;
 

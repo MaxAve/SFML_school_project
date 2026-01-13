@@ -8,9 +8,8 @@
 #include "physics.hpp"
 #include "utils.hpp"
 #include "HealthBar.hpp"
-#include "Entity.hpp"
 
-class Zombie : public Entity
+class Zombie
 {
 public:
     static std::vector<Zombie*> pool;
@@ -20,6 +19,8 @@ public:
     static void updateAll();
     static void drawAll(sf::RenderWindow& window);
 
+    sf::RectangleShape sprite;
+    sf::Vector2f velocity;
     sf::Vector2f displacementVelocity;
     float speed;
     Player* targetPlayer;
