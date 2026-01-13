@@ -1,4 +1,4 @@
-#include "../include/utils.h"
+#include "../include/utils.hpp"
 
 float utils::distance(sf::Vector2f a, sf::Vector2f b)
 {

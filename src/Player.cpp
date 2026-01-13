@@ -1,4 +1,4 @@
-#include "../include/Player.h"
+#include "../include/Player.hpp"
 
 Player::Player(sf::RenderWindow& window)
 {

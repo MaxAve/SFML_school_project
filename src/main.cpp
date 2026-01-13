@@ -1,11 +1,11 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "../include/Player.h"
-#include "../include/Physics.h"
-#include "../include/Bullet.h"
-#include "../include/window.h"
+#include "../include/Player.hpp"
+#include "../include/Physics.hpp"
+#include "../include/Bullet.hpp"
+#include "../include/window.hpp"
 #include "../include/TileMap.hpp"
-#include "../include/Zombie.h"
+#include "../include/Zombie.hpp"
 
 int main() 
 {

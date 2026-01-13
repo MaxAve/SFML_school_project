@@ -1,4 +1,4 @@
-#include "../include/window.h"
+#include "../include/window.hpp"
 
 sf::RenderWindow window = sf::RenderWindow(sf::VideoMode({ WINDOW_WIDTH, WINDOW_HEIGHT }), "SFML Project");
 

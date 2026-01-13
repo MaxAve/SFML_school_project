@@ -1,8 +1,6 @@
 #include "../include/TileMap.hpp"
 #include <iostream>
 
-
-
 TileMap::TileMap(size_t _mapWidth, size_t _mapHeight, float _gridSize)
     : WIDTH{_mapWidth}, HEIGHT{_mapHeight}, gridSizeF{_gridSize} {
     tileMap.resize(WIDTH);

@@ -4,11 +4,11 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <vector>
-#include "window.h"
-#include "player.h"
-#include "physics.h"
-#include "utils.h"
-#include "HealthBar.h"
+#include "window.hpp"
+#include "player.hpp"
+#include "physics.hpp"
+#include "utils.hpp"
+#include "HealthBar.hpp"
 
 class Zombie
 {
