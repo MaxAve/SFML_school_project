@@ -6,19 +6,24 @@
 #include "../include/window.hpp"
 #include "../include/TileMap.hpp"
 #include "../include/Zombie.hpp"
+#include "../include/fonts.hpp"
+#include "../include/PlayerHealthbar.hpp"
 
 int main() 
 {
     srand(time(NULL));
     Physics::init();
     Textures::initTextures();
+    Fonts::initFonts();
     sf::Clock deltaClock;
 
     TileMap tileMap(20, 20, 150.f);
 
     Player player(window);
+    PlayerHealthBar playerHealthBar(100);
 	float fireRate = 10.0f;
 	float timeSinceLastShot = 0.0f;
+
 
     for(int i = 0; i < 20; i++)
     {
@@ -76,13 +81,18 @@ int main()
 
         window.clear(sf::Color::Black);
 
+        
+        // draw Camera (View)
         window.setView(player.view);
+
         tileMap.drawAll(window);
 		Bullet::drawAll(window);
         Zombie::drawAll(window);
-
         player.draw(window);
-
+        
+        // draw UI
+        window.setView(window.getDefaultView());
+        playerHealthBar.draw(window);
         window.display();
 
         sf::Time dt = deltaClock.restart();
