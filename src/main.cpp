@@ -1,11 +1,11 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "../include/Player.h"
-#include "../include/Physics.h"
-#include "../include/Bullet.h"
-#include "../include/window.h"
+#include "../include/Player.hpp"
+#include "../include/Physics.hpp"
+#include "../include/Bullet.hpp"
+#include "../include/window.hpp"
 #include "../include/TileMap.hpp"
-#include "../include/Zombie.h"
+#include "../include/Zombie.hpp"
 
 int main() 
 {
@@ -20,11 +20,10 @@ int main()
 	float fireRate = 10.0f;
 	float timeSinceLastShot = 0.0f;
 
-    Zombie testZombie1({0, 0}, &player);
-    Zombie testZombie2({100, 0}, &player);
-    Zombie testZombie3({200, 0}, &player);
-    Zombie testZombie4({300, 0}, &player);
-    Zombie testZombie5({400, 0}, &player);
+    for(int i = 0; i < 20; i++)
+    {
+        new Zombie({(float)(rand() % 800), 0}, &player);
+    }
 
     while (window.isOpen())
     {
@@ -32,6 +31,12 @@ int main()
         {
             if(event->is<sf::Event::Closed>())
                 window.close();
+            if(const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) 
+            {
+                if (keyPressed->scancode == sf::Keyboard::Scan::Escape) 
+                    window.close();
+            }
+            
         }
         
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
@@ -56,7 +61,7 @@ int main()
 			{
 				sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 				float angle = std::atan2(mousePos.y - WINDOW_HEIGHT/2, mousePos.x - WINDOW_WIDTH/2);
-				Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x/2 - 10, player.sprite.getPosition().y + player.sprite.getSize().y/2 - 10}, 2000, angle);
+				Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x/2, player.sprite.getPosition().y + player.sprite.getSize().y/2}, 2000, angle);
 				timeSinceLastShot = 0.0f;
 				
 				//std::cout << Bullet::pool.size() << " - " << Bullet::pool[0]->distanceTraveled << "\n";

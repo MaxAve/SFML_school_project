@@ -1,4 +1,4 @@
-#include "../include/Zombie.h"
+#include "../include/Zombie.hpp"
 
 std::vector<Zombie*> Zombie::pool;
 
@@ -31,7 +31,7 @@ void Zombie::pushAwayFromOthers()
             if(i == j)
                 continue;
 
-            float d = utils::distance(Zombie::pool[i]->sprite.getPosition(), Zombie::pool[j]->sprite.getPosition());
+            float d = Utils::distance(Zombie::pool[i]->sprite.getPosition(), Zombie::pool[j]->sprite.getPosition());
             if(d < MIN_CROWD_DISTANCE)
             {
                 float angle = std::atan2(Zombie::pool[i]->sprite.getPosition().y - Zombie::pool[j]->sprite.getPosition().y,
@@ -49,6 +49,11 @@ void Zombie::updateAll()
     for(int i = 0; i < Zombie::pool.size(); i++)
     {
         Zombie::pool[i]->update();
+        if(Zombie::pool[i]->healthBar.currentHealth == 0)
+        {
+            Zombie::pool.erase(Zombie::pool.begin() + i);
+            i--;
+        }
     }
 }
 
@@ -68,7 +73,7 @@ void Zombie::update()
     this->velocity.x = std::cos(angle) * this->speed;
     this->velocity.y = std::sin(angle) * this->speed;
 
-    if(utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f)
+    if(Utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f)
     {
         this->sprite.move({(this->velocity.x + this->displacementVelocity.x) * Physics::deltaTime, 
                            (this->velocity.y + this->displacementVelocity.y) * Physics::deltaTime});
@@ -81,4 +86,9 @@ void Zombie::draw(sf::RenderWindow &window)
 {
     window.draw(this->sprite);
     this->healthBar.draw(window);
+}
+
+sf::Vector2f Zombie::getHitboxPosition()
+{
+    return {this->sprite.getSize().x/2 + this->sprite.getPosition().x, this->sprite.getSize().y/2 + this->sprite.getPosition().y};
 }

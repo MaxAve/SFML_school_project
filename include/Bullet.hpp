@@ -1,10 +1,9 @@
-#ifndef BULLET_H
-#define BULLET_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include "Physics.h"
-#include "Zombie.h"
+#include "Physics.hpp"
+#include "Zombie.hpp"
 
 class Bullet
 {
@@ -21,12 +20,10 @@ public:
     sf::Vector2f velocity;
 	float speed;
 	float distanceTraveled; // The distance traveled from the bullet's starting position
+    sf::Vector2f prevPosition;
 
     Bullet(sf::Vector2f position, float speed, float direction);
-
     void draw(sf::RenderWindow& window);
-
     void update();
+    bool hit(Zombie* zombie); // Returns true if the bullet touched or went through the zombie in the current frame
 };
-
-#endif

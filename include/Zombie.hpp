@@ -1,14 +1,13 @@
-#ifndef ZOMBIE_H
-#define ZOMBIE_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <vector>
-#include "window.h"
-#include "player.h"
-#include "physics.h"
-#include "utils.h"
-#include "HealthBar.h"
+#include "window.hpp"
+#include "player.hpp"
+#include "physics.hpp"
+#include "utils.hpp"
+#include "HealthBar.hpp"
 
 class Zombie
 {
@@ -20,7 +19,7 @@ public:
     static void updateAll();
     static void drawAll(sf::RenderWindow& window);
 
-    sf::RectangleShape sprite; // Replace with sprite
+    sf::RectangleShape sprite;
     sf::Vector2f velocity;
     sf::Vector2f displacementVelocity;
     float speed;
@@ -31,6 +30,5 @@ public:
     Zombie(sf::Vector2f position, Player* targetPlayer);
     void update();
     void draw(sf::RenderWindow& window);
+    sf::Vector2f getHitboxPosition();
 };
-
-#endif
