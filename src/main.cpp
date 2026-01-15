@@ -16,6 +16,7 @@ int main()
     Textures::initTextures();
     Fonts::initFonts();
     sf::Clock deltaClock;
+    window.setFramerateLimit(60); // to avoid pc flying into space
 
     TileMap tileMap(20, 20, 150.f);
 

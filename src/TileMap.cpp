@@ -7,8 +7,8 @@ TileMap::TileMap(size_t _mapWidth, size_t _mapHeight, float _gridSize)
     for (size_t x = 0; x < WIDTH; x++) {
         tileMap[x].resize(HEIGHT);
         for (size_t y = 0; y < HEIGHT; y++) {
-            tileMap[x][y].setTexture(Textures::TextureType::Wood);
-            // tileMap[x][y].setSize({gridSizeF, gridSizeF});
+            tileMap[x][y].setTexture(Textures::TextureType::Stone);
+            tileMap[x][y].setSize({(unsigned)gridSizeF, (unsigned)gridSizeF});
             tileMap[x][y].setPosition({x * gridSizeF, y * gridSizeF});
         }
     }

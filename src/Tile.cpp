@@ -8,8 +8,9 @@ Tile::Tile(Textures::TextureType textureType) : sprite(*Textures::get(textureTyp
     id = textureType;
 }
 
-void Tile::setSize(const sf::Vector2f& size) {
-    sprite.scale(size);
+// accepts a vector2 of targeted size, not factor
+void Tile::setSize(const sf::Vector2u& size) {
+    sprite.setScale({size.x / sprite.getLocalBounds().size.x, size.y / sprite.getLocalBounds().size.y});
 }
 
 void Tile::setPosition(const sf::Vector2f& coords) {

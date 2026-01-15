@@ -11,7 +11,7 @@ struct Tile {
 
     Tile(Textures::TextureType);
 
-    void setSize(const sf::Vector2f&);
+    void setSize(const sf::Vector2u&);
 
     void setPosition(const sf::Vector2f&);
 
