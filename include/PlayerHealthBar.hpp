@@ -9,7 +9,7 @@ class PlayerHealthBar {
     sf::Text text;
 
 public:
-    PlayerHealthBar(unsigned _maxHealth);
+    PlayerHealthBar(sf::Vector2f _size,unsigned _maxHealth);
 
     unsigned getHealth() const;
 

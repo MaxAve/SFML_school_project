@@ -1,12 +1,15 @@
 #include "../include/PlayerhealthBar.hpp"
 
-PlayerHealthBar::PlayerHealthBar(unsigned _maxHealth = 100) : healthBar(_maxHealth), maxHealth(_maxHealth), text(Fonts::pixel) {
+PlayerHealthBar::PlayerHealthBar(sf::Vector2f _size, unsigned _maxHealth = 100) : healthBar(_maxHealth), maxHealth(_maxHealth), text(Fonts::pixel) {
     text.setString("HP");
 
-    healthBar.fullRect.setOrigin({0,0});
-    healthBar.healthRect.setOrigin({0,0});
+    healthBar.fullRect.setOrigin({0, 0});
+    healthBar.healthRect.setOrigin({0, 0});
     healthBar.fullRect.setPosition({5, 5});
     healthBar.healthRect.setPosition({5, 5});
+
+    healthBar.fullRect.setSize(_size);
+    healthBar.healthRect.setSize(_size);
 
     healthBar.currentHealth = maxHealth;
 

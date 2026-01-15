@@ -7,10 +7,11 @@
 
 ### **Deniel**
 
-- [ ] make the tile textures have the right size
-- [ ] create a ui to show hp of the player
+- [X] make the tile textures have the right size
+- [ ] only render tiles that are visible
+- [X] create a ui to show hp of the player
     - [X] create class PlayerHealthbar
-    - [ ] Make healthbar bigger
+    - [X] Make healthbar bigger
 
 #### Smaller Priority:
 
