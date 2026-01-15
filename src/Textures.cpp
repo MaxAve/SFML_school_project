@@ -7,20 +7,20 @@ sf::Texture wood;
 sf::Texture stone;
 
 void initTextures() {
-    if (!grass.loadFromFile("resources/textures/grass.png")) {
-        std::cerr << "Error: Texture \"grass.png\"" << std::endl;
+    if (!grass.loadFromFile("resources/textures/grass.jpg")) {
+        std::cerr << "Error: Texture \"grass.jpg\"" << std::endl;
     }
-    grass.setSmooth(true);
+    grass.setSmooth(false);
 
     if (!wood.loadFromFile("resources/textures/wood.jpg")) {
         std::cerr << "Error: Texture \"wood.jpg\"" << std::endl;
     }
-    wood.setSmooth(true);
+    wood.setSmooth(false);
 
     if (!stone.loadFromFile("resources/textures/stone.jpg")) {
         std::cerr << "Error: Texture \"stone.jpg\"" << std::endl;
     }
-    stone.setSmooth(true);
+    stone.setSmooth(false);
 }
 
 sf::Texture* get(TextureType type) {
