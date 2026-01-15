@@ -9,6 +9,7 @@ class TileMap {
     const size_t HEIGHT;
 
     const float gridSizeF;
+    const unsigned gridSizeU;
 
     std::vector<std::vector<Tile>> tileMap;
 
@@ -17,7 +18,7 @@ public:
 
     const Tile* getTile(size_t x, size_t y);
 
-    void drawAll(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window);
 
-    void drawAll(sf::RenderWindow& window, size_t fromX, size_t toX, size_t fromY, size_t toY);
+    void draw(sf::RenderWindow& window, long long int fromX, long long int toX, long long int fromY, long long int toY);
 };

@@ -72,7 +72,7 @@ int main() {
         // draw Camera (View)
         window.setView(player.view);
 
-        tileMap.drawAll(window);
+        tileMap.draw(window);
         Bullet::drawAll(window);
         Zombie::drawAll(window);
         player.draw(window);
