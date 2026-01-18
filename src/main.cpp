@@ -1,11 +1,11 @@
 #include "../include/Bullet.hpp"
 #include "../include/Physics.hpp"
 #include "../include/Player.hpp"
-#include "../include/PlayerHealthbar.hpp"
+#include "../include/PlayerHealthBar.hpp"
 #include "../include/TileMap.hpp"
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
-#include "../include/window.hpp"
+#include "../include/Window.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 

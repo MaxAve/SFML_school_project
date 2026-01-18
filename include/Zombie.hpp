@@ -3,10 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <vector>
-#include "window.hpp"
-#include "player.hpp"
-#include "physics.hpp"
-#include "utils.hpp"
+#include "Window.hpp"
+#include "Player.hpp"
+#include "Physics.hpp"
+#include "Utils.hpp"
 #include "HealthBar.hpp"
 
 class Zombie

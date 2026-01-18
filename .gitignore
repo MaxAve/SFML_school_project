@@ -6,3 +6,4 @@ bin
 Makefile
 build
 CMakeFiles
+*swp

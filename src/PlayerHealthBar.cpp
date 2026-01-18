@@ -1,4 +1,4 @@
-#include "../include/PlayerhealthBar.hpp"
+#include "../include/PlayerHealthBar.hpp"
 
 PlayerHealthBar::PlayerHealthBar(sf::Vector2f _size, unsigned _maxHealth = 100) : healthBar(_maxHealth), maxHealth(_maxHealth), text(Fonts::pixel) {
     text.setString("HP");
