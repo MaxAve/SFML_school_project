@@ -3,9 +3,9 @@
 #include "../include/Player.hpp"
 #include "../include/PlayerHealthBar.hpp"
 #include "../include/TileMap.hpp"
+#include "../include/Window.hpp"
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
-#include "../include/Window.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -15,7 +15,9 @@ int main() {
     Textures::initTextures();
     Fonts::initFonts();
     sf::Clock deltaClock;
+
     window.setFramerateLimit(60); // to avoid pc flying into space
+    window.setView(defaultView);
 
     TileMap tileMap(20, 20, 150.f);
 
@@ -23,6 +25,9 @@ int main() {
     PlayerHealthBar playerHealthBar({200, 20}, 100);
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
+
+    sf::RectangleShape testShape({5.f,5.f});
+
 
     for (int i = 0; i < 20; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
@@ -32,6 +37,11 @@ int main() {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
+            if (event->is<sf::Event::Resized>()) {
+                defaultView.setSize({(float)window.getSize().x, (float)window.getSize().y});
+                defaultView.setCenter({(float) window.getSize().x / 2, (float) window.getSize().y / 2});
+                player.view.setSize({(float)window.getSize().x, (float)window.getSize().y});
+            }
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
@@ -52,7 +62,7 @@ int main() {
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             if (timeSinceLastShot >= (1.0f / fireRate)) {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                sf::Vector2i mousePos = Window::getMousePos();
                 float angle = std::atan2(mousePos.y - WINDOW_HEIGHT / 2, mousePos.x - WINDOW_WIDTH / 2);
                 Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
                 timeSinceLastShot = 0.0f;
@@ -66,6 +76,7 @@ int main() {
         Bullet::updateAll();
         player.update();
         Zombie::updateAll();
+        testShape.setPosition(defaultView.getCenter());
 
         window.clear(sf::Color::Black);
 
@@ -78,8 +89,10 @@ int main() {
         player.draw(window);
 
         // draw UI
-        window.setView(window.getDefaultView());
+        window.setView(defaultView);
         playerHealthBar.draw(window);
+        window.draw(testShape);
+
         window.display();
 
         sf::Time dt = deltaClock.restart();
