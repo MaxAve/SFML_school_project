@@ -8,6 +8,7 @@
 #include "Physics.hpp"
 #include "Utils.hpp"
 #include "HealthBar.hpp"
+#include "Particle.hpp"
 
 class Zombie
 {

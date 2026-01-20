@@ -6,7 +6,7 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer)
 {
     this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
     this->sprite.setPosition(position);
-    this->sprite.setFillColor(sf::Color::Red);
+    this->sprite.setFillColor(sf::Color::White);
     this->sprite.setOutlineThickness(2.0f);
     this->sprite.setOutlineColor(sf::Color(100, 0, 0));
     
@@ -51,6 +51,7 @@ void Zombie::updateAll()
         Zombie::pool[i]->update();
         if(Zombie::pool[i]->healthBar.currentHealth == 0)
         {
+            Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 20, 500);
             Zombie::pool.erase(Zombie::pool.begin() + i);
             i--;
         }
