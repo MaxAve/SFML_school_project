@@ -2,7 +2,6 @@
 ### Features (high priority):
 
 - **Deniel:**
-    - [ ] Make the window resizable and add fullscreen mode (please make a separate branch for this)
     - [X] Make the window resizable and add fullscreen mode (please make a seperate branch for this)
     - [X] Create ```Item``` class which should contain following attributes (note: this class is purely for holding INFORMATION about an item; if an item needs to be shown in the GUI, use ```GUIItem``` as described in the section below):
         - [X] ```bool canDealMeleeDamage``` (true if the item is a close-range weapon like a knife)
