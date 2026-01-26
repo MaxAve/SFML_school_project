@@ -73,6 +73,7 @@ int main() {
         Bullet::updateAll();
         player.update();
         Zombie::updateAll();
+        Particle::updateAll();
 
         window.clear(sf::Color::Black);
 
@@ -80,9 +81,11 @@ int main() {
         window.setView(player.view);
 
         tileMap.draw(window);
+        Particle::drawOnlyNonActive(window);
         Bullet::drawAll(window);
         Zombie::drawAll(window);
         player.draw(window);
+        Particle::drawOnlyActive(window);
 
         // draw UI
         window.setView(defaultView);

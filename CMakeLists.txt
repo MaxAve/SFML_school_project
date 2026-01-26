@@ -17,5 +17,6 @@ add_executable(game src/main.cpp
 					src/Utils.cpp
 					src/HealthBar.cpp
 					src/fonts.cpp
-					src/PlayerHealthBar.cpp)
+					src/PlayerHealthBar.cpp
+					src/Particle.cpp)
 target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)
