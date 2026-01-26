@@ -6,10 +6,11 @@
 #define WINDOW_HEIGHT 600
 
 extern sf::RenderWindow window;
+extern sf::View defaultView;
 
 class Window
 {
 public:
-    static sf::Vector2i getMousePos();
-    static sf::Vector2i getMousePosFromCenter();
+    static sf::Vector2i getMousePos(const sf::View& view = defaultView);
+    static sf::Vector2i getMousePosFromCenter(const sf::View& view = defaultView);
 };

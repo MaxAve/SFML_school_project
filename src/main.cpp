@@ -3,9 +3,9 @@
 #include "../include/Player.hpp"
 #include "../include/PlayerHealthBar.hpp"
 #include "../include/TileMap.hpp"
+#include "../include/Window.hpp"
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
-#include "../include/Window.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -15,7 +15,9 @@ int main() {
     Textures::initTextures();
     Fonts::initFonts();
     sf::Clock deltaClock;
+
     window.setFramerateLimit(60); // to avoid pc flying into space
+    window.setView(defaultView);
 
     TileMap tileMap(20, 20, 150.f);
 
@@ -32,6 +34,11 @@ int main() {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
+            if (event->is<sf::Event::Resized>()) {
+                defaultView.setSize({(float)window.getSize().x, (float)window.getSize().y});
+                defaultView.setCenter({(float) window.getSize().x / 2, (float) window.getSize().y / 2});
+                player.view.setSize({(float)window.getSize().x, (float)window.getSize().y});
+            }
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
@@ -52,8 +59,8 @@ int main() {
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             if (timeSinceLastShot >= (1.0f / fireRate)) {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                float angle = std::atan2(mousePos.y - WINDOW_HEIGHT / 2, mousePos.x - WINDOW_WIDTH / 2);
+                sf::Vector2i mousePos = Window::getMousePos();
+                float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                 Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
                 timeSinceLastShot = 0.0f;
 
@@ -81,8 +88,9 @@ int main() {
         Particle::drawOnlyActive(window);
 
         // draw UI
-        window.setView(window.getDefaultView());
+        window.setView(defaultView);
         playerHealthBar.draw(window);
+
         window.display();
 
         sf::Time dt = deltaClock.restart();
