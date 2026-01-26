@@ -26,9 +26,6 @@ int main() {
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
 
-    sf::RectangleShape testShape({5.f,5.f});
-
-
     for (int i = 0; i < 20; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
@@ -76,7 +73,6 @@ int main() {
         Bullet::updateAll();
         player.update();
         Zombie::updateAll();
-        testShape.setPosition(defaultView.getCenter());
 
         window.clear(sf::Color::Black);
 
@@ -91,7 +87,6 @@ int main() {
         // draw UI
         window.setView(defaultView);
         playerHealthBar.draw(window);
-        window.draw(testShape);
 
         window.display();
 
