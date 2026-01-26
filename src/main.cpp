@@ -63,7 +63,7 @@ int main() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             if (timeSinceLastShot >= (1.0f / fireRate)) {
                 sf::Vector2i mousePos = Window::getMousePos();
-                float angle = std::atan2(mousePos.y - WINDOW_HEIGHT / 2, mousePos.x - WINDOW_WIDTH / 2);
+                float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                 Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
                 timeSinceLastShot = 0.0f;
 

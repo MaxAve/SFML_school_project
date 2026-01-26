@@ -11,5 +11,5 @@ sf::Vector2i Window::getMousePos(const sf::View& view) {
 
 sf::Vector2i Window::getMousePosFromCenter(const sf::View& view) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    return sf::Vector2i(window.mapPixelToCoords({mousePos.x - WINDOW_WIDTH / 2, mousePos.y - WINDOW_HEIGHT / 2}, view));
+    return sf::Vector2i(window.mapPixelToCoords({mousePos.x - (int)window.getSize().x / 2, mousePos.y - (int)window.getSize().y / 2}, view));
 }
