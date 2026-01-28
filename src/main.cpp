@@ -57,7 +57,7 @@ int main() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
             player.sprite.move({0, player.speed * Physics::deltaTime});
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
             if (timeSinceLastShot >= (1.0f / fireRate)) {
                 sf::Vector2i mousePos = Window::getMousePos();
                 float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);

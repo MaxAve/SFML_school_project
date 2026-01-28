@@ -7,14 +7,12 @@ class Item {
     bool _isHealthPack; // true if the item can be used to heal the player
     int _damage; // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
     float _useRate; // how many times the item can be used per second
-    sf::Texture _texture; // texture to use when displaying the item
+    sf::Texture* _texture; // texture to use when displaying the item
 
 public:
     Item() = default;
 
-    Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture _texture);
-
-    Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, const char* pathToTexture);
+    Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
 
     bool canDealMeleeDamage() const;
 
@@ -26,7 +24,7 @@ public:
 
     float getUseRate() const;
 
-    const sf::Texture& getTexture() const;
+    sf::Texture* getTexture() const;
 
     void setCanDealMeleeDamage(bool val);
 
@@ -38,7 +36,5 @@ public:
 
     void setUseRate(float val);
 
-    void setTexture(const char* pathToTexture);
-
-    void setTexture(sf::Texture texture);
+    void setTexture(sf::Texture* texture);
 };
