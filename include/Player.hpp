@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "Window.hpp"
+#include "gui/Inventory.hpp"
 
 #ifndef M_PI
 #define M_PI 3.1415926535
@@ -15,6 +16,7 @@ public:
     sf::Vector2f velocity;
     sf::View view;
     float speed;
+    Inventory inventory;
 
 	sf::RectangleShape gunSprite; // Replace with sprite
 
