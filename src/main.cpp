@@ -26,8 +26,9 @@ int main() {
     bool inventoryToggled;
 
     // ! TEST
-    Item weed(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
-    player.inventory.setItem({1,1}, &weed);
+    Item grassBfr(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
+    player.inventory.setItem({1, 1}, &grassBfr);
+    // !
 
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
@@ -57,6 +58,12 @@ int main() {
                     inventoryToggled = !inventoryToggled;
                 }
             }
+            if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+                if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
+                    sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                    player.inventory.handleMousePress(mousePos);
+                }
+            }
         }
 
         if (!inventoryToggled) {
@@ -83,7 +90,6 @@ int main() {
                 }
             }
         }
-
         timeSinceLastShot += Physics::deltaTime;
 
         Bullet::updateAll();

@@ -8,6 +8,9 @@ unsigned Inventory::slotSizeU = 95u;
 float Inventory::slotSizeF = static_cast<float>(slotSizeU);
 
 Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const sf::Vector2f& position) {
+    carriedItem = nullptr;
+    carriedItemSprite.reset();
+
     // setup background
     background.setSize({(float)defaultView.getSize().x, (float)defaultView.getSize().y});
     background.setFillColor(stdBackgroundColor);
@@ -21,7 +24,7 @@ Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const
     foreground.setOutlineColor(stdOutlineColor);
 
     // create inventory slots
-    sf::Vector2f topLeftCorner = foreground.getPosition() - size/ 2.f;
+    sf::Vector2f topLeftCorner = foreground.getPosition() - size / 2.f;
     padding = (size - slotSizeF * (sf::Vector2f)inventorySize) / 2.f;
 
     inventorySlots.resize(inventorySize.x);
@@ -32,6 +35,41 @@ Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const
             inventorySlots[x][y].setPosition({topLeftCorner.x + padding.x + slotSizeF * x,
                                               topLeftCorner.y + padding.y + slotSizeF * y});
         }
+    }
+}
+
+void Inventory::handleMousePress(sf::Vector2f mousePos) {
+    InventorySlot* targetSlot = nullptr;
+    Item* selectedItem = nullptr;
+
+    for (auto& row : inventorySlots) {
+        for (auto& slot : row) {
+            if (slot.getGlobalBounds().contains(mousePos)) {
+                targetSlot = &slot;
+                break;
+            }
+        }
+        if (targetSlot) {
+            break;
+        }
+    }
+    
+    if (!targetSlot) {
+        return;
+    }
+
+    selectedItem = targetSlot->popItem();
+    targetSlot->setItem(carriedItem);
+    carriedItem = selectedItem;
+
+    if (carriedItem) {
+        carriedItemSprite.emplace(*(carriedItem->getTexture()));
+        sf::Vector2f textureSize = static_cast<sf::Vector2f>(carriedItem->getTexture()->getSize());
+        float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
+        carriedItemSprite->setScale({factor, factor});
+        carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
+    } else {
+        carriedItemSprite.reset();
     }
 }
 
@@ -68,14 +106,18 @@ void Inventory::resizeBackground(sf::Vector2f newSize) {
 void Inventory::update() {
     sf::Vector2f mousePos = (sf::Vector2f)Window::getMousePos();
 
-    for (auto& line : inventorySlots) {
-        for (auto& slot : line) {
+    if (carriedItem) {
+        carriedItemSprite->setPosition(mousePos);
+    }
+
+    for (auto& row : inventorySlots) {
+        for (auto& slot : row) {
             slot.setHovered(false);
         }
     }
 
-    for (auto& line : inventorySlots) {
-        for (auto& slot : line) {
+    for (auto& row : inventorySlots) {
+        for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
                 return;
@@ -92,5 +134,9 @@ void Inventory::draw() {
         for (size_t y = 0; y < inventorySlots[x].size(); y++) {
             inventorySlots[x][y].draw();
         }
+    }
+
+    if (carriedItemSprite) {
+        window.draw(*(carriedItemSprite));
     }
 }
