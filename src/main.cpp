@@ -24,7 +24,6 @@ int main() {
     Player player(window);
     PlayerHealthBar playerHealthBar({200, 20}, 100);
     bool inventoryToggled;
-    unsigned delayCnt = 0;
 
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
@@ -44,7 +43,7 @@ int main() {
                 defaultView.setCenter({newSize.x / 2, newSize.y / 2});
                 player.view.setSize({newSize.x, newSize.y});
                 player.inventory.resizeBackground(newSize);
-                player.inventory.resizeForeground({ newSize.x * 0.75f, newSize.y * 0.75f });
+                // player.inventory.resizeForeground({ newSize.x * 0.75f, newSize.y * 0.75f });
                 player.inventory.setPosition({newSize.x / 2, newSize.y / 2});
             }
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
@@ -87,6 +86,9 @@ int main() {
         player.update();
         Zombie::updateAll();
         Particle::updateAll();
+        if (inventoryToggled) {
+            player.inventory.update();
+        }
 
         window.clear(sf::Color::Black);
 

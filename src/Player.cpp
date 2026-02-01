@@ -1,6 +1,6 @@
 #include "../include/Player.hpp"
 
-Player::Player(sf::RenderWindow& window) : inventory({(float)window.getSize().x * 0.75f, (float)window.getSize().y * 0.75f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}) {
+Player::Player(sf::RenderWindow& window) : inventory({10, 3},{1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}) {
     this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
     this->sprite.setFillColor(sf::Color::Blue);
     this->sprite.setPosition({window.getSize().x / 2 - 25.f, window.getSize().y / 2 - 50.f});

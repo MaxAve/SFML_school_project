@@ -21,5 +21,6 @@ add_executable(game src/main.cpp
 					src/Particle.cpp
 					src/Item.cpp
 					src/gui/Inventory.cpp
+					src/gui/InventorySlot.cpp
 					)
 target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)
