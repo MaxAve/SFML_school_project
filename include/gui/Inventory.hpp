@@ -6,9 +6,12 @@
 class Inventory {
     sf::RectangleShape background;
     sf::RectangleShape foreground;
+    sf::Vector2f padding;
 
     std::vector<std::vector<InventorySlot>> inventorySlots; // [x][y]
     sf::Vector2u inventorySize;
+
+    InventorySlot* hoveredSlot;
 
 public:
     static const sf::Color stdBackgroundColor;

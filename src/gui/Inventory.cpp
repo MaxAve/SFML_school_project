@@ -21,8 +21,8 @@ Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const
     foreground.setOutlineColor(stdOutlineColor);
 
     // create inventory slots
-    sf::Vector2f topLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
-    sf::Vector2f padding = (size - slotSizeF * (sf::Vector2f)inventorySize) / 2.f;
+    sf::Vector2f topLeftCorner = foreground.getPosition() - size/ 2.f;
+    padding = (size - slotSizeF * (sf::Vector2f)inventorySize) / 2.f;
 
     inventorySlots.resize(inventorySize.x);
     for (size_t x = 0; x < inventorySlots.size(); x++) {
@@ -37,6 +37,14 @@ Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const
 
 void Inventory::setPosition(sf::Vector2f newPosition) {
     foreground.setPosition(newPosition);
+
+    sf::Vector2f topLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+    for (size_t x = 0; x < inventorySlots.size(); x++) {
+        for (size_t y = 0; y < inventorySlots[x].size(); y++) {
+            inventorySlots[x][y].setPosition({topLeftCorner.x + padding.x + slotSizeF * x,
+                                              topLeftCorner.y + padding.y + slotSizeF * y});
+        }
+    }
 }
 
 void Inventory::resizeForeground(sf::Vector2f newSize) {
@@ -54,11 +62,15 @@ void Inventory::update() {
 
     for (auto& line : inventorySlots) {
         for (auto& slot : line) {
+            slot.setHovered(false);
+        }
+    }
+
+    for (auto& line : inventorySlots) {
+        for (auto& slot : line) {
             if (slot.getGlobalBounds().contains(mousePos)) {
-                    slot.setHovered(true);
-                }
-            else {
-                slot.setHovered(false);
+                slot.setHovered(true);
+                return;
             }
         }
     }
