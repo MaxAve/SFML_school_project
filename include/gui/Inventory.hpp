@@ -29,6 +29,10 @@ public:
 
     void setPosition(sf::Vector2f);
 
+    sf::Vector2u getInventorySize() const;
+
+    void setItem(sf::Vector2u slot, Item* item);
+
     void update();
 
     void draw();

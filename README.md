@@ -11,9 +11,8 @@
         - [X] ```float useRate``` (how many times the item can be used per second)
         - [X] ```sf::Texture texture``` (texture to use when displaying the item)
     - [ ] Inventory (similar to Minecraft):
-        - [ ] Create a class ```GUIItem``` for an item that should have an item texture and can be dragged in and out of an **inventory slot** using the mouse. This class should be used **exclusively** for displaying items on the GUI.
-        - [ ] Create a class ```InventorySlot``` for a **SINGLE** square-shaped inventory slot where an item can be placed in and out of. We need to be able to place ```InventorySlot``` instances **anywhere** on the screen (e.g. ```InventorySlot``` should have a ```sf::Vector2f position``` attribute). The slot should be highligthed when the mouse hovers over it.
-        - [ ] Create a class ```Inventory``` that should contain a matrix (with a given width and height) of ```InventorySlot```s.
+        - [ ] Create a class ```InventorySlot``` for a **SINGLE** square-shaped inventory slot where an item can be placed in and out of. We need to be able to place ```InventorySlot``` instances **anywhere** on the screen (e.g. ```InventorySlot``` should have a ```sf::Vector2f position``` attribute). The slot should be highlighted when the mouse hovers over it.
+        - [X] Create a class ```Inventory``` that should contain a matrix (with a given width and height) of ```InventorySlot```s.
     - [ ] Loot system:
         - [ ] Create a class ```LootContainer``` that can contain items. The loot container should have a ```float range``` attribute that dictates the minimum distance the player needs to be away from the container to open it. Once the player is withing range of the container, the container should be highlighted (for now: use rectangle sprite and change color to highlight) and the player should be able to press Q to open it. Once opened, the GUI should display the container's and the player's inventories (like in Minecraft) so that the player can drag items from the container into their inventory.
     - [ ] Tilemap:

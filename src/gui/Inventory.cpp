@@ -47,6 +47,14 @@ void Inventory::setPosition(sf::Vector2f newPosition) {
     }
 }
 
+sf::Vector2u Inventory::getInventorySize() const {
+    return inventorySize;
+}
+
+void Inventory::setItem(sf::Vector2u slot, Item* item) {
+    inventorySlots[slot.x][slot.y].setItem(item);
+}
+
 void Inventory::resizeForeground(sf::Vector2f newSize) {
     foreground.setOrigin({0, 0});
     foreground.setSize(newSize);

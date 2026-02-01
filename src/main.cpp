@@ -25,6 +25,10 @@ int main() {
     PlayerHealthBar playerHealthBar({200, 20}, 100);
     bool inventoryToggled;
 
+    // ! TEST
+    Item weed(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
+    player.inventory.setItem({1,1}, &weed);
+
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
 

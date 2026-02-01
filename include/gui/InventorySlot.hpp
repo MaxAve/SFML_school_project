@@ -1,5 +1,7 @@
 #pragma once
+#include "../Item.hpp"
 #include <SFML/Graphics.hpp>
+#include <optional>
 
 class InventorySlot {
     static const float outlineThickness;
@@ -9,6 +11,8 @@ class InventorySlot {
 
     sf::RectangleShape slotShape; // includes position
     bool hovered;
+    Item* item;
+    std::optional<sf::Sprite> itemSprite;
 
 public:
     InventorySlot();
@@ -18,6 +22,12 @@ public:
     bool isHovered() const;
 
     void setHovered(bool val);
+
+    void setItem(Item* _item);
+
+    Item* popItem();
+
+    Item* getItem() const;
 
     sf::FloatRect getGlobalBounds() const;
 
@@ -29,4 +39,3 @@ public:
 
     void draw();
 };
-
