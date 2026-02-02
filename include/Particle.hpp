@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Window.hpp"
 #include "Physics.hpp"
+#include <iostream>
 
 typedef struct
 {
@@ -26,6 +27,7 @@ public:
     bool finished;
     sf::Vector2f velocity;
     ParticleSettings settings;
+    bool toDelete;
 
     Particle(sf::Vector2f position, sf::Vector2f velocity, sf::Vector2f size, sf::Color color, float gravity, float time, float floorTime);
 

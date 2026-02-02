@@ -15,8 +15,8 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer)
     this->displacementVelocity = sf::Vector2f(0,0);
     this->bulletPushVelocity = sf::Vector2f(0,0);
     this->targetPlayer = targetPlayer;
-    this->hitboxRadius = 60.0f;
     this->healthBar = HealthBar(100);
+    this->hitbox = Hitbox(sf::Vector2f(50.f, 100.f));
 
     Zombie::pool.push_back(this);
 }
@@ -89,6 +89,8 @@ void Zombie::update()
     }
 
     this->healthBar.setPosition({this->sprite.getPosition().x + 25, this->sprite.getPosition().y - 10});
+
+    this->hitbox.position = this->sprite.getPosition();
 }
 
 void Zombie::draw(sf::RenderWindow &window)

@@ -33,6 +33,11 @@ void Particle::updateAll()
     for(int i = 0; i < Particle::pool.size(); i++)
     {
         Particle::pool[i]->update();
+        if(Particle::pool[i]->toDelete)
+        {
+            Particle::pool.erase(Particle::pool.begin() + i);
+            i--;
+        }
     }
 }
 
@@ -76,7 +81,7 @@ void Particle::update()
         this->settings.floorTime -= Physics::deltaTime;
         if(this->settings.floorTime < .0f)
         {
-            // delete
+            this->toDelete = true;
         }
     }
 }

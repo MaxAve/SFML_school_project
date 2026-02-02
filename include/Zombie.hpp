@@ -9,6 +9,7 @@
 #include "Utils.hpp"
 #include "HealthBar.hpp"
 #include "Particle.hpp"
+#include "Hitbox.hpp"
 
 class Zombie
 {
@@ -26,8 +27,8 @@ public:
     sf::Vector2f bulletPushVelocity; // This velocity is used exclusively for when this zombie gets pushed by a bullet
     float speed;
     Player* targetPlayer;
-    float hitboxRadius;
     HealthBar healthBar;
+    Hitbox hitbox;
 
     Zombie(sf::Vector2f position, Player* targetPlayer);
     void update();
