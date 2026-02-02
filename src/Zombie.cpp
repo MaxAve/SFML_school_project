@@ -13,6 +13,7 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer)
     this->speed = 200.0f + (float)(rand() % 50);
     this->velocity = sf::Vector2f(0,0);
     this->displacementVelocity = sf::Vector2f(0,0);
+    this->bulletPushVelocity = sf::Vector2f(0,0);
     this->targetPlayer = targetPlayer;
     this->hitboxRadius = 60.0f;
     this->healthBar = HealthBar(100);
@@ -74,10 +75,17 @@ void Zombie::update()
     this->velocity.x = std::cos(angle) * this->speed;
     this->velocity.y = std::sin(angle) * this->speed;
 
+    this->bulletPushVelocity.x /= (1.0f + 5.f * Physics::deltaTime);
+    if(std::abs(this->bulletPushVelocity.x) < 0.01f)
+        this->bulletPushVelocity.x = 0.0f;
+    this->bulletPushVelocity.y /= (1.0f + 5.f * Physics::deltaTime);
+    if(std::abs(this->bulletPushVelocity.y) < 0.01f)
+        this->bulletPushVelocity.y = 0.0f;
+
     if(Utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f)
     {
-        this->sprite.move({(this->velocity.x + this->displacementVelocity.x) * Physics::deltaTime, 
-                           (this->velocity.y + this->displacementVelocity.y) * Physics::deltaTime});
+        this->sprite.move({(this->velocity.x + this->displacementVelocity.x + this->bulletPushVelocity.x) * Physics::deltaTime, 
+                           (this->velocity.y + this->displacementVelocity.y + this->bulletPushVelocity.y) * Physics::deltaTime});
     }
 
     this->healthBar.setPosition({this->sprite.getPosition().x + 25, this->sprite.getPosition().y - 10});
