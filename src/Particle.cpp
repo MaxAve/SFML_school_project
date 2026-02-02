@@ -35,6 +35,7 @@ void Particle::updateAll()
         Particle::pool[i]->update();
         if(Particle::pool[i]->toDelete)
         {
+            // TODO memory leak because no delete call
             Particle::pool.erase(Particle::pool.begin() + i);
             i--;
         }

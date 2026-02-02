@@ -6,6 +6,7 @@
 #include "../include/Window.hpp"
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
+#include "../include/BulletMeter.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -29,6 +30,8 @@ int main() {
     Item grassBfr(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
     player.inventory.setItem({1, 1}, &grassBfr);
     // !
+
+    BulletMeter bulletMeter(sf::Vector2f(5, 70), 30);
 
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
@@ -85,8 +88,11 @@ int main() {
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                     Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
                     timeSinceLastShot = 0.0f;
-
-                    // std::cout << Bullet::pool.size() << " - " << Bullet::pool[0]->distanceTraveled << "\n";
+                    
+                    if(bulletMeter.currentBullets > 0)
+                    {
+                        bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
+                    }
                 }
             }
         }
@@ -115,6 +121,7 @@ int main() {
         // draw UI
         window.setView(defaultView);
         playerHealthBar.draw(window);
+        bulletMeter.draw(window);
 
         if (inventoryToggled) {
             player.inventory.draw();
