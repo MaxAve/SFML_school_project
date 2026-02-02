@@ -1,26 +1,13 @@
 #include "../include/Item.hpp"
 #include <iostream>
 
-Item::Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture _texture)
-: _texture(std::move(_texture))
-{
+Item::Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
     this->_canDealMeleeDamage = _canDealMeleeDamage;
     this->_canDealRangedDamage = _canDealRangedDamage;
     this->_isHealthPack = _isHealthPack;
     this->_damage = _damage;
     this->_useRate = _useRate;
-}
-
-Item::Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, const char* pathToTexture) {
-    this->_canDealMeleeDamage = _canDealMeleeDamage;
-    this->_canDealRangedDamage = _canDealRangedDamage;
-    this->_isHealthPack = _isHealthPack;
-    this->_damage = _damage;
-    this->_useRate = _useRate;
-
-    if (!_texture.loadFromFile(pathToTexture)) {
-        std::cout << "Error: Item::Item(bool, bool, bool, int, float, const char*); Couldn't load file" << std::endl;
-    }
+    this->_texture = _texture;
 }
 
 bool Item::canDealMeleeDamage() const { return _canDealMeleeDamage; }
@@ -33,7 +20,7 @@ int Item::getDamage() const { return _damage; }
 
 float Item::getUseRate() const { return _useRate; }
 
-const sf::Texture& Item::getTexture() const { return _texture; }
+sf::Texture* Item::getTexture() const { return _texture; }
 
 void Item::setCanDealMeleeDamage(bool val) {
     _canDealMeleeDamage = val;
@@ -55,12 +42,6 @@ void Item::setUseRate(float val) {
     _useRate = val;
 }
 
-void Item::setTexture(const char* pathToTexture) {
-    if (!_texture.loadFromFile(pathToTexture)) {
-        std::cout << "Error: Item::setTexture(const char*); Couldn't load from file" << std::endl;
-    }   
-}
-
-void Item::setTexture(sf::Texture texture) {
-    _texture = std::move(texture);
+void Item::setTexture(sf::Texture* texture) {
+    _texture = texture;
 }
