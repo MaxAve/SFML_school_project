@@ -1,12 +1,12 @@
 #include "../include/Bullet.hpp"
 #include "../include/Physics.hpp"
 #include "../include/Player.hpp"
-#include "../include/PlayerHealthBar.hpp"
+#include "../include/gui/PlayerHealthBar.hpp"
 #include "../include/TileMap.hpp"
 #include "../include/Window.hpp"
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
-#include "../include/BulletMeter.hpp"
+#include "../include/gui/BulletMeter.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 

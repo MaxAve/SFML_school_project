@@ -1,4 +1,4 @@
-#include "../include/BulletMeter.hpp"
+#include "../include/gui/BulletMeter.hpp"
 
 BulletMeter::BulletMeter(sf::Vector2f position, int maxBullets)
 {

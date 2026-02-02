@@ -17,12 +17,12 @@ add_executable(game src/main.cpp
 					src/Utils.cpp
 					src/HealthBar.cpp
 					src/fonts.cpp
-					src/PlayerHealthBar.cpp
+					src/gui/PlayerHealthBar.cpp
 					src/Particle.cpp
 					src/Item.cpp
 					src/gui/Inventory.cpp
 					src/gui/InventorySlot.cpp
 					src/Hitbox.cpp
-					src/BulletMeter.cpp
+					src/gui/BulletMeter.cpp
 					)
 target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)
