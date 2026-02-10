@@ -23,15 +23,16 @@ int main() {
     TileMap tileMap(20, 20, 80.f);
 
     Player player(window);
-    PlayerHealthBar playerHealthBar({200, 20}, 100);
+    PlayerHealthBar playerHealthBar({420, 30}, 100);
     bool inventoryToggled;
+    float lastBulletReloadDelay = .0f;
 
     // ! TEST
     Item grassBfr(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
     player.inventory.setItem({1, 1}, &grassBfr);
     // !
 
-    BulletMeter bulletMeter(sf::Vector2f(5, 70), 30);
+    BulletMeter bulletMeter(sf::Vector2f(5, 40), 30);
 
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
@@ -83,7 +84,7 @@ int main() {
                 player.sprite.move({0, player.speed * Physics::deltaTime});
             }
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-                if (timeSinceLastShot >= (1.0f / fireRate)) {
+                if (timeSinceLastShot >= (1.0f / fireRate) && !player.reloading) {
                     sf::Vector2i mousePos = Window::getMousePos();
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                     Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
@@ -92,11 +93,35 @@ int main() {
                     if(bulletMeter.currentBullets > 0)
                     {
                         bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
+                        if(bulletMeter.currentBullets <= 0)
+                        {
+                            player.reloading = true;
+                        }
                     }
                 }
             }
         }
         timeSinceLastShot += Physics::deltaTime;
+
+        if(player.reloading)
+        {
+            lastBulletReloadDelay += Physics::deltaTime;
+
+            if(lastBulletReloadDelay > 0.05f)
+            {
+                bulletMeter.currentBullets += 1;
+                bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color::Red);
+                lastBulletReloadDelay = .0f;
+                if(bulletMeter.currentBullets == bulletMeter.maxBullets)
+                {
+                    player.reloading = false;
+                    for(int i = 0; i < bulletMeter.maxBullets; i++)
+                    {
+                        bulletMeter.sprites[i].setFillColor(sf::Color::White);
+                    }
+                }
+            }
+        }
 
         Bullet::updateAll();
         player.update();

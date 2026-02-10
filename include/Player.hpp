@@ -17,6 +17,7 @@ public:
     sf::View view;
     float speed;
     Inventory inventory;
+    bool reloading;
 
 	sf::RectangleShape gunSprite; // Replace with sprite
 

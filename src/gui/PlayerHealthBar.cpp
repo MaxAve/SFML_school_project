@@ -1,8 +1,6 @@
 #include "../include/gui/PlayerHealthBar.hpp"
 
-PlayerHealthBar::PlayerHealthBar(sf::Vector2f _size, unsigned _maxHealth = 100) : healthBar(_maxHealth), maxHealth(_maxHealth), text(Fonts::pixel) {
-    text.setString("HP");
-
+PlayerHealthBar::PlayerHealthBar(sf::Vector2f _size, unsigned _maxHealth = 100) : healthBar(_maxHealth), maxHealth(_maxHealth) {
     healthBar.fullRect.setOrigin({0, 0});
     healthBar.healthRect.setOrigin({0, 0});
     healthBar.fullRect.setPosition({5, 5});
@@ -12,11 +10,6 @@ PlayerHealthBar::PlayerHealthBar(sf::Vector2f _size, unsigned _maxHealth = 100) 
     healthBar.healthRect.setSize(_size);
 
     healthBar.currentHealth = maxHealth;
-
-    // set the position of text below the middle of the healthbar
-
-    text.setOrigin({text.getLocalBounds().size.x / 2, 0.f});
-    text.setPosition({healthBar.fullRect.getPosition().x + healthBar.fullRect.getGeometricCenter().x, healthBar.fullRect.getPosition().y + healthBar.fullRect.getSize().y + 1});
 }
 
 unsigned PlayerHealthBar::getHealth() const {
@@ -45,5 +38,4 @@ void PlayerHealthBar::changeHealth(int changeVal) {
 
 void PlayerHealthBar::draw(sf::RenderWindow& window) {
     healthBar.draw(window);
-    window.draw(text);
 }

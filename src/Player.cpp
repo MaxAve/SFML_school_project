@@ -6,6 +6,7 @@ Player::Player(sf::RenderWindow& window) : inventory({10, 3},{1025.f, 700.f}, {(
     this->sprite.setPosition({window.getSize().x / 2 - 25.f, window.getSize().y / 2 - 50.f});
     this->view = sf::View({800.f, 300.f}, {800.f, 600.f});
     this->speed = 300.0f;
+    this->reloading = false;
 
     this->gunSprite = sf::RectangleShape(sf::Vector2f(70.f, 30.f));
     this->gunSprite.setFillColor(sf::Color::Red);
