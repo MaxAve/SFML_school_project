@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "fonts.hpp"
 
 #define BULLET_SPRITE_WIDTH 8
 #define BULLET_SPRITE_DISTANCE 4

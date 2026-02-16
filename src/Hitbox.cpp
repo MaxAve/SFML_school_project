@@ -5,6 +5,24 @@ Hitbox::Hitbox(){}
 Hitbox::Hitbox(sf::Vector2f size)
 {
     this->size = size;
+
+    debugSprite = sf::RectangleShape(this->size);
+    debugSprite.setPosition(this->position);
+    debugSprite.setOutlineColor(sf::Color::Red);
+    debugSprite.setOutlineThickness(2);
+    debugSprite.setFillColor(sf::Color::Transparent);
+}
+
+Hitbox::Hitbox(sf::Vector2f position, sf::Vector2f size)
+{
+    this->size = size;
+    this->position = position;
+
+    debugSprite = sf::RectangleShape(this->size);
+    debugSprite.setPosition(this->position);
+    debugSprite.setOutlineColor(sf::Color::Red);
+    debugSprite.setOutlineThickness(2);
+    debugSprite.setFillColor(sf::Color::Transparent);
 }
 
 bool Hitbox::touching(Hitbox *other)
@@ -18,4 +36,9 @@ bool Hitbox::touching(Hitbox *other)
 bool Hitbox::withinBounds(sf::Vector2f point)
 {
     return point.x >= this->position.x && point.x <= (this->position.x + this->size.x) && point.y >= this->position.y && point.y <= (this->position.y + this->size.y);
+}
+
+void Hitbox::debugDraw(sf::RenderWindow &window)
+{
+    window.draw(this->debugSprite);
 }

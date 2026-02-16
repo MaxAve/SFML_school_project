@@ -7,6 +7,7 @@
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
 #include "../include/gui/BulletMeter.hpp"
+#include "../include/Door.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -24,7 +25,7 @@ int main() {
 
     Player player(window);
     PlayerHealthBar playerHealthBar({420, 30}, 100);
-    bool inventoryToggled;
+    bool inventoryToggled = false;
     float lastBulletReloadDelay = .0f;
 
     // ! TEST
@@ -37,9 +38,15 @@ int main() {
     float fireRate = 10.0f;
     float timeSinceLastShot = 0.0f;
 
-    for (int i = 0; i < 20; i++) {
-        new Zombie({(float)(rand() % 800), 0}, &player);
-    }
+    // for (int i = 0; i < 20; i++) {
+    //     new Zombie({(float)(rand() % 800), 0}, &player);
+    // }
+
+    Door* doorA = new Door(Hitbox({200, 200}, {80, 200}));
+    Door* doorB = new Door(Hitbox({400, 200}, {80, 200}));
+
+    doorA->targetDoor = doorB;
+    doorB->targetDoor = doorA;
 
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -61,6 +68,17 @@ int main() {
                 if (keyPressed->scancode == sf::Keyboard::Scan::I) {
                     inventoryToggled = !inventoryToggled;
                 }
+                if(keyPressed->scancode == sf::Keyboard::Scan::X)
+                {
+                    for(int i = 0; i < Door::pool.size(); i++)
+                    {
+                        if(Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition()))
+                        {
+                            player.setPosition(Door::pool[i]->targetDoor->hitbox.position);
+                            break;
+                        }
+                    }
+                }
             }
             if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
@@ -72,18 +90,19 @@ int main() {
 
         if (!inventoryToggled) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-                player.sprite.move({-player.speed * Physics::deltaTime, 0});
+                player.move({-player.speed * Physics::deltaTime, 0});
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-                player.sprite.move({player.speed * Physics::deltaTime, 0});
+                player.move({player.speed * Physics::deltaTime, 0});
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-                player.sprite.move({0, -player.speed * Physics::deltaTime});
+                player.move({0, -player.speed * Physics::deltaTime});
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-                player.sprite.move({0, player.speed * Physics::deltaTime});
+                player.move({0, player.speed * Physics::deltaTime});
             }
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
                 if (timeSinceLastShot >= (1.0f / fireRate) && !player.reloading) {
                     sf::Vector2i mousePos = Window::getMousePos();
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
@@ -110,7 +129,7 @@ int main() {
             if(lastBulletReloadDelay > 0.05f)
             {
                 bulletMeter.currentBullets += 1;
-                bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color::Red);
+                bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
                 lastBulletReloadDelay = .0f;
                 if(bulletMeter.currentBullets == bulletMeter.maxBullets)
                 {
@@ -135,12 +154,15 @@ int main() {
 
         // draw Camera (View)
         window.setView(player.view);
-
+        
         tileMap.draw(window);
+        for(auto& it : Door::pool)
+            it->debugDraw(window);
         Particle::drawOnlyNonActive(window);
         Bullet::drawAll(window);
         Zombie::drawAll(window);
         player.draw(window);
+        player.hitbox.debugDraw(window);
         Particle::drawOnlyActive(window);
 
         // draw UI

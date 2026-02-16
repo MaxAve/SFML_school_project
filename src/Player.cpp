@@ -7,6 +7,7 @@ Player::Player(sf::RenderWindow& window) : inventory({10, 3},{1025.f, 700.f}, {(
     this->view = sf::View({800.f, 300.f}, {800.f, 600.f});
     this->speed = 300.0f;
     this->reloading = false;
+    this->hitbox = Hitbox(this->sprite.getPosition(), this->sprite.getSize());
 
     this->gunSprite = sf::RectangleShape(sf::Vector2f(70.f, 30.f));
     this->gunSprite.setFillColor(sf::Color::Red);
@@ -24,4 +25,19 @@ void Player::draw(sf::RenderWindow& window) {
     this->view.setCenter({this->sprite.getPosition().x + 25.f, this->sprite.getPosition().y + 50.f});
     window.draw(this->sprite);
     window.draw(this->gunSprite);
+}
+
+void Player::setPosition(sf::Vector2f pos)
+{
+    this->sprite.setPosition(pos);
+    this->hitbox.position = pos;
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+}
+
+void Player::move(sf::Vector2f delta)
+{
+    this->sprite.move(delta);
+    this->hitbox.position.x += delta.x;
+    this->hitbox.position.y += delta.y;
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
 }
