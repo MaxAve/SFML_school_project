@@ -21,6 +21,15 @@ int main() {
     window.setFramerateLimit(60); // to avoid pc flying into space
     window.setView(defaultView);
 
+    sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
+    fadeRect.setPosition({0,0});
+    fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
+    bool fadeActive = false;
+    int fadeValue = 0;
+    int fadeTarget = 0;
+    float fadeSpeed = 500;
+    sf::Vector2f teleportTargetPos;
+
     TileMap tileMap(20, 20, 80.f);
 
     Player player(window);
@@ -33,17 +42,17 @@ int main() {
     player.inventory.setItem({1, 1}, &grassBfr);
     // !
 
-    BulletMeter bulletMeter(sf::Vector2f(5, 40), 30);
+    BulletMeter bulletMeter(sf::Vector2f(5, 40), 50);
 
-    float fireRate = 10.0f;
+    float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
-    // for (int i = 0; i < 20; i++) {
-    //     new Zombie({(float)(rand() % 800), 0}, &player);
-    // }
+    for (int i = 0; i < 40; i++) {
+        new Zombie({(float)(rand() % 800), 0}, &player);
+    }
 
     Door* doorA = new Door(Hitbox({200, 200}, {80, 200}));
-    Door* doorB = new Door(Hitbox({400, 200}, {80, 200}));
+    Door* doorB = new Door(Hitbox({700, 200}, {80, 200}));
 
     doorA->targetDoor = doorB;
     doorB->targetDoor = doorA;
@@ -59,6 +68,7 @@ int main() {
                 defaultView.setCenter({newSize.x / 2, newSize.y / 2});
                 player.view.setSize({newSize.x, newSize.y});
                 player.inventory.resizeBackground(newSize);
+                fadeRect.setSize(newSize);
                 // player.inventory.resizeForeground({ newSize.x * 0.75f, newSize.y * 0.75f });
                 player.inventory.setPosition({newSize.x / 2, newSize.y / 2});
             }
@@ -69,12 +79,16 @@ int main() {
                     inventoryToggled = !inventoryToggled;
                 }
                 if(keyPressed->scancode == sf::Keyboard::Scan::X)
-                {
+                { 
                     for(int i = 0; i < Door::pool.size(); i++)
                     {
                         if(Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition()))
                         {
-                            player.setPosition(Door::pool[i]->targetDoor->hitbox.position);
+                            fadeActive = true;
+                            fadeTarget = 255;
+                            teleportTargetPos = sf::Vector2f(
+                                Door::pool[i]->targetDoor->hitbox.position.x + Door::pool[i]->targetDoor->hitbox.size.x/2 - player.sprite.getSize().x/2,
+                                Door::pool[i]->targetDoor->hitbox.position.y + Door::pool[i]->targetDoor->hitbox.size.y - player.sprite.getSize().y);
                             break;
                         }
                     }
@@ -89,17 +103,20 @@ int main() {
         }
 
         if (!inventoryToggled) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-                player.move({-player.speed * Physics::deltaTime, 0});
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-                player.move({player.speed * Physics::deltaTime, 0});
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-                player.move({0, -player.speed * Physics::deltaTime});
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-                player.move({0, player.speed * Physics::deltaTime});
+            if(!fadeActive)
+            {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+                    player.move({-player.speed * Physics::deltaTime, 0});
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+                    player.move({player.speed * Physics::deltaTime, 0});
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+                    player.move({0, -player.speed * Physics::deltaTime});
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+                    player.move({0, player.speed * Physics::deltaTime});
+                }
             }
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
@@ -112,6 +129,7 @@ int main() {
                     if(bulletMeter.currentBullets > 0)
                     {
                         bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
+                        bulletMeter.ejectBullet(bulletMeter.maxBullets - bulletMeter.currentBullets - 1);
                         if(bulletMeter.currentBullets <= 0)
                         {
                             player.reloading = true;
@@ -126,7 +144,7 @@ int main() {
         {
             lastBulletReloadDelay += Physics::deltaTime;
 
-            if(lastBulletReloadDelay > 0.05f)
+            if(lastBulletReloadDelay > 0.02f)
             {
                 bulletMeter.currentBullets += 1;
                 bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
@@ -168,10 +186,33 @@ int main() {
         // draw UI
         window.setView(defaultView);
         playerHealthBar.draw(window);
+
+        bulletMeter.updateAnimations();
         bulletMeter.draw(window);
 
         if (inventoryToggled) {
             player.inventory.draw();
+        }
+        
+        if(fadeActive)
+        {
+            if(fadeValue < fadeTarget)
+                fadeValue = std::min(fadeValue + (int)(fadeSpeed * Physics::deltaTime), 255);
+            else if(fadeValue > fadeTarget)
+            {
+                fadeValue = std::max(fadeValue - (int)(fadeSpeed * Physics::deltaTime), 0);
+                if(fadeValue == 0)
+                    fadeActive = false;
+            }
+            
+            if(fadeValue == 255 && fadeTarget == 255)
+            {
+                fadeTarget = 0;
+                player.setPosition(teleportTargetPos);
+            }
+
+            fadeRect.setFillColor(sf::Color(0, 0, 0, fadeValue));
+            window.draw(fadeRect);
         }
 
         window.display();
