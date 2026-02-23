@@ -30,6 +30,7 @@ void Bullet::update()
 	{
 		if(this->hit(Zombie::pool[i]))
 		{
+			Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 2, 500);
 			Zombie::pool[i]->healthBar.setHealth(Zombie::pool[i]->healthBar.currentHealth - 30);
 			Zombie::pool[i]->bulletPushVelocity = this->velocity / 5.f;
 			this->distanceTraveled = 1000000000;

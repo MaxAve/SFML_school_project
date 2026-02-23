@@ -52,7 +52,7 @@ void Zombie::updateAll()
         Zombie::pool[i]->update();
         if(Zombie::pool[i]->healthBar.currentHealth == 0)
         {
-            Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 20, 500);
+            Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 35, 500);
             Zombie::pool.erase(Zombie::pool.begin() + i);
             i--;
         }
