@@ -1,14 +1,14 @@
 #include "../include/Bullet.hpp"
+#include "../include/Door.hpp"
+#include "../include/LootContainer.hpp"
 #include "../include/Physics.hpp"
 #include "../include/Player.hpp"
-#include "../include/gui/PlayerHealthBar.hpp"
 #include "../include/TileMap.hpp"
 #include "../include/Window.hpp"
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
 #include "../include/gui/BulletMeter.hpp"
-#include "../include/Door.hpp"
-#include "../include/LootContainer.hpp"
+#include "../include/gui/PlayerHealthBar.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -23,7 +23,7 @@ int main() {
     window.setView(defaultView);
 
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
-    fadeRect.setPosition({0,0});
+    fadeRect.setPosition({0, 0});
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
     bool fadeActive = false;
     int fadeValue = 0;
@@ -35,14 +35,16 @@ int main() {
 
     Player player(window);
     PlayerHealthBar playerHealthBar({420, 30}, 100);
+    SharedInventory sharedInventory(&player.inventory, nullptr);
     bool inventoryToggled = false;
+    bool sharedInventoryToggled = false;
     float lastBulletReloadDelay = .0f;
 
     // ! TEST
     Item grassBfr(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
     player.inventory.setItem({1, 1}, &grassBfr);
 
-    LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
+    LootContainer chest({10, 3}, player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 
     BulletMeter bulletMeter(sf::Vector2f(5, 40), 50);
@@ -72,42 +74,40 @@ int main() {
                 player.view.setSize({newSize.x, newSize.y});
                 player.inventory.resizeBackground(newSize);
                 fadeRect.setSize(newSize);
-                // player.inventory.resizeForeground({ newSize.x * 0.75f, newSize.y * 0.75f });
                 player.inventory.setPosition({newSize.x / 2, newSize.y / 2});
             }
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
-                if (keyPressed->scancode == sf::Keyboard::Scan::I) {
+                if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled) {
                     inventoryToggled = !inventoryToggled;
                 }
-                if(keyPressed->scancode == sf::Keyboard::Scan::X)
-                { 
-                    for(int i = 0; i < Door::pool.size(); i++)
-                    {
-                        if(Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition()))
-                        {
+                if (keyPressed->scancode == sf::Keyboard::Scan::X) {
+                    for (int i = 0; i < Door::pool.size(); i++) {
+                        if (Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition())) {
                             fadeActive = true;
                             fadeTarget = 255;
                             teleportTargetPos = sf::Vector2f(
-                                Door::pool[i]->targetDoor->hitbox.position.x + Door::pool[i]->targetDoor->hitbox.size.x/2 - player.sprite.getSize().x/2,
+                                Door::pool[i]->targetDoor->hitbox.position.x + Door::pool[i]->targetDoor->hitbox.size.x / 2 - player.sprite.getSize().x / 2,
                                 Door::pool[i]->targetDoor->hitbox.position.y + Door::pool[i]->targetDoor->hitbox.size.y - player.sprite.getSize().y);
                             break;
                         }
                     }
                 }
+                if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventory.getSecond() && !inventoryToggled) {
+                    sharedInventoryToggled = !sharedInventoryToggled;
+                }
             }
             if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
-                if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
+                if (inventoryToggled && mouseButtonPressed->button == sf::Mouse::Button::Left) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     player.inventory.handleMousePress(mousePos);
                 }
             }
         }
 
-        if (!inventoryToggled) {
-            if(!fadeActive)
-            {
+        if (!inventoryToggled && !sharedInventoryToggled) {
+            if (!fadeActive) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                     player.move({-player.speed * Physics::deltaTime, 0});
                 }
@@ -128,13 +128,11 @@ int main() {
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                     Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
                     timeSinceLastShot = 0.0f;
-                    
-                    if(bulletMeter.currentBullets > 0)
-                    {
+
+                    if (bulletMeter.currentBullets > 0) {
                         bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
                         bulletMeter.ejectBullet(bulletMeter.maxBullets - bulletMeter.currentBullets - 1);
-                        if(bulletMeter.currentBullets <= 0)
-                        {
+                        if (bulletMeter.currentBullets <= 0) {
                             player.reloading = true;
                         }
                     }
@@ -143,20 +141,16 @@ int main() {
         }
         timeSinceLastShot += Physics::deltaTime;
 
-        if(player.reloading)
-        {
+        if (player.reloading) {
             lastBulletReloadDelay += Physics::deltaTime;
 
-            if(lastBulletReloadDelay > 0.02f)
-            {
+            if (lastBulletReloadDelay > 0.02f) {
                 bulletMeter.currentBullets += 1;
                 bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
                 lastBulletReloadDelay = .0f;
-                if(bulletMeter.currentBullets == bulletMeter.maxBullets)
-                {
+                if (bulletMeter.currentBullets == bulletMeter.maxBullets) {
                     player.reloading = false;
-                    for(int i = 0; i < bulletMeter.maxBullets; i++)
-                    {
+                    for (int i = 0; i < bulletMeter.maxBullets; i++) {
                         bulletMeter.sprites[i].setFillColor(sf::Color::White);
                     }
                 }
@@ -167,8 +161,14 @@ int main() {
         player.update();
         Zombie::updateAll();
         Particle::updateAll();
-        chest.update(player);
 
+        if (!sharedInventoryToggled) {
+            sharedInventory.setSecond(nullptr);
+            chest.update(player, sharedInventory);
+        }
+        if (sharedInventoryToggled) {
+            sharedInventory.update();
+        }
         if (inventoryToggled) {
             player.inventory.update();
         }
@@ -177,9 +177,9 @@ int main() {
 
         // draw Camera (View)
         window.setView(player.view);
-        
+
         tileMap.draw(window);
-        for(auto& it : Door::pool)
+        for (auto& it : Door::pool)
             it->debugDraw(window);
         Particle::drawOnlyNonActive(window);
         Bullet::drawAll(window);
@@ -199,20 +199,20 @@ int main() {
         if (inventoryToggled) {
             player.inventory.draw();
         }
-        
-        if(fadeActive)
-        {
-            if(fadeValue < fadeTarget)
+        if (sharedInventoryToggled) {
+            sharedInventory.draw();
+        }
+
+        if (fadeActive) {
+            if (fadeValue < fadeTarget)
                 fadeValue = std::min(fadeValue + (int)(fadeSpeed * Physics::deltaTime), 255);
-            else if(fadeValue > fadeTarget)
-            {
+            else if (fadeValue > fadeTarget) {
                 fadeValue = std::max(fadeValue - (int)(fadeSpeed * Physics::deltaTime), 0);
-                if(fadeValue == 0)
+                if (fadeValue == 0)
                     fadeActive = false;
             }
-            
-            if(fadeValue == 255 && fadeTarget == 255)
-            {
+
+            if (fadeValue == 255 && fadeTarget == 255) {
                 fadeTarget = 0;
                 player.setPosition(teleportTargetPos);
             }

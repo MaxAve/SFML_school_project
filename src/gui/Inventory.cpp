@@ -38,7 +38,11 @@ Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const
     }
 }
 
-void Inventory::handleMousePress(sf::Vector2f mousePos) {
+void Inventory::handleMousePress(sf::Vector2f mousePos, Item* outsideItem) {
+    if (outsideItem) {
+        carriedItem = outsideItem;
+    }
+
     InventorySlot* targetSlot = nullptr;
     Item* selectedItem = nullptr;
 
@@ -53,7 +57,7 @@ void Inventory::handleMousePress(sf::Vector2f mousePos) {
             break;
         }
     }
-    
+
     if (!targetSlot) {
         return;
     }
@@ -85,8 +89,32 @@ void Inventory::setPosition(sf::Vector2f newPosition) {
     }
 }
 
+sf::FloatRect Inventory::getGlobalBounds() const {
+    return foreground.getGlobalBounds();
+}
+
 sf::Vector2u Inventory::getInventorySize() const {
     return inventorySize;
+}
+
+// if not successful, returns {-1, -1}
+sf::Vector2i Inventory::getSlotByMousePos(sf::Vector2f mousePos) const {
+    for (size_t row = 0; row < inventorySlots.size(); row++) {
+        for (size_t line = 0; line < inventorySlots[row].size(); line++) {
+            if (inventorySlots[row][line].getGlobalBounds().contains(mousePos)) {
+                return {(int)row, (int)line};
+            }
+        }
+    }
+
+    return {-1, -1};
+}
+
+Item* Inventory::popBySlot(sf::Vector2u slot, Item* newItem) {
+    Item* tmp = inventorySlots[slot.x][slot.y].popItem();
+    inventorySlots[slot.x][slot.y].setItem(newItem);
+
+    return tmp;
 }
 
 void Inventory::setItem(sf::Vector2u slot, Item* item) {

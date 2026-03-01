@@ -28,7 +28,7 @@ public:
 
     Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const sf::Vector2f& position = {0, 0});
 
-    void handleMousePress(sf::Vector2f mousePos);
+    void handleMousePress(sf::Vector2f mousePos, Item* outsideItem = nullptr);
 
     void resizeForeground(sf::Vector2f);
 
@@ -36,7 +36,13 @@ public:
 
     void setPosition(sf::Vector2f);
 
+    sf::FloatRect getGlobalBounds() const;
+
     sf::Vector2u getInventorySize() const;
+
+    sf::Vector2i getSlotByMousePos(sf::Vector2f) const;
+
+    Item* popBySlot(sf::Vector2u slot, Item* newItem);
 
     void setItem(sf::Vector2u slot, Item* item);
 
