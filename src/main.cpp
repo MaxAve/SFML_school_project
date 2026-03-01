@@ -8,6 +8,7 @@
 #include "../include/fonts.hpp"
 #include "../include/gui/BulletMeter.hpp"
 #include "../include/Door.hpp"
+#include "../include/LootContainer.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -40,6 +41,8 @@ int main() {
     // ! TEST
     Item grassBfr(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
     player.inventory.setItem({1, 1}, &grassBfr);
+
+    LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 
     BulletMeter bulletMeter(sf::Vector2f(5, 40), 50);
@@ -47,7 +50,7 @@ int main() {
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 0; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
 
@@ -164,6 +167,8 @@ int main() {
         player.update();
         Zombie::updateAll();
         Particle::updateAll();
+        chest.update(player);
+
         if (inventoryToggled) {
             player.inventory.update();
         }
@@ -182,6 +187,7 @@ int main() {
         player.draw(window);
         player.hitbox.debugDraw(window);
         Particle::drawOnlyActive(window);
+        chest.draw();
 
         // draw UI
         window.setView(defaultView);
