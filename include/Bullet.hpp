@@ -4,7 +4,7 @@
 #include <cmath>
 #include "Physics.hpp"
 #include "Zombie.hpp"
-#include "Particle.hpp"
+#include "fx/Particle.hpp"
 
 class Bullet
 {

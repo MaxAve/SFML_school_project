@@ -20,10 +20,11 @@
         - [ ] Make it possible to load tile textures from a spritesheet (e.g. a single image that contains every tile). Note: this is lower priority since we don't have any actual tile textures yet
 - **Maks:**
     - [ ] Create a class ```Building``` where a player can enter and exit. Entering the building will teleport the player to a different map with the building's layout. If any zombies were chasing the player before they entered the building, they should have a chance to enter the building as well.
-    - [ ] Hitboxes, walls and collision detection
-    - [ ] Particle system (blood)
+    - [X] Hitboxes
+    - [ ] Wall collisions
+    - [X] Particle system (blood)
     - [ ] Gun recoil animation
-    - [ ] Knockback?
+    - [X] Knockback
 
 ### Extra (low priority):
 - **Deniel:**

@@ -18,7 +18,7 @@ add_executable(game src/main.cpp
 					src/HealthBar.cpp
 					src/fonts.cpp
 					src/gui/PlayerHealthBar.cpp
-					src/Particle.cpp
+					src/fx/Particle.cpp
 					src/Item.cpp
 					src/gui/Inventory.cpp
 					src/gui/InventorySlot.cpp

@@ -33,7 +33,7 @@ int main() {
     TileMap tileMap(20, 20, 80.f);
 
     Player player(window);
-    PlayerHealthBar playerHealthBar({420, 30}, 100);
+    PlayerHealthBar playerHealthBar({420, 40}, 100);
     bool inventoryToggled = false;
     float lastBulletReloadDelay = .0f;
 
@@ -42,7 +42,7 @@ int main() {
     player.inventory.setItem({1, 1}, &grassBfr);
     // !
 
-    BulletMeter bulletMeter(sf::Vector2f(5, 40), 50);
+    BulletMeter bulletMeter(sf::Vector2f(6, 50), 50);
 
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
