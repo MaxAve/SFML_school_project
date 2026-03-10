@@ -24,5 +24,6 @@ add_executable(game src/main.cpp
 					src/gui/InventorySlot.cpp
 					src/Hitbox.cpp
 					src/gui/BulletMeter.cpp
-					src/Door.cpp)
+					src/Door.cpp
+					src/LootContainer.cpp)
 target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)
