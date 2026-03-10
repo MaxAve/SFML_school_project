@@ -12,6 +12,15 @@
 #include "../include/fx/DamageIndicatorText.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <random>
+
+float randomFloat(float min, float max) {
+    static std::random_device rd;      // seed
+    static std::mt19937 gen(rd());     // Mersenne Twister RNG
+    std::uniform_real_distribution<float> dist(min, max);
+
+    return dist(gen);
+}
 
 int main() {
     srand(time(NULL));
@@ -19,6 +28,8 @@ int main() {
     Textures::initTextures();
     Fonts::initFonts();
     sf::Clock deltaClock;
+
+    float cameraShakeRange = 0.0f;
 
     window.setFramerateLimit(60); // to avoid pc flying into space
     window.setView(defaultView);
@@ -51,7 +62,7 @@ int main() {
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
 
@@ -130,6 +141,7 @@ int main() {
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                     Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
                     timeSinceLastShot = 0.0f;
+                    cameraShakeRange = 3.0f;
                     
                     if(bulletMeter.currentBullets > 0)
                     {
@@ -141,6 +153,10 @@ int main() {
                         }
                     }
                 }
+            }
+            else
+            {
+                cameraShakeRange = 0; // TODO
             }
         }
         timeSinceLastShot += Physics::deltaTime;
@@ -223,6 +239,9 @@ int main() {
             fadeRect.setFillColor(sf::Color(0, 0, 0, fadeValue));
             window.draw(fadeRect);
         }
+
+        if(cameraShakeRange > 0.01f)
+            player.view.setCenter({player.view.getCenter().x + randomFloat(-cameraShakeRange, cameraShakeRange), player.view.getCenter().y + randomFloat(-cameraShakeRange, cameraShakeRange)});
 
         window.display();
 
