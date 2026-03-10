@@ -9,6 +9,7 @@
 #include "../include/gui/BulletMeter.hpp"
 #include "../include/Door.hpp"
 #include "../include/LootContainer.hpp"
+#include "../include/fx/DamageIndicatorText.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -50,10 +51,11 @@ int main() {
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
-    for (int i = 0; i < 0; i++) {
+    for (int i = 0; i < 100; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
 
+    // DOOR TEST
     Door* doorA = new Door(Hitbox({200, 200}, {80, 200}));
     Door* doorB = new Door(Hitbox({700, 200}, {80, 200}));
 
@@ -188,6 +190,7 @@ int main() {
         player.hitbox.debugDraw(window);
         Particle::drawOnlyActive(window);
         chest.draw();
+        DamageIndicatorText::drawAll(window);
 
         // draw UI
         window.setView(defaultView);

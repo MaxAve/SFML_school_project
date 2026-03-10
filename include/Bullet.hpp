@@ -5,6 +5,7 @@
 #include "Physics.hpp"
 #include "Zombie.hpp"
 #include "fx/Particle.hpp"
+#include "fx/DamageIndicatorText.hpp"
 
 class Bullet
 {

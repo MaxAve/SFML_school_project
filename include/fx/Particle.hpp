@@ -2,8 +2,8 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include "Window.hpp"
-#include "Physics.hpp"
+#include "../Window.hpp"
+#include "../Physics.hpp"
 #include <iostream>
 
 typedef struct

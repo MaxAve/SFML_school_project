@@ -6,7 +6,7 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer)
 {
     this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
     this->sprite.setPosition(position);
-    this->sprite.setFillColor(sf::Color::White);
+    this->sprite.setFillColor(sf::Color(255, 100, 100));
     this->sprite.setOutlineThickness(2.0f);
     this->sprite.setOutlineColor(sf::Color(100, 0, 0));
     
