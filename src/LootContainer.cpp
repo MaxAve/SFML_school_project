@@ -15,6 +15,10 @@ double LootContainer::getDistanceToSq(const sf::Vector2f coord) {
     return (chestPos.x - coord.x) * (chestPos.x - coord.x) + (chestPos.y - coord.y) * (chestPos.y - coord.y);
 }
 
+std::vector<std::vector<InventorySlot>>* LootContainer::getInventorySlots() {
+    return &inventorySlots;
+}
+
 bool LootContainer::inRangeSq(double distance) {
     return (range * range) >= distance ? true : false;
 }

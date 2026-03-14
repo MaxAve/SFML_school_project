@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "Window.hpp"
-#include "gui/Inventory.hpp"
+#include "Inventory.hpp"
 #include "Hitbox.hpp"
 #include <iostream>
 

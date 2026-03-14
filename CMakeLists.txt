@@ -20,7 +20,7 @@ add_executable(game src/main.cpp
 					src/gui/PlayerHealthBar.cpp
 					src/fx/Particle.cpp
 					src/Item.cpp
-					src/gui/Inventory.cpp
+					src/Inventory.cpp
 					src/gui/InventorySlot.cpp
 					src/Hitbox.cpp
 					src/gui/BulletMeter.cpp

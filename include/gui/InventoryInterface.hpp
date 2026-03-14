@@ -1,9 +1,15 @@
 #pragma once
+#include "../Inventory.hpp"
 #include "../Window.hpp"
+#include "InventorySlot.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "InventorySlot.hpp"
-class Inventory {
+
+// manages the graphical implementation of the inventory
+class InventoryInterface {
+    Inventory* inventory;
+    std::vector<std::vector<InventorySlot>>* inventorySlots;
+
     sf::RectangleShape background;
     sf::RectangleShape foreground;
     sf::Vector2f padding;
@@ -11,9 +17,6 @@ class Inventory {
     // For Drag & Drop
     Item* carriedItem;
     std::optional<sf::Sprite> carriedItemSprite;
-
-    std::vector<std::vector<InventorySlot>> inventorySlots; // [x][y]
-    sf::Vector2u inventorySize;
 
     InventorySlot* hoveredSlot;
 
@@ -25,8 +28,7 @@ public:
     static unsigned slotSizeU;
     static float slotSizeF;
 
-
-    Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const sf::Vector2f& position = {0, 0});
+    InventoryInterface(Inventory* inventory, sf::Vector2f size, sf::Vector2f position = {0, 0});
 
     void handleMousePress(sf::Vector2f mousePos);
 
@@ -34,13 +36,9 @@ public:
 
     void resizeBackground(sf::Vector2f);
 
+    sf::Vector2i getSlotByScreenCoord(sf::Vector2f);
+
     void setPosition(sf::Vector2f);
-
-    sf::Vector2u getInventorySize() const;
-
-    std::vector<std::vector<InventorySlot>>* getInventorySlots();
-
-    void setItem(sf::Vector2u slot, Item* item);
 
     void update();
 

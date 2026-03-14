@@ -18,6 +18,8 @@ public:
     // ! returns distance as square
     double getDistanceToSq(const sf::Vector2f);
 
+    std::vector<std::vector<InventorySlot>>* getInventorySlots();
+
     // ! arg is distance as square
     bool inRangeSq(double);
 

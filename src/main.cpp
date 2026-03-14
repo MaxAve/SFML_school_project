@@ -10,6 +10,8 @@
 #include "../include/Door.hpp"
 #include "../include/LootContainer.hpp"
 #include "../include/fx/DamageIndicatorText.hpp"
+#include "../include/gui/InventoryInterface.hpp"
+#include "../include/Inventory.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -47,6 +49,7 @@ int main() {
 
     Player player(window);
     PlayerHealthBar playerHealthBar({420, 40}, 100);
+    InventoryInterface inventoryInterface(&player.inventory, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
     bool inventoryToggled = false;
     float lastBulletReloadDelay = .0f;
 
@@ -83,10 +86,10 @@ int main() {
                 defaultView.setSize({newSize.x, newSize.y});
                 defaultView.setCenter({newSize.x / 2, newSize.y / 2});
                 player.view.setSize({newSize.x, newSize.y});
-                player.inventory.resizeBackground(newSize);
+                inventoryInterface.resizeBackground(newSize);
                 fadeRect.setSize(newSize);
                 // player.inventory.resizeForeground({ newSize.x * 0.75f, newSize.y * 0.75f });
-                player.inventory.setPosition({newSize.x / 2, newSize.y / 2});
+                inventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
             }
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
@@ -114,7 +117,7 @@ int main() {
                 // handle inventory mouse press
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left && inventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
-                    player.inventory.handleMousePress(mousePos);
+                    inventoryInterface.handleMousePress(mousePos);
                 }
             }
         }
@@ -189,7 +192,7 @@ int main() {
         chest.update(player);
 
         if (inventoryToggled) {
-            player.inventory.update();
+            inventoryInterface.update();
         }
 
         window.clear(sf::Color::Black);
@@ -217,7 +220,7 @@ int main() {
         bulletMeter.draw(window);
 
         if (inventoryToggled) {
-            player.inventory.draw();
+            inventoryInterface.draw();
         }
         
         if(fadeActive)
