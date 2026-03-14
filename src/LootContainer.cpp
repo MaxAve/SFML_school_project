@@ -10,15 +10,24 @@ LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
     box.setFillColor(sf::Color::Cyan);
 }
 
-void LootContainer::update(const Player& player) {
+double LootContainer::getDistanceToSq(const sf::Vector2f coord) {
     const sf::Vector2f& chestPos = box.getPosition();
-    const sf::Vector2f& playerPos = player.sprite.getGlobalBounds().getCenter();
+    return (chestPos.x - coord.x) * (chestPos.x - coord.x) + (chestPos.y - coord.y) * (chestPos.y - coord.y);
+}
 
-    // inefficient way:
-    // float distance = sqrt(pow(chestPos.x - playerPos.x, 2) + pow(chestPos.y - playerPos.y, 2)); 
-    float distance = (chestPos.x - playerPos.x) * (chestPos.x - playerPos.x) + (chestPos.y - playerPos.y) * (chestPos.y - playerPos.y);
+bool LootContainer::inRangeSq(double distance) {
+    return (range * range) >= distance ? true : false;
+}
 
-    if (distance < (range * range)) {
+void LootContainer::update(const Player& player) {
+    if (inRangeSq(getDistanceToSq(player.sprite.getGlobalBounds().getCenter()))) {
+        playerInRange = true;
+    } else {
+        playerInRange = false;
+    }
+
+    // highlight lootbox
+    if (playerInRange) {
         box.setOutlineColor(sf::Color::Yellow);
     } else {
         box.setOutlineColor(sf::Color::Transparent);
