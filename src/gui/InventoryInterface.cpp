@@ -1,4 +1,6 @@
 #include "../../include/gui/InventoryInterface.hpp"
+#include <iostream>
+#define LOG(message) std::cout << message << std::endl
 
 const sf::Color InventoryInterface::stdBackgroundColor(20, 20, 25, 150);
 const sf::Color InventoryInterface::stdForegroundColor(45, 50, 55, 230);
@@ -8,6 +10,8 @@ unsigned InventoryInterface::slotSizeU = 95u;
 float InventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
 InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) {
+    LOG("InventoryInterface::InventoryInterface(Inventory*, sf::Vector2f, sf::Vector2f)");
+    
     inventory = _inventory;
     inventorySlots = _inventory->getInventorySlots();
     carriedItem = nullptr;
@@ -29,14 +33,16 @@ InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size
     sf::Vector2f topLeftCorner = foreground.getPosition() - _size / 2.f;
     padding = (_size - slotSizeF * (sf::Vector2f)_inventory->getInventorySize()) / 2.f;
 
+    LOG("setting inventorySlot params");
     for (size_t x = 0; x < (*inventorySlots).size(); x++) {
-        inventorySlots[x].resize(_inventory->getInventorySize().y);
         for (size_t y = 0; y < (*inventorySlots)[x].size(); y++) {
             (*inventorySlots)[x][y].setSize(InventoryInterface::slotSizeF);
             (*inventorySlots)[x][y].setPosition({topLeftCorner.x + padding.x + slotSizeF * x,
                                                  topLeftCorner.y + padding.y + slotSizeF * y});
         }
     }
+
+    LOG("leaving... InventoryInterface::InventoryInterface(Inventory*, sf::Vecto2f, sf::Vector2f)");
 }
 
 void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {

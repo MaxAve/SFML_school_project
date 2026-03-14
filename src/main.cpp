@@ -16,6 +16,8 @@
 #include <iostream>
 #include <random>
 
+#define LOG(message) std::cout << message << std::endl
+
 float randomFloat(float min, float max) {
     static std::random_device rd;      // seed
     static std::mt19937 gen(rd());     // Mersenne Twister RNG
@@ -25,12 +27,16 @@ float randomFloat(float min, float max) {
 }
 
 int main() {
+    LOG("main()");
+
+    LOG("initializing time, physics, textures, fonts");
     srand(time(NULL));
     Physics::init();
     Textures::initTextures();
     Fonts::initFonts();
     sf::Clock deltaClock;
 
+    LOG("setup window");
     float cameraShakeRange = 0.0f;
 
     window.setFramerateLimit(60); // to avoid pc flying into space
@@ -45,14 +51,19 @@ int main() {
     float fadeSpeed = 500;
     sf::Vector2f teleportTargetPos;
 
+    LOG("load tilemap");
     TileMap tileMap(20, 20, 80.f);
 
+    LOG("initializing player");
     Player player(window);
+    LOG("player object created");
     PlayerHealthBar playerHealthBar({420, 40}, 100);
+    LOG("initializing inventoryInterface");
     InventoryInterface inventoryInterface(&player.inventory, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
     bool inventoryToggled = false;
     float lastBulletReloadDelay = .0f;
 
+    LOG("TEST: Item and inventory stuff");
     // ! TEST
     Item grassBfr(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
     player.inventory.setItem({1, 1}, &grassBfr);
@@ -60,22 +71,26 @@ int main() {
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 
+    LOG("Initializing shoot mechanics");
     BulletMeter bulletMeter(sf::Vector2f(6, 50), 50);
 
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
+    LOG("Spawning zombies");
     for (int i = 0; i < 10; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
 
     // DOOR TEST
+    LOG("TEST: Doors");
     Door* doorA = new Door(Hitbox({200, 200}, {80, 200}));
     Door* doorB = new Door(Hitbox({700, 200}, {80, 200}));
 
     doorA->targetDoor = doorB;
     doorB->targetDoor = doorA;
 
+    LOG("Starting game loop");
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())

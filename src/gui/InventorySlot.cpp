@@ -1,10 +1,10 @@
 #include "../../include/gui/InventorySlot.hpp"
 #include "../../include/Window.hpp"
-#include "../../include/gui/Inventory.hpp"
+#include "../../include/gui/InventoryInterface.hpp"
 
-const float InventorySlot::outlineThickness = Inventory::stdOutlineThickness;
-const sf::Color InventorySlot::outlineColor = Inventory::stdOutlineColor;
-const sf::Color InventorySlot::backgroundColor = Inventory::stdForegroundColor;
+const float InventorySlot::outlineThickness = InventoryInterface::stdOutlineThickness;
+const sf::Color InventorySlot::outlineColor = InventoryInterface::stdOutlineColor;
+const sf::Color InventorySlot::backgroundColor = InventoryInterface::stdForegroundColor;
 const sf::Color InventorySlot::highlightColor = outlineColor;
 
 InventorySlot::InventorySlot() {

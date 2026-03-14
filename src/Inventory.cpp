@@ -1,6 +1,7 @@
 #include "../include/Inventory.hpp"
 
-Inventory::Inventory(sf::Vector2u inventorySize) {
+Inventory::Inventory(sf::Vector2u _inventorySize) {
+    this->inventorySize = _inventorySize;
     inventorySlots.resize(inventorySize.x);
     for (size_t x = 0; x < inventorySlots.size(); x++) {
         inventorySlots[x].resize(inventorySize.y);

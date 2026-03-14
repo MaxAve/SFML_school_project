@@ -1,4 +1,5 @@
 #include "../include/Player.hpp"
+#define LOG(message) std::cout << message << std::endl
 
 Player::Player(sf::RenderWindow& window) : inventory({10, 3}) {
     this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
