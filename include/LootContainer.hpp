@@ -1,11 +1,15 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
+#include <vector>
+#include "gui/InventorySlot.hpp"
 
 class LootContainer {
     float range;
     sf::RectangleShape box;
     bool playerInRange = false;
+
+    std::vector<std::vector<InventorySlot>> inventorySlots; // [x][y]
 
 public:
 

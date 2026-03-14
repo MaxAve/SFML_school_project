@@ -89,6 +89,10 @@ sf::Vector2u Inventory::getInventorySize() const {
     return inventorySize;
 }
 
+std::vector<std::vector<InventorySlot>>* Inventory::getInventorySlots() {
+    return &inventorySlots;
+}
+
 void Inventory::setItem(sf::Vector2u slot, Item* item) {
     inventorySlots[slot.x][slot.y].setItem(item);
 }

@@ -38,6 +38,8 @@ public:
 
     sf::Vector2u getInventorySize() const;
 
+    std::vector<std::vector<InventorySlot>>* getInventorySlots();
+
     void setItem(sf::Vector2u slot, Item* item);
 
     void update();
