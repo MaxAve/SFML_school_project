@@ -12,6 +12,10 @@ sf::Vector2u Inventory::getInventorySize() const {
     return inventorySize;
 }
 
+std::string Inventory::getTitle() const {
+    return title;
+}
+
 std::vector<std::vector<InventorySlot>>* Inventory::getInventorySlots() {
     return &inventorySlots;
 }

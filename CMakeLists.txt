@@ -22,7 +22,8 @@ add_executable(game src/main.cpp
 					src/Item.cpp
 					src/Inventory.cpp
 					src/gui/InventoryInterface.cpp
-					src/gui/InventorySlot.cpp
+					src/InventorySlot.cpp
+					src/gui/InventorySlotGui.cpp
 					src/Hitbox.cpp
 					src/gui/BulletMeter.cpp
 					src/Door.cpp

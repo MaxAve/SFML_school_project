@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
 #include <vector>
-#include "gui/InventorySlot.hpp"
+#include "InventorySlot.hpp"
 
 class LootContainer {
     float range;
