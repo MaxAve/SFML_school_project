@@ -29,7 +29,6 @@ InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size
     foreground.setOutlineColor(stdOutlineColor);
 
     // create inventory slots
-
     sf::Vector2f topLeftCorner = foreground.getPosition() - _size / 2.f;
     padding = (_size - slotSizeF * (sf::Vector2f)_inventory->getInventorySize()) / 2.f;
     std::vector<std::vector<InventorySlot>>* _inventorySlots = _inventory->getInventorySlots();

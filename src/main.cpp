@@ -1,3 +1,4 @@
+#include "../include/gui/SharedInventoryInterface.hpp"
 #include "../include/Bullet.hpp"
 #include "../include/Physics.hpp"
 #include "../include/Player.hpp"
@@ -61,6 +62,9 @@ int main() {
     LOG("initializing inventoryInterface");
     InventoryInterface inventoryInterface(&player.inventory, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
     bool inventoryToggled = false;
+    SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, nullptr);
+    bool sharedInventoryToggled = false;
+    
     float lastBulletReloadDelay = .0f;
 
     LOG("TEST: Item and inventory stuff");
@@ -109,10 +113,13 @@ int main() {
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
-                if (keyPressed->scancode == sf::Keyboard::Scan::I) {
+                if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled && !fadeActive) {
                     inventoryToggled = !inventoryToggled;
                 }
-                if(keyPressed->scancode == sf::Keyboard::Scan::X)
+                if (keyPressed->scancode == sf::Keyboard::Scan::Q && !inventoryToggled && !fadeActive) {
+                    sharedInventoryToggled = !sharedInventoryToggled;
+                }
+                if(keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled)
                 { 
                     for(int i = 0; i < Door::pool.size(); i++)
                     {
@@ -137,7 +144,8 @@ int main() {
             }
         }
 
-        if (!inventoryToggled) {
+        // game outside of inventory
+        if (!inventoryToggled && !sharedInventoryToggled) {
             if(!fadeActive)
             {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
@@ -209,6 +217,9 @@ int main() {
         if (inventoryToggled) {
             inventoryInterface.update();
         }
+        if (sharedInventoryToggled) {
+            sharedInventoryInterface.update();
+        }
 
         window.clear(sf::Color::Black);
 
@@ -236,6 +247,9 @@ int main() {
 
         if (inventoryToggled) {
             inventoryInterface.draw();
+        }
+        if (sharedInventoryToggled) {
+            sharedInventoryInterface.draw();
         }
         
         if(fadeActive)

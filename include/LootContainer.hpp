@@ -23,6 +23,8 @@ public:
     // ! arg is distance as square
     bool inRangeSq(double);
 
+    // TODO: bool isPlayerInRange();
+
     void update(const Player& player);
 
     void draw();
