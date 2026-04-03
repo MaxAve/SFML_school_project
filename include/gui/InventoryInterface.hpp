@@ -9,6 +9,7 @@
 class InventoryInterface {
     Inventory* inventory;
     std::vector<std::vector<InventorySlotGui>> inventorySlots;
+    sf::Text title;
 
     sf::RectangleShape background;
     sf::RectangleShape foreground;

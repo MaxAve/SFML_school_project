@@ -36,15 +36,57 @@ SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vecto
     LOG("leaving... SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory);");
 }
 
-// TODO: all empty functions
+InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
+    for (auto& row : otherInventorySlots) {
+        for (auto& slot : row) {
+            if (slot.isHovered()) {
+                return &slot;
+            }
+        }
+    }
+
+    for (auto& row : mainInventorySlots) {
+        for (auto& slot : row) {
+            if (slot.isHovered()) {
+                return &slot;
+            }
+        }
+    }
+
+    return nullptr;
+}
 
 void SharedInventoryInterface::handleMousePress(sf::Vector2f mousePos) {
+    InventorySlotGui* targetSlot = findHoveredSlot();
+    Item* selectedItem = nullptr;
+
+    if (!targetSlot) {
+        return;
+    }
+
+    selectedItem = targetSlot->popItem();
+    targetSlot->setItem(carriedItem);
+    carriedItem = selectedItem;
+
+    if (carriedItem) {
+        carriedItemSprite.emplace(*(carriedItem->getTexture()));
+        sf::Vector2f textureSize = static_cast<sf::Vector2f>(carriedItem->getTexture()->getSize());
+        float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
+        carriedItemSprite->setScale({factor, factor});
+        carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
+    } else {
+        carriedItemSprite.reset();
+    }
 }
 
-void SharedInventoryInterface::resizeForeground(sf::Vector2f) {
+void SharedInventoryInterface::resizeForeground(sf::Vector2f newSize) {
+    foreground.setOrigin({0, 0});
+    foreground.setSize(newSize);
+    foreground.setOrigin(foreground.getLocalBounds().getCenter());
 }
 
-void SharedInventoryInterface::resizeBackground(sf::Vector2f) {
+void SharedInventoryInterface::resizeBackground(sf::Vector2f newSize) {
+    background.setSize(newSize);
 }
 
 void SharedInventoryInterface::setOtherInventory(Inventory* inventory) {
@@ -110,14 +152,114 @@ void SharedInventoryInterface::setMainInventory(Inventory* inventory) {
     }
 }
 
-sf::Vector2i SharedInventoryInterface::getSlotByScreenCoord(sf::Vector2f) {
-    return {0, 0};
+Inventory* SharedInventoryInterface::getOtherInventory() {
+    return otherInventory;
 }
 
-void SharedInventoryInterface::setPosition(sf::Vector2f) {
+Inventory* SharedInventoryInterface::getMainInventory() {
+    return mainInventory;
+}
+
+void SharedInventoryInterface::setPosition(sf::Vector2f newPosition) {
+    foreground.setPosition(newPosition);
+
+    if (otherInventory) {
+        sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+
+        otherTitle.setPosition({upperLeftCorner.x + paddingU.x, upperLeftCorner.y});
+
+        for (size_t x = 0; x < otherInventorySlots.size(); x++) {
+            for (size_t y = 0; y < otherInventorySlots[x].size(); y++) {
+                otherInventorySlots[x][y].setPosition({upperLeftCorner.x + paddingU.x + slotSizeF * x,
+                                                       upperLeftCorner.y + paddingU.y + slotSizeF * y});
+            }
+        }
+    }
+
+    if (mainInventory) {
+        sf::Vector2f halfSize = foreground.getSize() / 2.f;
+        sf::Vector2f middleLeftCorner = {foreground.getPosition().x - halfSize.x, foreground.getPosition().y};
+
+        mainTitle.setPosition({middleLeftCorner.x + paddingL.x, middleLeftCorner.y});
+
+        for (size_t x = 0; x < mainInventorySlots.size(); x++) {
+            for (size_t y = 0; y < mainInventorySlots[x].size(); y++) {
+                mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingU.x + slotSizeF * x,
+                                                      middleLeftCorner.y + paddingU.y + slotSizeF * y});
+            }
+        }
+    }
 }
 
 void SharedInventoryInterface::update() {
+    // checking if the slotGui corresponds with slot status
+    // occurs because we set the item directly to the corresponding slot instead of slotGui
+    // ? perhaps fix by solving the inconsistency of inventorySlot::setItem()
+    for (auto& row : mainInventorySlots) {
+        for (auto& slot : row) {
+            if (!slot.getItem()) {
+                if (slot.getSpriteTexture()) {
+                    slot.setupItemSprite(nullptr);
+                }
+                continue;
+            }
+
+            if (slot.getSpriteTexture() != slot.getItem()->getTexture()) {
+                slot.setupItemSprite(slot.getItem());
+            }
+        }
+    }
+
+    for (auto& row : otherInventorySlots) {
+        for (auto& slot : row) {
+            if (!slot.getItem()) {
+                if (slot.getSpriteTexture()) {
+                    slot.setupItemSprite(nullptr);
+                }
+                continue;
+            }
+
+            if (slot.getSpriteTexture() != slot.getItem()->getTexture()) {
+                slot.setupItemSprite(slot.getItem());
+            }
+        }
+    }
+
+    sf::Vector2f mousePos = (sf::Vector2f)Window::getMousePos();
+
+    if (carriedItem) {
+        carriedItemSprite->setPosition(mousePos);
+    }
+
+    for (auto& row : mainInventorySlots) {
+        for (auto& slot : row) {
+            slot.setHovered(false);
+        }
+    }
+
+    for (auto& row : otherInventorySlots) {
+        for (auto& slot : row) {
+            slot.setHovered(false);
+        }
+    }
+
+    for (auto& row : mainInventorySlots) {
+        for (auto& slot : row) {
+            if (slot.getGlobalBounds().contains(mousePos)) {
+                slot.setHovered(true);
+                return;
+            }
+        }
+    }
+
+    for (auto& row : otherInventorySlots) {
+        for (auto& slot : row) {
+            if (slot.getGlobalBounds().contains(mousePos)) {
+                slot.setHovered(true);
+                return;
+            }
+        }
+    }
 }
 
 void SharedInventoryInterface::draw() {
@@ -137,5 +279,9 @@ void SharedInventoryInterface::draw() {
         for (const auto& slot : row) {
             slot.draw();
         }
+    }
+
+    if (carriedItemSprite) {
+        window.draw(*(carriedItemSprite));
     }
 }

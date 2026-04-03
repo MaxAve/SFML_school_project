@@ -40,9 +40,13 @@ public:
 
     void setMainInventory(Inventory* inventory);
 
+    Inventory* getOtherInventory();
+
+    Inventory* getMainInventory();
+
     void setOtherInventory(Inventory* inventory);
 
-    sf::Vector2i getSlotByScreenCoord(sf::Vector2f);
+    InventorySlotGui* findHoveredSlot();
 
     void setPosition(sf::Vector2f);
 

@@ -1,4 +1,5 @@
 #include "../../include/gui/InventoryInterface.hpp"
+#include "../../include/fonts.hpp"
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
 
@@ -9,7 +10,7 @@ const sf::Color InventoryInterface::stdOutlineColor(100, 105, 115);
 unsigned InventoryInterface::slotSizeU = 95u;
 float InventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
-InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) {
+InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) : title(Fonts::pixel, "Player", 20) {
     LOG("InventoryInterface::InventoryInterface(Inventory*, sf::Vector2f, sf::Vector2f)");
 
     inventory = _inventory;
@@ -31,6 +32,7 @@ InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size
     // create inventory slots
     sf::Vector2f topLeftCorner = foreground.getPosition() - _size / 2.f;
     padding = (_size - slotSizeF * (sf::Vector2f)_inventory->getInventorySize()) / 2.f;
+    title.setPosition({topLeftCorner.x + padding.x, topLeftCorner.y});
     std::vector<std::vector<InventorySlot>>* _inventorySlots = _inventory->getInventorySlots();
 
     LOG("setting inventorySlotGui params");
@@ -89,6 +91,8 @@ void InventoryInterface::setPosition(sf::Vector2f newPosition) {
     foreground.setPosition(newPosition);
 
     sf::Vector2f topLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+    title.setPosition({topLeftCorner.x + padding.x, topLeftCorner.y});
+
     for (size_t x = 0; x < inventorySlots.size(); x++) {
         for (size_t y = 0; y < inventorySlots[x].size(); y++) {
             inventorySlots[x][y].setPosition({topLeftCorner.x + padding.x + slotSizeF * x,
@@ -110,7 +114,7 @@ void InventoryInterface::resizeBackground(sf::Vector2f newSize) {
 void InventoryInterface::update() {
     LOG("InventoryInterface::update()");
     LOG("Check if item texture fits to the showed one");
-    
+
     // checking if the slotGui corresponds with slot status
     // occurs because we set the item directly to the corresponding slot instead of slotGui
     // ? perhaps fix by solving the inconsistency of inventorySlot::setItem()
@@ -154,6 +158,8 @@ void InventoryInterface::update() {
 void InventoryInterface::draw() {
     window.draw(background);
     window.draw(foreground);
+
+    window.draw(title);
 
     for (size_t x = 0; x < inventorySlots.size(); x++) {
         for (size_t y = 0; y < inventorySlots[x].size(); y++) {

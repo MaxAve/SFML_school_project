@@ -106,9 +106,10 @@ int main() {
                 defaultView.setCenter({newSize.x / 2, newSize.y / 2});
                 player.view.setSize({newSize.x, newSize.y});
                 inventoryInterface.resizeBackground(newSize);
+                sharedInventoryInterface.resizeBackground(newSize);
                 fadeRect.setSize(newSize);
-                // player.inventory.resizeForeground({ newSize.x * 0.75f, newSize.y * 0.75f });
                 inventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
+                sharedInventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
             }
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
@@ -116,7 +117,7 @@ int main() {
                 if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled && !fadeActive) {
                     inventoryToggled = !inventoryToggled;
                 }
-                if (keyPressed->scancode == sf::Keyboard::Scan::Q && !inventoryToggled && !fadeActive) {
+                if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventoryInterface.getOtherInventory() && !inventoryToggled && !fadeActive) {
                     sharedInventoryToggled = !sharedInventoryToggled;
                 }
                 if(keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled)
@@ -140,6 +141,11 @@ int main() {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left && inventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     inventoryInterface.handleMousePress(mousePos);
+                }
+
+                if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
+                    sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                    sharedInventoryInterface.handleMousePress(mousePos);
                 }
             }
         }
@@ -212,9 +218,13 @@ int main() {
         player.update();
         Zombie::updateAll();
         Particle::updateAll();
+
+        // TODO: optimization needed to support many lootboxes
         chest.update(player);
         if (chest.isPlayerInRange()) {
             sharedInventoryInterface.setOtherInventory(chest.getInventory());
+        } else {
+            sharedInventoryInterface.setOtherInventory(nullptr);
         }
 
         if (inventoryToggled) {
