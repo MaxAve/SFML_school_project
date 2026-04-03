@@ -2,14 +2,14 @@
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
 #include <vector>
-#include "gui/InventorySlot.hpp"
+#include "InventorySlot.hpp"
 
 class LootContainer {
     float range;
     sf::RectangleShape box;
     bool playerInRange = false;
 
-    std::vector<std::vector<InventorySlot>> inventorySlots; // [x][y]
+    Inventory inventory;
 
 public:
 
@@ -18,10 +18,16 @@ public:
     // ! returns distance as square
     double getDistanceToSq(const sf::Vector2f);
 
+    double getDistanceTo(const sf::Vector2f);
+
     std::vector<std::vector<InventorySlot>>* getInventorySlots();
 
     // ! arg is distance as square
     bool inRangeSq(double);
+
+    bool isPlayerInRange() const;
+
+    Inventory* getInventory();
 
     void update(const Player& player);
 

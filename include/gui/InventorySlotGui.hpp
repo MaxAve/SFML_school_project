@@ -1,23 +1,24 @@
 #pragma once
-#include "../Item.hpp"
-#include <SFML/Graphics.hpp>
-#include <optional>
+#include "../InventorySlot.hpp"
 
-class InventorySlot {
+// supposed to show the inventory slot in the gui
+class InventorySlotGui {
     static const float outlineThickness;
     static const sf::Color outlineColor;
     static const sf::Color backgroundColor;
     static const sf::Color highlightColor;
 
+    InventorySlot* inventorySlot;
+
     sf::RectangleShape slotShape; // includes position
     bool hovered;
-    Item* item;
     std::optional<sf::Sprite> itemSprite;
 
 public:
-    InventorySlot();
 
-    InventorySlot(sf::Vector2f position, float size);
+    InventorySlotGui(InventorySlot* _inventorySlot = nullptr);
+
+    InventorySlotGui(sf::Vector2f position, float size);
 
     bool isHovered() const;
 
@@ -25,9 +26,13 @@ public:
 
     void setItem(Item* _item);
 
+    void setupItemSprite(Item* item);
+
     Item* popItem();
 
     Item* getItem() const;
+
+    const sf::Texture* getSpriteTexture() const;
 
     sf::FloatRect getGlobalBounds() const;
 
@@ -35,7 +40,11 @@ public:
 
     sf::Vector2f getPosition() const;
 
+    InventorySlot* getInventorySlot() const;
+
+    void setInventorySlot(InventorySlot* _inventorySlot);
+
     void setSize(float _size);
 
-    void draw();
+    void draw() const;
 };

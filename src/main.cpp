@@ -1,3 +1,4 @@
+#include "../include/gui/SharedInventoryInterface.hpp"
 #include "../include/Bullet.hpp"
 #include "../include/Physics.hpp"
 #include "../include/Player.hpp"
@@ -61,6 +62,9 @@ int main() {
     LOG("initializing inventoryInterface");
     InventoryInterface inventoryInterface(&player.inventory, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
     bool inventoryToggled = false;
+    SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, nullptr);
+    bool sharedInventoryToggled = false;
+    
     float lastBulletReloadDelay = .0f;
 
     LOG("TEST: Item and inventory stuff");
@@ -102,17 +106,21 @@ int main() {
                 defaultView.setCenter({newSize.x / 2, newSize.y / 2});
                 player.view.setSize({newSize.x, newSize.y});
                 inventoryInterface.resizeBackground(newSize);
+                sharedInventoryInterface.resizeBackground(newSize);
                 fadeRect.setSize(newSize);
-                // player.inventory.resizeForeground({ newSize.x * 0.75f, newSize.y * 0.75f });
                 inventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
+                sharedInventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
             }
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
-                if (keyPressed->scancode == sf::Keyboard::Scan::I) {
+                if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled && !fadeActive) {
                     inventoryToggled = !inventoryToggled;
                 }
-                if(keyPressed->scancode == sf::Keyboard::Scan::X)
+                if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventoryInterface.getOtherInventory() && !inventoryToggled && !fadeActive) {
+                    sharedInventoryToggled = !sharedInventoryToggled;
+                }
+                if(keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled)
                 { 
                     for(int i = 0; i < Door::pool.size(); i++)
                     {
@@ -134,10 +142,16 @@ int main() {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     inventoryInterface.handleMousePress(mousePos);
                 }
+
+                if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
+                    sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                    sharedInventoryInterface.handleMousePress(mousePos);
+                }
             }
         }
 
-        if (!inventoryToggled) {
+        // game outside of inventory
+        if (!inventoryToggled && !sharedInventoryToggled) {
             if(!fadeActive)
             {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
@@ -204,10 +218,20 @@ int main() {
         player.update();
         Zombie::updateAll();
         Particle::updateAll();
+
+        // TODO: optimization needed to support many lootboxes
         chest.update(player);
+        if (chest.isPlayerInRange()) {
+            sharedInventoryInterface.setOtherInventory(chest.getInventory());
+        } else {
+            sharedInventoryInterface.setOtherInventory(nullptr);
+        }
 
         if (inventoryToggled) {
             inventoryInterface.update();
+        }
+        if (sharedInventoryToggled) {
+            sharedInventoryInterface.update();
         }
 
         window.clear(sf::Color::Black);
@@ -236,6 +260,9 @@ int main() {
 
         if (inventoryToggled) {
             inventoryInterface.draw();
+        }
+        if (sharedInventoryToggled) {
+            sharedInventoryInterface.draw();
         }
         
         if(fadeActive)

@@ -1,14 +1,15 @@
 #pragma once
 #include "../Inventory.hpp"
 #include "../Window.hpp"
-#include "InventorySlot.hpp"
+#include "InventorySlotGui.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
 // manages the graphical implementation of the inventory
 class InventoryInterface {
     Inventory* inventory;
-    std::vector<std::vector<InventorySlot>>* inventorySlots;
+    std::vector<std::vector<InventorySlotGui>> inventorySlots;
+    sf::Text title;
 
     sf::RectangleShape background;
     sf::RectangleShape foreground;
