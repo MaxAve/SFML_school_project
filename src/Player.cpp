@@ -45,14 +45,16 @@ void Player::move(sf::Vector2f delta)
         if(this->sprite.getPosition().y <= (hb->position.y + hb->size.y) && (this->sprite.getPosition().y + this->hitbox.size.y) >= hb->position.y)
         {
             if(delta.x < 0 && this->sprite.getPosition().x < (hb->position.x + hb->size.x) && this->sprite.getPosition().x > hb->position.x)
-                this->sprite.setPosition({hb->position.x + hb->size.x, this->sprite.getPosition().y});
+                this->sprite.setPosition({hb->position.x + hb->size.x + 1, this->sprite.getPosition().y});
             if(delta.x > 0 && (this->sprite.getPosition().x + this->hitbox.size.x) > hb->position.x && this->sprite.getPosition().x < (hb->position.x + hb->size.x))
-                this->sprite.setPosition({hb->position.x - this->hitbox.size.x, this->sprite.getPosition().y});
+                this->sprite.setPosition({hb->position.x - this->hitbox.size.x - 1, this->sprite.getPosition().y});
         }
-        if()
+        if(this->sprite.getPosition().x <= (hb->position.x + hb->size.x) && (this->sprite.getPosition().x + this->hitbox.size.x) >= hb->position.x)
         {
             if(delta.y < 0 && this->sprite.getPosition().y < (hb->position.y + hb->size.y) && this->sprite.getPosition().y > hb->position.y)
-                this->sprite.setPosition({this->sprite.getPosition().x, hb->position.y + hb->size.y});
+                this->sprite.setPosition({this->sprite.getPosition().x, hb->position.y + hb->size.y + 1});
+            if(delta.y > 0 && (this->sprite.getPosition().y + this->hitbox.size.y) > hb->position.y && this->sprite.getPosition().y < (hb->position.y + hb->size.y))
+                this->sprite.setPosition({this->sprite.getPosition().x, hb->position.y - this->hitbox.size.y - 1});
         }
     }
 

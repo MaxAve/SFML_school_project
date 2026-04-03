@@ -82,7 +82,8 @@ int main() {
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    for (int i = 0; i < 10; i++) {
+    int nzombies = 0;
+    for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
 
@@ -90,8 +91,8 @@ int main() {
 
     // DOOR TEST
     LOG("TEST: Doors");
-    Door* doorA = new Door(Hitbox({200, 200}, {80, 200}));
-    Door* doorB = new Door(Hitbox({700, 200}, {80, 200}));
+    Door* doorA = new Door(Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
+    Door* doorB = new Door(Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
 
     doorA->targetDoor = doorB;
     doorB->targetDoor = doorA;

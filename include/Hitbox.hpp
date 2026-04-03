@@ -15,7 +15,7 @@ public:
 
     Hitbox();
     Hitbox(sf::Vector2f size);
-    Hitbox(sf::Vector2f position, sf::Vector2f size, bool isSolid);
+    Hitbox(sf::Vector2f position, sf::Vector2f size, bool isSolid=false);
     bool touching(Hitbox* other);
     bool withinBounds(sf::Vector2f point);
     void debugDraw(sf::RenderWindow& window);
