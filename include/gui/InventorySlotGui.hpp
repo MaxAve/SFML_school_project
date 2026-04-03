@@ -46,5 +46,5 @@ public:
 
     void setSize(float _size);
 
-    void draw();
+    void draw() const;
 };

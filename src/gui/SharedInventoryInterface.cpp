@@ -1,15 +1,19 @@
 #include "../../include/gui/SharedInventoryInterface.hpp"
-#include "../../include/gui/InventoryInterface.hpp"
 #include "../../include/fonts.hpp"
+#include "../../include/gui/InventoryInterface.hpp"
 
-const sf::Color SharedInventoryInterface::stdBackgroundColor = InventoryInterface::stdBackgroundColor;
-const sf::Color SharedInventoryInterface::stdForegroundColor = InventoryInterface::stdForegroundColor;
-const float SharedInventoryInterface::stdOutlineThickness = InventoryInterface::stdOutlineThickness;
-const sf::Color SharedInventoryInterface::stdOutlineColor = InventoryInterface::stdOutlineColor;
-unsigned SharedInventoryInterface::slotSizeU = InventoryInterface::slotSizeU;
-float SharedInventoryInterface::slotSizeF = InventoryInterface::slotSizeF;
+#include <iostream>
+#define LOG(message) std::cout << message << std::endl
 
-SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel), otherTitle(Fonts::pixel), mainInventory{_mainInventory}, otherInventory{_otherInventory} {
+const sf::Color SharedInventoryInterface::stdBackgroundColor(20, 20, 25, 150);
+const sf::Color SharedInventoryInterface::stdForegroundColor(45, 50, 55, 230);
+const float SharedInventoryInterface::stdOutlineThickness = 2;
+const sf::Color SharedInventoryInterface::stdOutlineColor(100, 105, 115);
+unsigned SharedInventoryInterface::slotSizeU = 95u;
+float SharedInventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
+
+SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory} {
+    LOG("SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory);");
     carriedItem = nullptr;
     carriedItemSprite.reset();
 
@@ -25,29 +29,85 @@ SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vecto
     foreground.setOutlineThickness(stdOutlineThickness);
     foreground.setOutlineColor(stdOutlineColor);
 
-    // TODO: padding, inventorySlots
+    LOG("start setting inventories");
+    setMainInventory(mainInventory);
+    setOtherInventory(otherInventory);
+
+    LOG("leaving... SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory);");
 }
 
 // TODO: all empty functions
 
 void SharedInventoryInterface::handleMousePress(sf::Vector2f mousePos) {
-
 }
 
 void SharedInventoryInterface::resizeForeground(sf::Vector2f) {
-
 }
 
 void SharedInventoryInterface::resizeBackground(sf::Vector2f) {
-
-}
-
-void SharedInventoryInterface::setMainInventory(Inventory* inventory) {
-
 }
 
 void SharedInventoryInterface::setOtherInventory(Inventory* inventory) {
+    otherInventory = inventory;
 
+    if (!inventory) {
+        otherTitle.setString("");
+        otherInventorySlots.clear();
+
+        return;
+    }
+
+    otherTitle.setString(inventory->getTitle());
+    sf::Vector2u invSize = inventory->getInventorySize();
+
+    sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+    paddingU = ((foreground.getSize() - sf::Vector2f{0, foreground.getSize().y / 2.f}) - static_cast<sf::Vector2f>(invSize) * slotSizeF) / 2.f;
+    std::vector<std::vector<InventorySlot>>* _inventorySlots = inventory->getInventorySlots();
+
+    otherTitle.setPosition({upperLeftCorner.x + paddingU.x, upperLeftCorner.y});
+
+    otherInventorySlots.resize(invSize.x);
+    for (size_t x = 0; x < invSize.x; x++) {
+        otherInventorySlots[x].resize(invSize.y);
+        for (size_t y = 0; y < invSize.y; y++) {
+            otherInventorySlots[x][y].setSize(SharedInventoryInterface::slotSizeF);
+            otherInventorySlots[x][y].setPosition({upperLeftCorner.x + paddingU.x + slotSizeF * x,
+                                                   upperLeftCorner.y + paddingU.y + slotSizeF * y});
+            otherInventorySlots[x][y].setInventorySlot(&(*_inventorySlots)[x][y]);
+        }
+    }
+}
+
+void SharedInventoryInterface::setMainInventory(Inventory* inventory) {
+    mainInventory = inventory;
+
+    if (!inventory) {
+        mainTitle.setString("");
+        mainInventorySlots.clear();
+
+        return;
+    }
+
+    mainTitle.setString(inventory->getTitle());
+    sf::Vector2u invSize = inventory->getInventorySize();
+
+    sf::Vector2f halfSize = foreground.getSize() / 2.f;
+    sf::Vector2f middleLeftCorner = {foreground.getPosition().x - halfSize.x, foreground.getPosition().y};
+    paddingL = ((foreground.getSize() - sf::Vector2f{0, halfSize.y}) - static_cast<sf::Vector2f>(invSize) * slotSizeF) / 2.f;
+    std::vector<std::vector<InventorySlot>>* _inventorySlots = inventory->getInventorySlots();
+
+    mainTitle.setPosition({middleLeftCorner.x + paddingL.x, middleLeftCorner.y});
+
+    mainInventorySlots.resize(invSize.x);
+    for (size_t x = 0; x < invSize.x; x++) {
+        mainInventorySlots[x].resize(invSize.y);
+        for (size_t y = 0; y < invSize.y; y++) {
+            mainInventorySlots[x][y].setSize(SharedInventoryInterface::slotSizeF);
+            mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingL.x + slotSizeF * x,
+                                                  middleLeftCorner.y + paddingL.y + slotSizeF * y});
+            mainInventorySlots[x][y].setInventorySlot(&(*_inventorySlots)[x][y]);
+        }
+    }
 }
 
 sf::Vector2i SharedInventoryInterface::getSlotByScreenCoord(sf::Vector2f) {
@@ -55,14 +115,27 @@ sf::Vector2i SharedInventoryInterface::getSlotByScreenCoord(sf::Vector2f) {
 }
 
 void SharedInventoryInterface::setPosition(sf::Vector2f) {
-
 }
 
 void SharedInventoryInterface::update() {
-    
 }
 
 void SharedInventoryInterface::draw() {
     window.draw(background);
     window.draw(foreground);
+
+    window.draw(otherTitle);
+    window.draw(mainTitle);
+
+    for (const auto& row : otherInventorySlots) {
+        for (const auto& slot : row) {
+            slot.draw();
+        }
+    }
+
+    for (const auto& row : mainInventorySlots) {
+        for (const auto& slot : row) {
+            slot.draw();
+        }
+    }
 }

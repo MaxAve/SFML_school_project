@@ -110,6 +110,10 @@ void InventoryInterface::resizeBackground(sf::Vector2f newSize) {
 void InventoryInterface::update() {
     LOG("InventoryInterface::update()");
     LOG("Check if item texture fits to the showed one");
+    
+    // checking if the slotGui corresponds with slot status
+    // occurs because we set the item directly to the corresponding slot instead of slotGui
+    // ? perhaps fix by solving the inconsistency of inventorySlot::setItem()
     for (auto& row : inventorySlots) {
         for (auto& slot : row) {
             if (!slot.getItem()) {

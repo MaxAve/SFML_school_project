@@ -1,7 +1,7 @@
 #include "../include/LootContainer.hpp"
 
 LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
-    : range{_range} {
+    : range{_range}, inventory({10,3}, "Lootbox") {
 
     box.setSize(size);
     box.setOrigin(box.getLocalBounds().getCenter());
@@ -15,8 +15,21 @@ double LootContainer::getDistanceToSq(const sf::Vector2f coord) {
     return (chestPos.x - coord.x) * (chestPos.x - coord.x) + (chestPos.y - coord.y) * (chestPos.y - coord.y);
 }
 
+
+double LootContainer::getDistanceTo(const sf::Vector2f coord) {
+    return sqrt(getDistanceToSq(coord));
+}
+
 std::vector<std::vector<InventorySlot>>* LootContainer::getInventorySlots() {
-    return &inventorySlots;
+    return inventory.getInventorySlots();
+}
+
+Inventory* LootContainer::getInventory() {
+    return &inventory;
+}
+
+bool LootContainer::isPlayerInRange() const {
+    return playerInRange;
 }
 
 bool LootContainer::inRangeSq(double distance) {

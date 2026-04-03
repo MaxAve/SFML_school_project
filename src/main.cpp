@@ -213,6 +213,9 @@ int main() {
         Zombie::updateAll();
         Particle::updateAll();
         chest.update(player);
+        if (chest.isPlayerInRange()) {
+            sharedInventoryInterface.setOtherInventory(chest.getInventory());
+        }
 
         if (inventoryToggled) {
             inventoryInterface.update();

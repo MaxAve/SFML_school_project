@@ -13,7 +13,8 @@ class SharedInventoryInterface {
 
     sf::RectangleShape background;
     sf::RectangleShape foreground;
-    sf::Vector2f padding;
+    sf::Vector2f paddingU; // for upper sector
+    sf::Vector2f paddingL; // for lower sector
 
     // For Drag & Drop
     Item* carriedItem;

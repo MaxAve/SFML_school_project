@@ -110,7 +110,7 @@ void InventorySlotGui::setSize(float _size) {
     slotShape.setSize({_size, _size});
 }
 
-void InventorySlotGui::draw() {
+void InventorySlotGui::draw() const {
     window.draw(slotShape);
 
     if (itemSprite) {
