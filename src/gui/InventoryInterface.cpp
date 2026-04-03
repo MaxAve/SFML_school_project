@@ -1,13 +1,19 @@
-#include "../../include/gui/Inventory.hpp"
+#include "../../include/gui/InventoryInterface.hpp"
+#include "../../include/fonts.hpp"
+#include <iostream>
+#define LOG(message) std::cout << message << std::endl
 
-const sf::Color Inventory::stdBackgroundColor(20, 20, 25, 150);
-const sf::Color Inventory::stdForegroundColor(45, 50, 55, 230);
-const float Inventory::stdOutlineThickness = 2;
-const sf::Color Inventory::stdOutlineColor(100, 105, 115);
-unsigned Inventory::slotSizeU = 95u;
-float Inventory::slotSizeF = static_cast<float>(slotSizeU);
+const sf::Color InventoryInterface::stdBackgroundColor(20, 20, 25, 150);
+const sf::Color InventoryInterface::stdForegroundColor(45, 50, 55, 230);
+const float InventoryInterface::stdOutlineThickness = 2;
+const sf::Color InventoryInterface::stdOutlineColor(100, 105, 115);
+unsigned InventoryInterface::slotSizeU = 95u;
+float InventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
-Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const sf::Vector2f& position) {
+InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) : title(Fonts::pixel, "Player", 20) {
+    LOG("InventoryInterface::InventoryInterface(Inventory*, sf::Vector2f, sf::Vector2f)");
+
+    inventory = _inventory;
     carriedItem = nullptr;
     carriedItemSprite.reset();
 
@@ -16,35 +22,43 @@ Inventory::Inventory(sf::Vector2u inventorySize, const sf::Vector2f& size, const
     background.setFillColor(stdBackgroundColor);
 
     // setup foreground
-    foreground.setSize(size);
+    foreground.setSize(_size);
     foreground.setOrigin(foreground.getGeometricCenter());
-    foreground.setPosition(position);
+    foreground.setPosition(_position);
     foreground.setFillColor(stdForegroundColor);
     foreground.setOutlineThickness(stdOutlineThickness);
     foreground.setOutlineColor(stdOutlineColor);
 
     // create inventory slots
-    sf::Vector2f topLeftCorner = foreground.getPosition() - size / 2.f;
-    padding = (size - slotSizeF * (sf::Vector2f)inventorySize) / 2.f;
+    sf::Vector2f topLeftCorner = foreground.getPosition() - _size / 2.f;
+    padding = (_size - slotSizeF * (sf::Vector2f)_inventory->getInventorySize()) / 2.f;
+    title.setPosition({topLeftCorner.x + padding.x, topLeftCorner.y});
+    std::vector<std::vector<InventorySlot>>* _inventorySlots = _inventory->getInventorySlots();
 
-    inventorySlots.resize(inventorySize.x);
+    LOG("setting inventorySlotGui params");
+    inventorySlots.resize(_inventory->getInventorySize().x);
+    LOG("Resized y");
     for (size_t x = 0; x < inventorySlots.size(); x++) {
-        inventorySlots[x].resize(inventorySize.y);
+        inventorySlots[x].resize(_inventory->getInventorySize().y);
+        LOG("Resized x");
         for (size_t y = 0; y < inventorySlots[x].size(); y++) {
-            inventorySlots[x][y].setSize(slotSizeF);
+            inventorySlots[x][y].setSize(InventoryInterface::slotSizeF);
             inventorySlots[x][y].setPosition({topLeftCorner.x + padding.x + slotSizeF * x,
                                               topLeftCorner.y + padding.y + slotSizeF * y});
+            inventorySlots[x][y].setInventorySlot(&(*_inventorySlots)[x][y]);
         }
     }
+
+    LOG("leaving... InventoryInterface::InventoryInterface(Inventory*, sf::Vecto2f, sf::Vector2f)");
 }
 
-void Inventory::handleMousePress(sf::Vector2f mousePos) {
-    InventorySlot* targetSlot = nullptr;
+void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
+    InventorySlotGui* targetSlot = nullptr;
     Item* selectedItem = nullptr;
 
     for (auto& row : inventorySlots) {
         for (auto& slot : row) {
-            if (slot.getGlobalBounds().contains(mousePos)) {
+            if (slot.isHovered()) {
                 targetSlot = &slot;
                 break;
             }
@@ -53,7 +67,7 @@ void Inventory::handleMousePress(sf::Vector2f mousePos) {
             break;
         }
     }
-    
+
     if (!targetSlot) {
         return;
     }
@@ -73,10 +87,12 @@ void Inventory::handleMousePress(sf::Vector2f mousePos) {
     }
 }
 
-void Inventory::setPosition(sf::Vector2f newPosition) {
+void InventoryInterface::setPosition(sf::Vector2f newPosition) {
     foreground.setPosition(newPosition);
 
     sf::Vector2f topLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+    title.setPosition({topLeftCorner.x + padding.x, topLeftCorner.y});
+
     for (size_t x = 0; x < inventorySlots.size(); x++) {
         for (size_t y = 0; y < inventorySlots[x].size(); y++) {
             inventorySlots[x][y].setPosition({topLeftCorner.x + padding.x + slotSizeF * x,
@@ -85,25 +101,38 @@ void Inventory::setPosition(sf::Vector2f newPosition) {
     }
 }
 
-sf::Vector2u Inventory::getInventorySize() const {
-    return inventorySize;
-}
-
-void Inventory::setItem(sf::Vector2u slot, Item* item) {
-    inventorySlots[slot.x][slot.y].setItem(item);
-}
-
-void Inventory::resizeForeground(sf::Vector2f newSize) {
+void InventoryInterface::resizeForeground(sf::Vector2f newSize) {
     foreground.setOrigin({0, 0});
     foreground.setSize(newSize);
     foreground.setOrigin(foreground.getLocalBounds().getCenter());
 }
 
-void Inventory::resizeBackground(sf::Vector2f newSize) {
+void InventoryInterface::resizeBackground(sf::Vector2f newSize) {
     background.setSize(newSize);
 }
 
-void Inventory::update() {
+void InventoryInterface::update() {
+    LOG("InventoryInterface::update()");
+    LOG("Check if item texture fits to the showed one");
+
+    // checking if the slotGui corresponds with slot status
+    // occurs because we set the item directly to the corresponding slot instead of slotGui
+    // ? perhaps fix by solving the inconsistency of inventorySlot::setItem()
+    for (auto& row : inventorySlots) {
+        for (auto& slot : row) {
+            if (!slot.getItem()) {
+                if (slot.getSpriteTexture()) {
+                    slot.setupItemSprite(nullptr);
+                }
+                continue;
+            }
+
+            if (slot.getSpriteTexture() != slot.getItem()->getTexture()) {
+                slot.setupItemSprite(slot.getItem());
+            }
+        }
+    }
+
     sf::Vector2f mousePos = (sf::Vector2f)Window::getMousePos();
 
     if (carriedItem) {
@@ -126,9 +155,11 @@ void Inventory::update() {
     }
 }
 
-void Inventory::draw() {
+void InventoryInterface::draw() {
     window.draw(background);
     window.draw(foreground);
+
+    window.draw(title);
 
     for (size_t x = 0; x < inventorySlots.size(); x++) {
         for (size_t y = 0; y < inventorySlots[x].size(); y++) {

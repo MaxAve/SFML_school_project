@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "Window.hpp"
-#include "gui/Inventory.hpp"
+#include "Inventory.hpp"
 #include "Hitbox.hpp"
 #include <iostream>
 
@@ -18,8 +18,7 @@ public:
     sf::Vector2f velocity;
     sf::View view;
     float speed;
-    Inventory inventory;
-    bool reloading;
+    Inventory inventory; bool reloading;
     Hitbox hitbox;
 
 	sf::RectangleShape gunSprite; // Replace with sprite

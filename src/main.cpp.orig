@@ -81,17 +81,26 @@ int main() {
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
+<<<<<<< HEAD
+    for (int i = 0; i < 0; i++) {
+=======
     LOG("Spawning zombies");
     for (int i = 0; i < 10; i++) {
+>>>>>>> da7950584eb903d2653f7804203a1032a11e5d91
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
 
     Hitbox testHitbox({300, 500}, {100, 100}, true);
 
     // DOOR TEST
+<<<<<<< HEAD
+    Door* doorA = new Door(Hitbox({200, 200}, {80, 200}, false));
+    Door* doorB = new Door(Hitbox({700, 200}, {80, 200}, false));
+=======
     LOG("TEST: Doors");
     Door* doorA = new Door(Hitbox({200, 200}, {80, 200}));
     Door* doorB = new Door(Hitbox({700, 200}, {80, 200}));
+>>>>>>> da7950584eb903d2653f7804203a1032a11e5d91
 
     doorA->targetDoor = doorB;
     doorB->targetDoor = doorA;
