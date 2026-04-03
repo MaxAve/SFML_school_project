@@ -62,13 +62,15 @@ int main() {
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 0; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
 
+    Hitbox testHitbox({300, 500}, {100, 100}, true);
+
     // DOOR TEST
-    Door* doorA = new Door(Hitbox({200, 200}, {80, 200}));
-    Door* doorB = new Door(Hitbox({700, 200}, {80, 200}));
+    Door* doorA = new Door(Hitbox({200, 200}, {80, 200}, false));
+    Door* doorB = new Door(Hitbox({700, 200}, {80, 200}, false));
 
     doorA->targetDoor = doorB;
     doorB->targetDoor = doorA;
@@ -204,6 +206,7 @@ int main() {
         Zombie::drawAll(window);
         player.draw(window);
         player.hitbox.debugDraw(window);
+        testHitbox.debugDraw(window);
         Particle::drawOnlyActive(window);
         chest.draw();
         DamageIndicatorText::drawAll(window);

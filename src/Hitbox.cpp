@@ -1,5 +1,7 @@
 #include "../include/Hitbox.hpp"
 
+std::vector<Hitbox *> Hitbox::solidHitboxPool;
+
 Hitbox::Hitbox(){}
 
 Hitbox::Hitbox(sf::Vector2f size)
@@ -13,10 +15,15 @@ Hitbox::Hitbox(sf::Vector2f size)
     debugSprite.setFillColor(sf::Color::Transparent);
 }
 
-Hitbox::Hitbox(sf::Vector2f position, sf::Vector2f size)
+Hitbox::Hitbox(sf::Vector2f position, sf::Vector2f size, bool isSolid)
 {
     this->size = size;
     this->position = position;
+    this->isSolid = isSolid;
+    if(isSolid)
+    {
+        Hitbox::solidHitboxPool.push_back(this);
+    }
 
     debugSprite = sf::RectangleShape(this->size);
     debugSprite.setPosition(this->position);
