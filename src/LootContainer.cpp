@@ -1,6 +1,8 @@
 #include "../include/LootContainer.hpp"
 #include "../include/Textures.hpp"
 
+float LootContainer::promptDistanceFromContainer = 8.f;
+
 LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
     : range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get(Textures::TextureType::GUI_Q_KEY_PROMPT)) {
 
@@ -12,7 +14,7 @@ LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
 
     prompt.setScale({2.f, 2.5f});
     prompt.setOrigin(prompt.getLocalBounds().getCenter() + sf::Vector2f{0, prompt.getLocalBounds().size.y / 2});
-    prompt.setPosition(box.getPosition() - sf::Vector2f{0, box.getGlobalBounds().size.y / 2 + 8});
+    prompt.setPosition(box.getPosition() - sf::Vector2f{0, box.getGlobalBounds().size.y / 2 + promptDistanceFromContainer});
 }
 
 double LootContainer::getDistanceToSq(const sf::Vector2f coord) {

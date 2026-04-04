@@ -5,6 +5,8 @@
 #include "InventorySlot.hpp"
 
 class LootContainer {
+    static float promptDistanceFromContainer;
+
     float range;
     sf::RectangleShape box;
     bool playerInRange = false;
