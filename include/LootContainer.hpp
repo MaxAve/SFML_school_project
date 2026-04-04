@@ -8,6 +8,7 @@ class LootContainer {
     float range;
     sf::RectangleShape box;
     bool playerInRange = false;
+    sf::Sprite prompt;
 
     Inventory inventory;
 

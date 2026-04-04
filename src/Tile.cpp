@@ -1,6 +1,6 @@
 #include "../include/Tile.hpp"
 
-Tile::Tile() : sprite(Textures::grass) {
+Tile::Tile() : sprite(*Textures::get(Textures::TextureType::Grass)) {
     id = Textures::TextureType::Grass;
 }
 

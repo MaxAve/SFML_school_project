@@ -2,39 +2,37 @@
 #include <iostream>
 
 namespace Textures {
-sf::Texture grass;
-sf::Texture wood;
-sf::Texture stone;
+
+std::unordered_map<TextureType, sf::Texture> typeToTexture;
+
 
 void initTextures() {
-    if (!grass.loadFromFile("resources/textures/grass.jpg")) {
+    if (!typeToTexture[Textures::Grass].loadFromFile("resources/textures/grass.jpg")) {
         std::cerr << "Error: Texture \"grass.jpg\"" << std::endl;
     }
-    grass.setSmooth(false);
+    typeToTexture[Textures::Grass].setSmooth(false);
 
-    if (!wood.loadFromFile("resources/textures/wood.jpg")) {
+    if (!typeToTexture[Textures::Wood].loadFromFile("resources/textures/wood.jpg")) {
         std::cerr << "Error: Texture \"wood.jpg\"" << std::endl;
     }
-    wood.setSmooth(false);
+    typeToTexture[Textures::Wood].setSmooth(false);
 
-    if (!stone.loadFromFile("resources/textures/stone.jpg")) {
+    if (!typeToTexture[Textures::Stone].loadFromFile("resources/textures/stone.jpg")) {
         std::cerr << "Error: Texture \"stone.jpg\"" << std::endl;
     }
-    stone.setSmooth(false);
+    typeToTexture[Textures::Stone].setSmooth(false);
+
+    if (!typeToTexture[Textures::GUI_Q_KEY_PROMPT].loadFromFile("resources/textures/gui_hud/q_key_prompt.png")) {
+        std::cerr << "Error: Texture \"gui_hud/q_key_prompt.jpg\"" << std::endl;
+    }
+    typeToTexture[Textures::GUI_Q_KEY_PROMPT].setSmooth(false);
 }
 
 sf::Texture* get(TextureType type) {
-    switch (type) {
-        case TextureType::Grass:
-        return &grass;
-        case TextureType::Wood:
-        return &wood;
-        case TextureType::Stone:
-        return &stone;
-        default:
-        std::cout << "Textures::get(TextureType): No such type" << std::endl;
+    if (typeToTexture.find(type) == typeToTexture.end()) {
+        return nullptr;
     }
-
-    return nullptr;
+    
+    return &typeToTexture[type];
 }
 } // namespace Textures

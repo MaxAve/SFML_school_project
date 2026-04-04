@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <unordered_map>
 
 namespace Textures {
 
@@ -7,11 +8,10 @@ enum TextureType {
     Grass,
     Wood,
     Stone,
+    GUI_Q_KEY_PROMPT,
 };
 
-extern sf::Texture grass;
-extern sf::Texture wood;
-extern sf::Texture stone;
+extern std::unordered_map<TextureType, sf::Texture> typeToTexture;
 
 void initTextures();
 

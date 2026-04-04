@@ -1,20 +1,24 @@
 #include "../include/LootContainer.hpp"
+#include "../include/Textures.hpp"
 
 LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
-    : range{_range}, inventory({10,3}, "Lootbox") {
+    : range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get(Textures::TextureType::GUI_Q_KEY_PROMPT)) {
 
     box.setSize(size);
     box.setOrigin(box.getLocalBounds().getCenter());
     box.setPosition(pos);
     box.setOutlineThickness(3.f);
     box.setFillColor(sf::Color::Cyan);
+
+    prompt.setScale({2.f, 2.5f});
+    prompt.setOrigin(prompt.getLocalBounds().getCenter() + sf::Vector2f{0, prompt.getLocalBounds().size.y / 2});
+    prompt.setPosition(box.getPosition() - sf::Vector2f{0, box.getGlobalBounds().size.y / 2 + 8});
 }
 
 double LootContainer::getDistanceToSq(const sf::Vector2f coord) {
     const sf::Vector2f& chestPos = box.getPosition();
     return (chestPos.x - coord.x) * (chestPos.x - coord.x) + (chestPos.y - coord.y) * (chestPos.y - coord.y);
 }
-
 
 double LootContainer::getDistanceTo(const sf::Vector2f coord) {
     return sqrt(getDistanceToSq(coord));
@@ -53,4 +57,8 @@ void LootContainer::update(const Player& player) {
 
 void LootContainer::draw() {
     window.draw(box);
+
+    if (playerInRange) {
+        window.draw(prompt);
+    }
 }
