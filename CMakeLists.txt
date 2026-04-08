@@ -10,7 +10,6 @@ add_executable(game src/main.cpp
 					src/Physics.cpp 
 					src/Player.cpp 
 					src/Tile.cpp 
-					src/TileMap.cpp 
 					src/Window.cpp
 					src/Textures.cpp
 					src/Zombie.cpp
@@ -29,5 +28,6 @@ add_executable(game src/main.cpp
 					src/gui/BulletMeter.cpp
 					src/Door.cpp
 					src/LootContainer.cpp
-					src/fx/DamageIndicatorText.cpp)
+					src/fx/DamageIndicatorText.cpp
+					src/TileMapChunk.cpp)
 target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)

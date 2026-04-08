@@ -3,7 +3,6 @@
 #include "../include/Physics.hpp"
 #include "../include/Player.hpp"
 #include "../include/gui/PlayerHealthBar.hpp"
-#include "../include/TileMap.hpp"
 #include "../include/Window.hpp"
 #include "../include/Zombie.hpp"
 #include "../include/fonts.hpp"
@@ -13,6 +12,8 @@
 #include "../include/fx/DamageIndicatorText.hpp"
 #include "../include/gui/InventoryInterface.hpp"
 #include "../include/Inventory.hpp"
+#include "../include/Textures.hpp"
+#include "../include/TileMapChunk.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -43,6 +44,46 @@ int main() {
     window.setFramerateLimit(60); // to avoid pc flying into space
     window.setView(defaultView);
 
+    LOG("Loading tileset");
+    if(!TileMapChunk::tilesetAtlas.loadFromFile("resources/textures/environment/tilemap.png"))
+    {
+        LOG("Failed to load tileset");
+        return 1;
+    }
+
+    // Test chunk
+    TileMapChunk testChunk({0, 0});
+
+    // Fill the chunk with some tiles
+    for(int x = 0; x < 16; x++)
+        for(int y = 0; y < 16; y++)
+            testChunk.tiles[y][x] = 0;
+    for(int x = 0; x < 16; x++)
+        testChunk.tiles[7][x] = 16;
+    for(int x = 0; x < 16; x++)
+        testChunk.tiles[8][x] = 17;
+    testChunk.tiles[8][8] = 18;
+    for(int x = 0; x < 16; x++)
+        for(int y = 9; y < 13; y++)
+            testChunk.tiles[y][x] = 34;
+    for(int x = 0; x < 16; x++)
+        if(x % 2 == 0)
+            testChunk.tiles[10][x] = 33;
+    for(int x = 0; x < 16; x++)
+        testChunk.tiles[13][x] = 64;
+
+    testChunk.updateTextures();
+
+    // Second layer for tall grass
+    TileMapChunk testChunk2({0, 0});
+    for(int x = 0; x < 16; x++)
+        for(int y = 0; y < 16; y++)
+            if((y < 7 || y >= 13) && (rand() % 3) == 0)
+                testChunk2.tiles[y][x] = 80; // tall grass
+            else
+                testChunk2.tiles[y][x] = 96; // air
+    testChunk2.updateTextures();
+
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
     fadeRect.setPosition({0,0});
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -51,9 +92,6 @@ int main() {
     int fadeTarget = 0;
     float fadeSpeed = 500;
     sf::Vector2f teleportTargetPos;
-
-    LOG("load tilemap");
-    TileMap tileMap(20, 20, 80.f);
 
     LOG("initializing player");
     Player player(window);
@@ -242,7 +280,9 @@ int main() {
         // draw Camera (View)
         window.setView(player.view);
         
-        tileMap.draw(window);
+        testChunk.draw(window);
+        testChunk2.draw(window);
+
         for(auto& it : Door::pool)
             it->debugDraw(window);
         Particle::drawOnlyNonActive(window);

@@ -12,7 +12,7 @@ LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
     box.setOutlineThickness(3.f);
     box.setFillColor(sf::Color::Cyan);
 
-    prompt.setScale({2.f, 2.5f});
+    prompt.setScale({3.f, 3.f});
     prompt.setOrigin(prompt.getLocalBounds().getCenter() + sf::Vector2f{0, prompt.getLocalBounds().size.y / 2});
     prompt.setPosition(box.getPosition() - sf::Vector2f{0, box.getGlobalBounds().size.y / 2 + promptDistanceFromContainer});
 }
