@@ -1,4 +1,4 @@
-#include "../../include/looting/Inventory.hpp"
+#include "looting/Inventory.hpp"
 
 Inventory::Inventory(sf::Vector2u _inventorySize, const std::string& _title) : title{_title} {
     this->inventorySize = _inventorySize;
