@@ -3,13 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <vector>
-#include "Window.hpp"
-#include "Player.hpp"
-#include "Physics.hpp"
-#include "Utils.hpp"
-#include "HealthBar.hpp"
-#include "fx/Particle.hpp"
-#include "Hitbox.hpp"
+#include "../core/Window.hpp"
+#include "../entities/Player.hpp"
+#include "../core/Physics.hpp"
+#include "../core/Utils.hpp"
+#include "../gui/HealthBar.hpp"
+#include "../fx/Particle.hpp"
+#include "../core/Hitbox.hpp"
 
 class Zombie
 {

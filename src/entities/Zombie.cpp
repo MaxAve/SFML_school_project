@@ -1,4 +1,4 @@
-#include "../include/Zombie.hpp"
+#include "../../include/entities/Zombie.hpp"
 
 std::vector<Zombie*> Zombie::pool;
 

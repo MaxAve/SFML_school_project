@@ -1,5 +1,5 @@
-#include "../include/Window.hpp"
-#include "../include/Player.hpp"
+#include "../../include/core/Window.hpp"
+#include "../../include/entities/Player.hpp"
 
 sf::RenderWindow window = sf::RenderWindow(sf::VideoMode({WINDOW_WIDTH, WINDOW_HEIGHT}), "SFML Project");
 sf::View defaultView(window.getDefaultView());

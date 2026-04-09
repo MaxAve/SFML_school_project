@@ -1,4 +1,4 @@
-#include "../include/Item.hpp"
+#include "../../include/looting/Item.hpp"
 #include <iostream>
 
 Item::Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {

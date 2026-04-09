@@ -1,6 +1,6 @@
-#include "../include/InventorySlot.hpp"
-#include "../include/Window.hpp"
-#include "../include/gui/InventoryInterface.hpp"
+#include "../../include/looting/InventorySlot.hpp"
+#include "../../include/core/Window.hpp"
+#include "../../include/gui/InventoryInterface.hpp"
 
 InventorySlot::InventorySlot() {
     item = nullptr;

@@ -1,4 +1,4 @@
-#include "../include/Tile.hpp"
+#include "../../include/environment/Tile.hpp"
 
 Tile::Tile() : sprite(*Textures::get(Textures::TextureType::Grass)) {
     id = Textures::TextureType::Grass;

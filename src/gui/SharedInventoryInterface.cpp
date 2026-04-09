@@ -1,5 +1,5 @@
 #include "../../include/gui/SharedInventoryInterface.hpp"
-#include "../../include/fonts.hpp"
+#include "../../include/resources/Fonts.hpp"
 #include "../../include/gui/InventoryInterface.hpp"
 
 #include <iostream>

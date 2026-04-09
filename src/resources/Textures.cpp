@@ -1,4 +1,4 @@
-#include "../include/Textures.hpp"
+#include "../../include/resources/Textures.hpp"
 #include <iostream>
 
 namespace Textures {

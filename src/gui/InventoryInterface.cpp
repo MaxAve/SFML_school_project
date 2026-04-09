@@ -1,5 +1,5 @@
 #include "../../include/gui/InventoryInterface.hpp"
-#include "../../include/fonts.hpp"
+#include "../../include/resources/Fonts.hpp"
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
 

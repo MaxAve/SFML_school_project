@@ -1,4 +1,4 @@
-#include "../include/TileMapChunk.hpp"
+#include "../../include/environment/TileMapChunk.hpp"
 
 sf::Texture TileMapChunk::tilesetAtlas;
 

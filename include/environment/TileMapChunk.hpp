@@ -1,6 +1,6 @@
 #pragma once
-#include "Tile.hpp"
-#include "Textures.hpp"
+#include "../environment/Tile.hpp"
+#include "../resources/Textures.hpp"
 #include <SFML/Graphics.hpp>
 
 #define CHUNK_WIDTH 16
