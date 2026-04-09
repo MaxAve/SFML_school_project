@@ -1,4 +1,4 @@
-#include "../../include/gui/PlayerHealthBar.hpp"
+#include "gui/PlayerHealthBar.hpp"
 
 PlayerHealthBar::PlayerHealthBar(sf::Vector2f _size, unsigned _maxHealth = 100) : healthBar(_maxHealth), maxHealth(_maxHealth) {
     healthBar.fullRect.setOrigin({0, 0});

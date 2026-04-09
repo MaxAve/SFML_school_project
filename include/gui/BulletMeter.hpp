@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "../resources/Fonts.hpp"
-#include "../core/Physics.hpp"
+#include "resources/Fonts.hpp"
+#include "core/Physics.hpp"
 
 #define BULLET_SPRITE_WIDTH 10
 #define BULLET_SPRITE_DISTANCE 6

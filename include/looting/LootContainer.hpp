@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "../entities/Player.hpp"
+#include "entities/Player.hpp"
 #include <vector>
 #include "InventorySlot.hpp"
 

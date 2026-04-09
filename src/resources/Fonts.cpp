@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../../include/resources/Fonts.hpp"
+#include "resources/Fonts.hpp"
 
 namespace Fonts {
 sf::Font pixel;

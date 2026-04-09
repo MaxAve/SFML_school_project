@@ -1,4 +1,4 @@
-#include "../../include/environment/Door.hpp"
+#include "environment/Door.hpp"
 
 std::vector<Door*> Door::pool;
 

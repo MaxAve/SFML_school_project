@@ -1,4 +1,4 @@
-#include "../../include/gui/HealthBar.hpp"
+#include "gui/HealthBar.hpp"
 
 HealthBar::HealthBar()
 {}

@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "../core/Hitbox.hpp"
+#include "core/Hitbox.hpp"
 
 class Door
 {

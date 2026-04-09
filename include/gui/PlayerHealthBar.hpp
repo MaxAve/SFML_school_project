@@ -1,6 +1,6 @@
 #pragma once
 #include "HealthBar.hpp"
-#include "../resources/Fonts.hpp"
+#include "resources/Fonts.hpp"
 #include <SFML/Graphics.hpp>
 
 class PlayerHealthBar {

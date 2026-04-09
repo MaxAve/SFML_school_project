@@ -1,4 +1,4 @@
-#include "../../include/entities/Bullet.hpp"
+#include "entities/Bullet.hpp"
 
 std::vector<Bullet*> Bullet::pool;
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "../gui/InventorySlotGui.hpp"
-#include "../looting/Inventory.hpp"
+#include "gui/InventorySlotGui.hpp"
+#include "looting/Inventory.hpp"
 
 class SharedInventoryInterface {
     Inventory* mainInventory;

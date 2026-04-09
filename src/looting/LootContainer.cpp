@@ -1,5 +1,5 @@
-#include "../../include/looting/LootContainer.hpp"
-#include "../../include/resources/Textures.hpp"
+#include "looting/LootContainer.hpp"
+#include "resources/Textures.hpp"
 
 float LootContainer::promptDistanceFromContainer = 8.f;
 

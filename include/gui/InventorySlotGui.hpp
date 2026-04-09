@@ -1,5 +1,5 @@
 #pragma once
-#include "../looting/InventorySlot.hpp"
+#include "looting/InventorySlot.hpp"
 
 // supposed to show the inventory slot in the gui
 class InventorySlotGui {

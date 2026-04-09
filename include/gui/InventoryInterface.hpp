@@ -1,7 +1,7 @@
 #pragma once
-#include "../looting/Inventory.hpp"
-#include "../core/Window.hpp"
-#include "../gui/InventorySlotGui.hpp"
+#include "looting/Inventory.hpp"
+#include "core/Window.hpp"
+#include "gui/InventorySlotGui.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
 

@@ -3,8 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
-#include "../resources/Fonts.hpp"
-#include "../core/Physics.hpp"
+#include "resources/Fonts.hpp"
+#include "core/Physics.hpp"
 
 class DamageIndicatorText
 {

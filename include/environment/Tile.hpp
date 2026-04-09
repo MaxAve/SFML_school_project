@@ -1,5 +1,5 @@
 #pragma once
-#include "../resources/Textures.hpp"
+#include "resources/Textures.hpp"
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
