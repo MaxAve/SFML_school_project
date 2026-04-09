@@ -1,5 +1,5 @@
 #pragma once
-#include "Window.hpp"
+#include "core/Window.hpp"
 #include "InventorySlot.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>

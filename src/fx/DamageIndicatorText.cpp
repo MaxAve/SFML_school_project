@@ -1,4 +1,4 @@
-#include "../../include/fx/DamageIndicatorText.hpp"
+#include "fx/DamageIndicatorText.hpp"
 
 std::vector<DamageIndicatorText *> DamageIndicatorText::pool;
 

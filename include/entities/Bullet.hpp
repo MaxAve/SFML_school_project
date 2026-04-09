@@ -2,8 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include "Physics.hpp"
-#include "Zombie.hpp"
+#include "core/Physics.hpp"
+#include "entities/Zombie.hpp"
 #include "fx/Particle.hpp"
 #include "fx/DamageIndicatorText.hpp"
 

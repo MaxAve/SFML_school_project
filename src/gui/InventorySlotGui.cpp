@@ -1,5 +1,5 @@
-#include "../../include/gui/InventorySlotGui.hpp"
-#include "../../include/gui/InventoryInterface.hpp"
+#include "gui/InventorySlotGui.hpp"
+#include "gui/InventoryInterface.hpp"
 
 const float InventorySlotGui::outlineThickness = InventoryInterface::stdOutlineThickness;
 const sf::Color InventorySlotGui::outlineColor = InventoryInterface::stdOutlineColor;

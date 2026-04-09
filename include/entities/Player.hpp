@@ -2,9 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include "Window.hpp"
-#include "Inventory.hpp"
-#include "Hitbox.hpp"
+#include "core/Window.hpp"
+#include "looting/Inventory.hpp"
+#include "core/Hitbox.hpp"
 #include <iostream>
 
 #ifndef M_PI

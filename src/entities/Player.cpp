@@ -1,4 +1,4 @@
-#include "../include/Player.hpp"
+#include "entities/Player.hpp"
 #define LOG(message) std::cout << message << std::endl
 
 Player::Player(sf::RenderWindow& window) : inventory({10, 3}, "player") {

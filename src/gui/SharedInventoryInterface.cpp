@@ -1,6 +1,6 @@
-#include "../../include/gui/SharedInventoryInterface.hpp"
-#include "../../include/fonts.hpp"
-#include "../../include/gui/InventoryInterface.hpp"
+#include "gui/SharedInventoryInterface.hpp"
+#include "resources/Fonts.hpp"
+#include "gui/InventoryInterface.hpp"
 
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
