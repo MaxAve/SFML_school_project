@@ -1,4 +1,4 @@
-#include "include/core/Hitbox.hpp"
+#include "core/Hitbox.hpp"
 
 std::vector<Hitbox *> Hitbox::solidHitboxPool;
 

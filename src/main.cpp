@@ -14,6 +14,7 @@
 #include "looting/Inventory.hpp"
 #include "resources/Textures.hpp"
 #include "environment/TileMapChunk.hpp"
+#include "entities/EntityRenderer.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -120,7 +121,7 @@ int main() {
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    int nzombies = 0;
+    int nzombies = 100;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
@@ -275,6 +276,8 @@ int main() {
             sharedInventoryInterface.update();
         }
 
+        EntityRenderer::sortEntities(&player, Zombie::pool);
+
         window.clear(sf::Color::Black);
 
         // draw Camera (View)
@@ -283,16 +286,19 @@ int main() {
         testChunk.draw(window);
         testChunk2.draw(window);
 
+        chest.draw();
         for(auto& it : Door::pool)
             it->debugDraw(window);
         Particle::drawOnlyNonActive(window);
         Bullet::drawAll(window);
-        Zombie::drawAll(window);
-        player.draw(window);
-        player.hitbox.debugDraw(window);
+
+        EntityRenderer::drawAll(window);
+
+        //Zombie::drawAll(window);
+        //player.draw(window);
+        //player.hitbox.debugDraw(window);
         testHitbox.debugDraw(window);
         Particle::drawOnlyActive(window);
-        chest.draw();
         DamageIndicatorText::drawAll(window);
 
         // draw UI

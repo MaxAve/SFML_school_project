@@ -46,7 +46,7 @@ void Particle::spawnBloodParticles(sf::Vector2f position, int amount, int speedR
 {
     for(int i = 0; i < amount; i++)
     {
-        new Particle(position, {(float)((rand() % speedRange) - speedRange/2), (float)(rand() % speedRange) - speedRange/2}, {22, 22}, sf::Color(230, 0, 0), 1500, 0.5, 3);
+        new Particle(position, {(float)((rand() % speedRange) - speedRange/2), (float)(rand() % speedRange) - speedRange/2}, {22, 22}, sf::Color(150, 0, 0), 1500, 0.3, 3);
     }
 }
 
