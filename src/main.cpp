@@ -108,8 +108,10 @@ int main() {
 
     LOG("TEST: Item and inventory stuff");
     // ! TEST
-    Item grassBfr(false, false, false, 0, 0, Textures::get(Textures::TextureType::Grass));
-    player.inventory.setItem({1, 1}, &grassBfr);
+    Item ti0(false, false, false, 0, 0, Textures::get("items/bullet_small"));
+    Item ti1(false, false, false, 0, 0, Textures::get("items/bullet_spread"));
+    player.inventory.setItem({1, 1}, &ti0);
+    player.inventory.setItem({0, 1}, &ti1);
 
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
@@ -121,7 +123,7 @@ int main() {
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    int nzombies = 100;
+    int nzombies = 0;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }

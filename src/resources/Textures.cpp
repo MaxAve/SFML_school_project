@@ -5,9 +5,27 @@ namespace Textures {
 
 std::unordered_map<TextureType, sf::Texture> typeToTexture;
 
+std::unordered_map<std::string, sf::Texture> stringToTexture;
 
 void initTextures() {
-    if (!typeToTexture[Textures::Grass].loadFromFile("resources/textures/grass.jpg")) {
+    std::vector<std::string> textureNames = {
+        "items/bandage",
+        "items/bullet_large",
+        "items/bullet_medium",
+        "items/bullet_small",
+        "items/bullet_spread",
+        "items/medkit",
+        "items/medkit3d",
+        "gui_hud/q_key_prompt",
+    };
+    for(int i = 0; i < textureNames.size(); i++)
+    {
+        std::string path = "resources/textures/" + textureNames[i] + ".png";
+        stringToTexture.insert({textureNames[i], sf::Texture(path)});
+    }
+
+    // TODO remove all of this:
+    if (!typeToTexture[Textures::Grass].loadFromFile("resources/textures/grass.png")) {
         std::cerr << "Error: Texture \"grass.jpg\"" << std::endl;
     }
     typeToTexture[Textures::Grass].setSmooth(false);
@@ -35,4 +53,12 @@ sf::Texture* get(TextureType type) {
     
     return &typeToTexture[type];
 }
+
+sf::Texture *Textures::get(std::string texName)
+{
+    if (stringToTexture.find(texName) == stringToTexture.end())
+        return nullptr;
+    return &stringToTexture.at(texName);
+}
+
 } // namespace Textures
