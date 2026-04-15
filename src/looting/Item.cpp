@@ -1,7 +1,8 @@
 #include "looting/Item.hpp"
 #include <iostream>
 
-Item::Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
+Item::Item(std::string name, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
+    this->_name = name;
     this->_canDealMeleeDamage = _canDealMeleeDamage;
     this->_canDealRangedDamage = _canDealRangedDamage;
     this->_isHealthPack = _isHealthPack;
@@ -9,6 +10,8 @@ Item::Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPa
     this->_useRate = _useRate;
     this->_texture = _texture;
 }
+
+std::string Item::getName() const { return this->_name; }
 
 bool Item::canDealMeleeDamage() const { return _canDealMeleeDamage; }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <string>
 
 class Item {
     bool _canDealMeleeDamage; // true if the item is a close-range weapon like a knife
@@ -8,11 +9,14 @@ class Item {
     int _damage; // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
     float _useRate; // how many times the item can be used per second
     sf::Texture* _texture; // texture to use when displaying the item
+    std::string _name;
 
 public:
     Item() = default;
 
-    Item(bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
+    Item(std::string name, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
+
+    std::string getName() const;
 
     bool canDealMeleeDamage() const;
 

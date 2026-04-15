@@ -108,10 +108,19 @@ int main() {
 
     LOG("TEST: Item and inventory stuff");
     // ! TEST
-    Item ti0(false, false, false, 0, 0, Textures::get("items/bullet_small"));
-    Item ti1(false, false, false, 0, 0, Textures::get("items/bullet_spread"));
-    player.inventory.setItem({1, 1}, &ti0);
-    player.inventory.setItem({0, 1}, &ti1);
+
+    Item ti0("Small Caliber Ammo", false, false, false, 0, 0, Textures::get("items/bullet_small"));
+    Item ti1("Shotgun Ammo", false, false, false, 0, 0, Textures::get("items/bullet_spread"));
+    Item ti2("Large Caliber Ammo", false, false, false, 0, 0, Textures::get("items/bullet_large"));
+    Item ti3("Medium Caliber Ammo", false, false, false, 0, 0, Textures::get("items/bullet_medium"));
+    Item ti4("Bandage", false, false, false, 0, 0, Textures::get("items/bandage"));
+    Item ti5("Medkit", false, false, false, 0, 0, Textures::get("items/medkit3d"));
+    player.inventory.setItem({0, 1}, &ti0);
+    player.inventory.setItem({1, 1}, &ti1);
+    player.inventory.setItem({2, 1}, &ti2);
+    player.inventory.setItem({3, 1}, &ti3);
+    player.inventory.setItem({4, 1}, &ti4);
+    player.inventory.setItem({5, 1}, &ti5);
 
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
@@ -123,7 +132,7 @@ int main() {
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    int nzombies = 0;
+    int nzombies = 10;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
