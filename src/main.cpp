@@ -15,6 +15,7 @@
 #include "resources/Textures.hpp"
 #include "environment/TileMapChunk.hpp"
 #include "entities/EntityRenderer.hpp"
+#include "gui/ItemLabel.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -51,6 +52,8 @@ int main() {
         LOG("Failed to load tileset");
         return 1;
     }
+
+    ItemLabel::init();
 
     // Test chunk
     TileMapChunk testChunk({0, 0});
@@ -109,18 +112,22 @@ int main() {
     LOG("TEST: Item and inventory stuff");
     // ! TEST
 
-    Item ti0("Small Caliber Ammo", false, false, false, 0, 0, Textures::get("items/bullet_small"));
-    Item ti1("Shotgun Ammo", false, false, false, 0, 0, Textures::get("items/bullet_spread"));
-    Item ti2("Large Caliber Ammo", false, false, false, 0, 0, Textures::get("items/bullet_large"));
-    Item ti3("Medium Caliber Ammo", false, false, false, 0, 0, Textures::get("items/bullet_medium"));
-    Item ti4("Bandage", false, false, false, 0, 0, Textures::get("items/bandage"));
-    Item ti5("Medkit", false, false, false, 0, 0, Textures::get("items/medkit3d"));
+    Item ti0("Small Caliber Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_small"));
+    Item ti1("Shotgun Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_spread"));
+    Item ti2("Large Caliber Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_large"));
+    Item ti3("Medium Caliber Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_medium"));
+    Item ti4("Bandage", "Consumable\nHeals 20 HP on use", false, false, false, 0, 0, Textures::get("items/bandage"));
+    Item ti5("Medkit", "Consumable\nHeals 80 HP on use", false, false, false, 0, 0, Textures::get("items/medkit3d"));
+    Item ti6("Kitchen Knife", "Weapon\nDeals 20 damage on hit", false, false, false, 0, 0, Textures::get("items/kitchen_knife"));
+    Item ti7("Combat Knife", "Weapon\nDeals 30 damage on hit", false, false, false, 0, 0, Textures::get("items/combat_knife"));
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
     player.inventory.setItem({3, 1}, &ti3);
     player.inventory.setItem({4, 1}, &ti4);
     player.inventory.setItem({5, 1}, &ti5);
+    player.inventory.setItem({6, 1}, &ti6);
+    player.inventory.setItem({7, 1}, &ti7);
 
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
@@ -325,6 +332,8 @@ int main() {
         if (sharedInventoryToggled) {
             sharedInventoryInterface.draw();
         }
+
+        ItemLabel::draw(window);
         
         if(fadeActive)
         {

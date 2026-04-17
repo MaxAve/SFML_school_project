@@ -3,6 +3,7 @@
 #include "core/Window.hpp"
 #include "gui/InventorySlotGui.hpp"
 #include "resources/Fonts.hpp"
+#include "gui/ItemLabel.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
@@ -24,8 +25,6 @@ class InventoryInterface {
     InventorySlot* hoveredSlot;
 
 public:
-    static sf::Text itemHoverLabel; // TODO this is temporary; we need to create a custom class for labels at some point
-
     static const sf::Color stdBackgroundColor;
     static const sf::Color stdForegroundColor;
     static const float stdOutlineThickness;

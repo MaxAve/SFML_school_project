@@ -10,13 +10,16 @@ class Item {
     float _useRate; // how many times the item can be used per second
     sf::Texture* _texture; // texture to use when displaying the item
     std::string _name;
+    std::string _description;
 
 public:
     Item() = default;
 
-    Item(std::string name, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
+    Item(std::string name, std::string desc, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
 
     std::string getName() const;
+
+    std::string getDescription() const;
 
     bool canDealMeleeDamage() const;
 

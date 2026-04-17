@@ -192,6 +192,8 @@ void SharedInventoryInterface::setPosition(sf::Vector2f newPosition) {
 }
 
 void SharedInventoryInterface::update() {
+    ItemLabel::visible = false;
+
     // checking if the slotGui corresponds with slot status
     // occurs because we set the item directly to the corresponding slot instead of slotGui
     // ? perhaps fix by solving the inconsistency of inventorySlot::setItem()
@@ -247,6 +249,11 @@ void SharedInventoryInterface::update() {
         for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
+                if(slot.getItem() != nullptr)
+                {
+                    ItemLabel::visible = true;
+                    ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
+                }
                 return;
             }
         }
@@ -256,6 +263,11 @@ void SharedInventoryInterface::update() {
         for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
+                if(slot.getItem() != nullptr)
+                {
+                    ItemLabel::visible = true;
+                    ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
+                }
                 return;
             }
         }

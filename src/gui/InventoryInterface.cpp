@@ -3,7 +3,6 @@
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
 
-sf::Text InventoryInterface::itemHoverLabel(Fonts::pixel);
 const sf::Color InventoryInterface::stdBackgroundColor(20, 20, 25, 150);
 const sf::Color InventoryInterface::stdForegroundColor(45, 50, 55, 230);
 const float InventoryInterface::stdOutlineThickness = 2;
@@ -13,11 +12,6 @@ float InventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
 InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) : title(Fonts::pixel, "Player", 20) {
     LOG("InventoryInterface::InventoryInterface(Inventory*, sf::Vector2f, sf::Vector2f)");
-
-    itemHoverLabel.setString("");
-    itemHoverLabel.setFillColor(sf::Color::White);
-    itemHoverLabel.setCharacterSize(20);
-    itemHoverLabel.setStyle(sf::Text::Bold);
 
     inventory = _inventory;
     carriedItem = nullptr;
@@ -121,7 +115,7 @@ void InventoryInterface::update() {
     LOG("InventoryInterface::update()");
     LOG("Check if item texture fits to the showed one");
 
-    itemHoverLabel.setString("");
+    ItemLabel::visible = false;
 
     // checking if the slotGui corresponds with slot status
     // occurs because we set the item directly to the corresponding slot instead of slotGui
@@ -159,7 +153,8 @@ void InventoryInterface::update() {
                 slot.setHovered(true);
                 if(slot.getItem() != nullptr)
                 {
-                    itemHoverLabel.setString(slot.getItem()->getName());
+                    ItemLabel::visible = true;
+                    ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
                 }
                 return;
             }
@@ -182,8 +177,4 @@ void InventoryInterface::draw() {
     if (carriedItemSprite) {
         window.draw(*(carriedItemSprite));
     }
-
-    sf::Vector2f lp = (sf::Vector2f)Window::getMousePos();
-    this->itemHoverLabel.setPosition(sf::Vector2f(lp.x + 20, lp.y + 20));
-    window.draw(this->itemHoverLabel);
 }
