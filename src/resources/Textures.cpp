@@ -18,6 +18,7 @@ void initTextures() {
         "items/medkit3d",
         "items/kitchen_knife",
         "items/combat_knife",
+        "items/lockpick",
         "gui_hud/q_key_prompt",
     };
     for(int i = 0; i < textureNames.size(); i++)

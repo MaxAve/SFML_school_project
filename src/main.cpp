@@ -120,6 +120,7 @@ int main() {
     Item ti5("Medkit", "Consumable\nHeals 80 HP on use", false, false, false, 0, 0, Textures::get("items/medkit3d"));
     Item ti6("Kitchen Knife", "Weapon\nDeals 20 damage on hit", false, false, false, 0, 0, Textures::get("items/kitchen_knife"));
     Item ti7("Combat Knife", "Weapon\nDeals 30 damage on hit", false, false, false, 0, 0, Textures::get("items/combat_knife"));
+    Item ti8("Lockpick", "Tool\nCan be used to open locked doors and boxes", false, false, false, 0, 0, Textures::get("items/lockpick"));
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
@@ -128,6 +129,7 @@ int main() {
     player.inventory.setItem({5, 1}, &ti5);
     player.inventory.setItem({6, 1}, &ti6);
     player.inventory.setItem({7, 1}, &ti7);
+    player.inventory.setItem({8, 1}, &ti8);
 
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
