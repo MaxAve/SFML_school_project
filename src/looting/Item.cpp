@@ -1,9 +1,9 @@
 #include "looting/Item.hpp"
 #include <iostream>
 
-Item::Item(std::string name, ItemType itemType, ItemCategory itemCategory, std::string desc, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
+Item::Item(ItemType itemType, std::string name, std::string desc, size_t amount, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
     this->_type = itemType;
-    this->_category = itemCategory;
+    this->_actualAmount = amount;
 
     this->_name = name;
     this->_description = desc;
@@ -29,10 +29,6 @@ ItemType Item::getType() const {
     return _type;
 }
 
-ItemCategory Item::getCategory() const {
-    return _category;
-}
-
 size_t Item::getMaximalAmount() const {
     return _maximalAmount;
 }
@@ -50,22 +46,41 @@ void Item::setAmount(size_t val) {
     _actualAmount = val;
 }
 
-// returns the difference between given amount and maximum
-int Item::addAmount(int val) {
-   int spaceLeft = _maximalAmount - _actualAmount;
-   int amountToAdd = std::min(spaceLeft, val);
+bool Item::isFull() const {
+    return _actualAmount == _maximalAmount;
+}
 
-   // swap
-   if (!spaceLeft) {
+/**
+ * The function `addAmount` in C++ adds a specified amount to an item, considering the maximum amount
+ * that can be added.
+ *
+ * @param val The `val` parameter in the `addAmount` function represents the amount of items that you
+ * want to add to the current amount of items stored in the `Item` object.
+ *
+ * @return The function `addAmount` returns the amount that was not able to be added to the item due to
+ * space constraints.
+ */
+int Item::addAmount(int val) {
+    if (val < 0) {
+        int amountToRemove = std::min(static_cast<int>(_actualAmount), -val);
+        _actualAmount -= amountToRemove;
+        return val + amountToRemove; 
+    }
+
+    int spaceLeft = _maximalAmount - _actualAmount;
+    int amountToAdd = std::min(spaceLeft, val);
+
+    // swap
+    if (!spaceLeft) {
         int prevAmount = _actualAmount;
         _actualAmount = val;
 
         return prevAmount;
-   }
+    }
 
-   _actualAmount += amountToAdd;
-   
-   return val - amountToAdd;
+    _actualAmount += amountToAdd;
+
+    return val - amountToAdd;
 }
 
 int Item::getDamage() const { return _damage; }

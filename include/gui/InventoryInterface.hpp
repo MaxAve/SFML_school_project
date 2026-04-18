@@ -35,7 +35,11 @@ public:
 
     InventoryInterface(Inventory* inventory, sf::Vector2f size, sf::Vector2f position = {0, 0});
 
+    void setCarriedItemSprite(sf::Texture*);
+
     void handleLMB(sf::Vector2f mousePos);
+
+    void handleRMB(sf::Vector2f mousePos);
 
     void resizeForeground(sf::Vector2f);
 

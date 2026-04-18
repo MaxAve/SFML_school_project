@@ -66,18 +66,16 @@ void InventoryInterface::handleLMB(sf::Vector2f mousePos) {
         return;
     }
 
-
     // if same Items
     if (targetSlot->getItem() && carriedItem && carriedItem->getType() == targetSlot->getItem()->getType()) {
         int diff = targetSlot->getItem()->addAmount(carriedItem->getAmount());
         if (diff > 0) {
             carriedItem->setAmount(diff);
-            amountOfCarriedItem.setString(std::to_string(diff));
         } else {
             carriedItem = nullptr;
             carriedItemSprite.reset();
         }
-         
+
         return;
     }
 
@@ -86,16 +84,70 @@ void InventoryInterface::handleLMB(sf::Vector2f mousePos) {
     carriedItem = selectedItem;
 
     if (carriedItem) {
-        carriedItemSprite.emplace(*(carriedItem->getTexture()));
-        sf::Vector2f textureSize = static_cast<sf::Vector2f>(carriedItem->getTexture()->getSize());
-        float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
-        carriedItemSprite->setScale({factor, factor});
-        carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
-        amountOfCarriedItem.setString(std::to_string(carriedItem->getAmount()));
+        setCarriedItemSprite(carriedItem->getTexture());
     } else {
         carriedItemSprite.reset();
     }
+}
 
+void InventoryInterface::setCarriedItemSprite(sf::Texture* tex) {
+    carriedItemSprite.emplace(*(carriedItem->getTexture()));
+    sf::Vector2f textureSize = static_cast<sf::Vector2f>(carriedItem->getTexture()->getSize());
+    float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
+    carriedItemSprite->setScale({factor, factor});
+    carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
+}
+
+void InventoryInterface::handleRMB(sf::Vector2f mousePos) {
+    InventorySlotGui* targetSlot = nullptr;
+
+    for (auto& row : inventorySlots) {
+        for (auto& slot : row) {
+            if (slot.isHovered()) {
+                targetSlot = &slot;
+                break;
+            }
+        }
+        if (targetSlot) {
+            break;
+        }
+    }
+
+    if (!targetSlot) {
+        return;
+    }
+
+    // split stack
+    if (!carriedItem && targetSlot->getItem() && targetSlot->getItem()->getAmount() > 1) {
+        carriedItem = new Item(*targetSlot->getItem()); // ! MAKE SURE TO AVOID MEMORY LEAKS
+        size_t prevAmount = targetSlot->getItem()->getAmount();
+        targetSlot->getItem()->setAmount(prevAmount / 2);
+        carriedItem->setAmount(prevAmount - targetSlot->getItem()->getAmount());
+        setCarriedItemSprite(carriedItem->getTexture());
+
+        return;
+    }
+
+    // distribute one
+    if (!carriedItem || (carriedItem->getAmount() <= 1)) {
+        return;
+    }
+    if (!targetSlot->getItem()) {
+        targetSlot->setItem(new Item(*carriedItem)); // ! MAKE SURE TO AVOID MEMORY LEAKS
+        targetSlot->getItem()->setAmount(1);
+        carriedItem->addAmount(-1);
+    } else if (targetSlot->getItem()->getType() == carriedItem->getType()) { // if slot not empty
+        if (targetSlot->getItem()->isFull()) {
+            return;
+        }
+        targetSlot->getItem()->addAmount(1);
+        carriedItem->addAmount(-1);
+
+        if (!carriedItem->getAmount()) {
+            carriedItem = nullptr;
+            carriedItemSprite.reset();
+        }
+    }
 }
 
 void InventoryInterface::setPosition(sf::Vector2f newPosition) {
@@ -147,7 +199,8 @@ void InventoryInterface::update() {
 
     if (carriedItem) {
         carriedItemSprite->setPosition(mousePos);
-        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF/2.f - 13.f, mousePos.y + slotSizeF/2.f - 12.f});
+        amountOfCarriedItem.setString(std::to_string(carriedItem->getAmount()));
+        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF / 2.f - 13.f, mousePos.y + slotSizeF / 2.f - 12.f});
     }
 
     for (auto& row : inventorySlots) {

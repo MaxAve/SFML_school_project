@@ -14,14 +14,6 @@ enum class ItemType {
     LOCKPICK,
 };
 
-enum class ItemCategory {
-    FIRE_ARM, // ? maybe too abstract
-    COLD_WEAPON,
-    CONSUMABLE,
-    TOOL,
-    AMMUNITION,
-};
-
 class Item {
     bool _canDealMeleeDamage;  // true if the item is a close-range weapon like a knife
     bool _canDealRangedDamage; // true if the item can fire bullets
@@ -32,17 +24,15 @@ class Item {
     std::string _name;
     std::string _description;
 
-    ItemCategory _category;
     ItemType _type;
     // ! should depend on item type
     size_t _maximalAmount = 64;
-    // ! has to be set in constructor
     size_t _actualAmount = 1;
 
 public:
     Item() = default;
 
-    Item(std::string name, ItemType type, ItemCategory category, std::string desc, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
+    Item(ItemType type, std::string name, std::string desc, size_t amount, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
 
     std::string getName() const;
 
@@ -60,13 +50,13 @@ public:
 
     ItemType getType() const;
 
-    ItemCategory getCategory() const;
-
     size_t getMaximalAmount() const;
 
     size_t getAmount() const;
 
     void setAmount(size_t val);
+
+    bool isFull() const;
 
     int addAmount(int val);
 

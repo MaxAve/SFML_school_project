@@ -91,6 +91,8 @@ void SharedInventoryInterface::handleLMB(sf::Vector2f mousePos) {
     }
 }
 
+
+
 void SharedInventoryInterface::resizeForeground(sf::Vector2f newSize) {
     foreground.setOrigin({0, 0});
     foreground.setSize(newSize);

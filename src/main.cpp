@@ -111,16 +111,16 @@ int main() {
     LOG("TEST: Item and inventory stuff");
     // ! TEST
 
-    Item ti0("Small Caliber Ammo", ItemType::SMALL_CALIBER_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_small"));
-    Item ti1("Shotgun Ammo", ItemType::SHOTGUN_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_spread"));
-    Item ti2("Large Caliber Ammo", ItemType::LARGE_CALIBER_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_large"));
-    Item ti3("Medium Caliber Ammo", ItemType::MEDIUM_CALIBER_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_medium"));
-    Item ti4("Bandage", ItemType::BANDAGE, ItemCategory::CONSUMABLE, "Consumable\nHeals 20 HP on use", false, false, false, 0, 0, Textures::get("items/bandage"));
-    Item ti5("Medkit", ItemType::MEDKIT, ItemCategory::CONSUMABLE, "Consumable\nHeals 80 HP on use", false, false, false, 0, 0, Textures::get("items/medkit3d"));
-    Item ti6("Kitchen Knife", ItemType::KITCHEN_KNIFE, ItemCategory::COLD_WEAPON, "Weapon\nDeals 20 damage on hit", false, false, false, 0, 0, Textures::get("items/kitchen_knife"));
-    Item ti7("Combat Knife", ItemType::COMBAT_KNIFE, ItemCategory::COLD_WEAPON, "Weapon\nDeals 30 damage on hit", false, false, false, 0, 0, Textures::get("items/combat_knife"));
-    Item ti8("Lockpick", ItemType::LOCKPICK, ItemCategory::TOOL, "Tool\nCan be used to open locked doors and boxes", false, false, false, 0, 0, Textures::get("items/lockpick"));
-    Item ti9("Medkit", ItemType::MEDKIT, ItemCategory::CONSUMABLE, "Consumable\nHeals 80 HP on use", false, false, false, 0, 0, Textures::get("items/medkit3d"));
+    Item ti0(ItemType::SMALL_CALIBER_AMMO, "Small Caliber Ammo", "Ammunition", 1, false, false, false, 0, 0, Textures::get("items/bullet_small"));
+    Item ti1(ItemType::SHOTGUN_AMMO, "Shotgun Ammo", "Ammunition", 1, false, false, false, 0, 0, Textures::get("items/bullet_spread"));
+    Item ti2(ItemType::LARGE_CALIBER_AMMO, "Large Caliber Ammo", "Ammunition", 1, false, false, false, 0, 0, Textures::get("items/bullet_large"));
+    Item ti3(ItemType::MEDIUM_CALIBER_AMMO, "Medium Caliber Ammo", "Ammunition", 1, false, false, false, 0, 0, Textures::get("items/bullet_medium"));
+    Item ti4(ItemType::BANDAGE, "Bandage", "Consumable\nHeals 20 HP on use", 1, false, false, false, 0, 0, Textures::get("items/bandage"));
+    Item ti5(ItemType::MEDKIT, "Medkit", "Consumable\nHeals 80 HP on use", 1, false, false, false, 0, 0, Textures::get("items/medkit3d"));
+    Item ti6(ItemType::KITCHEN_KNIFE, "Kitchen Knife", "Weapon\nDeals 20 damage on hit", 1, false, false, false, 0, 0, Textures::get("items/kitchen_knife"));
+    Item ti7(ItemType::COMBAT_KNIFE, "Combat Knife", "Weapon\nDeals 30 damage on hit", 1, false, false, false, 0, 0, Textures::get("items/combat_knife"));
+    Item ti8(ItemType::LOCKPICK, "Lockpick", "Tool\nCan be used to open locked doors and boxes", 1, false, false, false, 0, 0, Textures::get("items/lockpick"));
+    Item ti9(ItemType::MEDKIT, "Medkit", "Consumable\nHeals 80 HP on use", 1, false, false, false, 0, 0, Textures::get("items/medkit3d"));
     ti5.setAmount(33);
     ti9.setAmount(32);
     ti2.setAmount(120);
@@ -208,6 +208,11 @@ int main() {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     sharedInventoryInterface.handleLMB(mousePos);
+                }
+
+                if (mouseButtonPressed->button == sf::Mouse::Button::Right && inventoryToggled) {
+                    sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                    inventoryInterface.handleRMB(mousePos);
                 }
             }
         }
