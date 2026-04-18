@@ -11,8 +11,6 @@ unsigned InventoryInterface::slotSizeU = 95u;
 float InventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
 InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) : title(Fonts::pixel, "Player", 20) {
-    LOG("InventoryInterface::InventoryInterface(Inventory*, sf::Vector2f, sf::Vector2f)");
-
     inventory = _inventory;
     carriedItem = nullptr;
     carriedItemSprite.reset();
@@ -35,12 +33,9 @@ InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size
     title.setPosition({topLeftCorner.x + padding.x, topLeftCorner.y});
     std::vector<std::vector<InventorySlot>>* _inventorySlots = _inventory->getInventorySlots();
 
-    LOG("setting inventorySlotGui params");
     inventorySlots.resize(_inventory->getInventorySize().x);
-    LOG("Resized y");
     for (size_t x = 0; x < inventorySlots.size(); x++) {
         inventorySlots[x].resize(_inventory->getInventorySize().y);
-        LOG("Resized x");
         for (size_t y = 0; y < inventorySlots[x].size(); y++) {
             inventorySlots[x][y].setSize(InventoryInterface::slotSizeF);
             inventorySlots[x][y].setPosition({topLeftCorner.x + padding.x + slotSizeF * x,
@@ -48,8 +43,6 @@ InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size
             inventorySlots[x][y].setInventorySlot(&(*_inventorySlots)[x][y]);
         }
     }
-
-    LOG("leaving... InventoryInterface::InventoryInterface(Inventory*, sf::Vecto2f, sf::Vector2f)");
 }
 
 void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
@@ -72,6 +65,18 @@ void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
         return;
     }
 
+    // if same Items
+    if (targetSlot->getItem() && carriedItem && carriedItem->getType() == targetSlot->getItem()->getType()) {
+        int diff = targetSlot->getItem()->addAmount(carriedItem->getAmount());
+        if (diff > 0) {
+            carriedItem->setAmount(diff);
+        } else {
+            carriedItemSprite.reset();
+        }
+         
+        return;
+    }
+
     selectedItem = targetSlot->popItem();
     targetSlot->setItem(carriedItem);
     carriedItem = selectedItem;
@@ -85,6 +90,7 @@ void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
     } else {
         carriedItemSprite.reset();
     }
+
 }
 
 void InventoryInterface::setPosition(sf::Vector2f newPosition) {
@@ -112,9 +118,6 @@ void InventoryInterface::resizeBackground(sf::Vector2f newSize) {
 }
 
 void InventoryInterface::update() {
-    LOG("InventoryInterface::update()");
-    LOG("Check if item texture fits to the showed one");
-
     ItemLabel::visible = false;
 
     // checking if the slotGui corresponds with slot status
@@ -151,8 +154,7 @@ void InventoryInterface::update() {
         for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
-                if(slot.getItem() != nullptr)
-                {
+                if (slot.getItem() != nullptr) {
                     ItemLabel::visible = true;
                     ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
                 }

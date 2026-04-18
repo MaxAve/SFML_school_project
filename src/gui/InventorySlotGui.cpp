@@ -1,16 +1,18 @@
 #include "gui/InventorySlotGui.hpp"
 #include "gui/InventoryInterface.hpp"
+#include "resources/Fonts.hpp"
 
 const float InventorySlotGui::outlineThickness = InventoryInterface::stdOutlineThickness;
 const sf::Color InventorySlotGui::outlineColor = InventoryInterface::stdOutlineColor;
 const sf::Color InventorySlotGui::backgroundColor = InventoryInterface::stdForegroundColor;
 const sf::Color InventorySlotGui::highlightColor = outlineColor;
 
-InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) {
+InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) : itemAmount(Fonts::pixel) {
     hovered = false;
     inventorySlot = _inventorySlot;
 
     if (_inventorySlot) {
+        itemAmount.setString(std::to_string(_inventorySlot->getItem()->getAmount()));
         setupItemSprite(_inventorySlot->getItem());
     }
 
@@ -19,9 +21,9 @@ InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) {
     slotShape.setOutlineColor(outlineColor);
 }
 
-InventorySlotGui::InventorySlotGui(sf::Vector2f position, float size) {
-    slotShape.setSize({size, size});
-    slotShape.setPosition(position);
+InventorySlotGui::InventorySlotGui(sf::Vector2f position, float size) : itemAmount(Fonts::pixel) {
+    setSize(size);
+    setPosition(position);
 
     InventorySlotGui(nullptr);
 }
@@ -43,6 +45,7 @@ void InventorySlotGui::setHovered(bool val) {
 void InventorySlotGui::setItem(Item* _item) {
     inventorySlot->setItem(_item);
     setupItemSprite(_item);
+    // TODO: SETUP sf::Text amountOfItems
 }
 
 void InventorySlotGui::setupItemSprite(Item* item) {
@@ -81,6 +84,8 @@ sf::FloatRect InventorySlotGui::getGlobalBounds() const {
 }
 
 void InventorySlotGui::setPosition(sf::Vector2f _position) {
+    float size = slotShape.getSize().x;
+    itemAmount.setPosition({_position.x + size - itemAmount.getCharacterSize() * 2, _position.y + size - itemAmount.getCharacterSize() * 2});
     slotShape.setPosition(_position);
 
     if (itemSprite) {

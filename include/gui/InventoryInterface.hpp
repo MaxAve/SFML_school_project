@@ -1,12 +1,12 @@
 #pragma once
-#include "looting/Inventory.hpp"
 #include "core/Window.hpp"
 #include "gui/InventorySlotGui.hpp"
-#include "resources/Fonts.hpp"
 #include "gui/ItemLabel.hpp"
+#include "looting/Inventory.hpp"
+#include "resources/Fonts.hpp"
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
 // manages the graphical implementation of the inventory
 class InventoryInterface {

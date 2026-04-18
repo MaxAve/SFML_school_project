@@ -1,7 +1,10 @@
 #include "looting/Item.hpp"
 #include <iostream>
 
-Item::Item(std::string name, std::string desc, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
+Item::Item(std::string name, ItemType itemType, ItemCategory itemCategory, std::string desc, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
+    this->_type = itemType;
+    this->_category = itemCategory;
+
     this->_name = name;
     this->_description = desc;
     this->_canDealMeleeDamage = _canDealMeleeDamage;
@@ -21,6 +24,33 @@ bool Item::canDealMeleeDamage() const { return _canDealMeleeDamage; }
 bool Item::canDealRangedDamage() const { return _canDealRangedDamage; }
 
 bool Item::isHealthPack() const { return _isHealthPack; }
+
+ItemType Item::getType() const {
+    return _type;
+}
+
+ItemCategory Item::getCategory() const {
+    return _category;
+}
+
+size_t Item::getMaximalAmount() const {
+    return _maximalAmount;
+}
+
+size_t Item::getAmount() const {
+    return _actualAmount;
+}
+
+void Item::setAmount(size_t val) {
+    _actualAmount = val;
+}
+
+// return the difference between given amount and maximum
+int Item::addAmount(int val) {
+    _actualAmount += val;
+
+    return val - _maximalAmount;
+}
 
 int Item::getDamage() const { return _damage; }
 

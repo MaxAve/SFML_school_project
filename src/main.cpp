@@ -1,21 +1,21 @@
-#include "gui/SharedInventoryInterface.hpp"
-#include "entities/Bullet.hpp"
 #include "core/Physics.hpp"
-#include "entities/Player.hpp"
-#include "gui/PlayerHealthBar.hpp"
 #include "core/Window.hpp"
-#include "entities/Zombie.hpp"
-#include "resources/Fonts.hpp"
-#include "gui/BulletMeter.hpp"
-#include "environment/Door.hpp"
-#include "looting/LootContainer.hpp"
-#include "fx/DamageIndicatorText.hpp"
-#include "gui/InventoryInterface.hpp"
-#include "looting/Inventory.hpp"
-#include "resources/Textures.hpp"
-#include "environment/TileMapChunk.hpp"
+#include "entities/Bullet.hpp"
 #include "entities/EntityRenderer.hpp"
+#include "entities/Player.hpp"
+#include "entities/Zombie.hpp"
+#include "environment/Door.hpp"
+#include "environment/TileMapChunk.hpp"
+#include "fx/DamageIndicatorText.hpp"
+#include "gui/BulletMeter.hpp"
+#include "gui/InventoryInterface.hpp"
 #include "gui/ItemLabel.hpp"
+#include "gui/PlayerHealthBar.hpp"
+#include "gui/SharedInventoryInterface.hpp"
+#include "looting/Inventory.hpp"
+#include "looting/LootContainer.hpp"
+#include "resources/Fonts.hpp"
+#include "resources/Textures.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -23,8 +23,8 @@
 #define LOG(message) std::cout << message << std::endl
 
 float randomFloat(float min, float max) {
-    static std::random_device rd;      // seed
-    static std::mt19937 gen(rd());     // Mersenne Twister RNG
+    static std::random_device rd;  // seed
+    static std::mt19937 gen(rd()); // Mersenne Twister RNG
     std::uniform_real_distribution<float> dist(min, max);
 
     return dist(gen);
@@ -47,8 +47,7 @@ int main() {
     window.setView(defaultView);
 
     LOG("Loading tileset");
-    if(!TileMapChunk::tilesetAtlas.loadFromFile("resources/textures/environment/tilemap.png"))
-    {
+    if (!TileMapChunk::tilesetAtlas.loadFromFile("resources/textures/environment/tilemap.png")) {
         LOG("Failed to load tileset");
         return 1;
     }
@@ -59,37 +58,37 @@ int main() {
     TileMapChunk testChunk({0, 0});
 
     // Fill the chunk with some tiles
-    for(int x = 0; x < 16; x++)
-        for(int y = 0; y < 16; y++)
+    for (int x = 0; x < 16; x++)
+        for (int y = 0; y < 16; y++)
             testChunk.tiles[y][x] = 0;
-    for(int x = 0; x < 16; x++)
+    for (int x = 0; x < 16; x++)
         testChunk.tiles[7][x] = 16;
-    for(int x = 0; x < 16; x++)
+    for (int x = 0; x < 16; x++)
         testChunk.tiles[8][x] = 17;
     testChunk.tiles[8][8] = 18;
-    for(int x = 0; x < 16; x++)
-        for(int y = 9; y < 13; y++)
+    for (int x = 0; x < 16; x++)
+        for (int y = 9; y < 13; y++)
             testChunk.tiles[y][x] = 34;
-    for(int x = 0; x < 16; x++)
-        if(x % 2 == 0)
+    for (int x = 0; x < 16; x++)
+        if (x % 2 == 0)
             testChunk.tiles[10][x] = 33;
-    for(int x = 0; x < 16; x++)
+    for (int x = 0; x < 16; x++)
         testChunk.tiles[13][x] = 64;
 
     testChunk.updateTextures();
 
     // Second layer for tall grass
     TileMapChunk testChunk2({0, 0});
-    for(int x = 0; x < 16; x++)
-        for(int y = 0; y < 16; y++)
-            if((y < 7 || y >= 13) && (rand() % 3) == 0)
+    for (int x = 0; x < 16; x++)
+        for (int y = 0; y < 16; y++)
+            if ((y < 7 || y >= 13) && (rand() % 3) == 0)
                 testChunk2.tiles[y][x] = 80; // tall grass
             else
                 testChunk2.tiles[y][x] = 96; // air
     testChunk2.updateTextures();
 
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
-    fadeRect.setPosition({0,0});
+    fadeRect.setPosition({0, 0});
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
     bool fadeActive = false;
     int fadeValue = 0;
@@ -106,21 +105,21 @@ int main() {
     bool inventoryToggled = false;
     SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, nullptr);
     bool sharedInventoryToggled = false;
-    
+
     float lastBulletReloadDelay = .0f;
 
     LOG("TEST: Item and inventory stuff");
     // ! TEST
 
-    Item ti0("Small Caliber Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_small"));
-    Item ti1("Shotgun Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_spread"));
-    Item ti2("Large Caliber Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_large"));
-    Item ti3("Medium Caliber Ammo", "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_medium"));
-    Item ti4("Bandage", "Consumable\nHeals 20 HP on use", false, false, false, 0, 0, Textures::get("items/bandage"));
-    Item ti5("Medkit", "Consumable\nHeals 80 HP on use", false, false, false, 0, 0, Textures::get("items/medkit3d"));
-    Item ti6("Kitchen Knife", "Weapon\nDeals 20 damage on hit", false, false, false, 0, 0, Textures::get("items/kitchen_knife"));
-    Item ti7("Combat Knife", "Weapon\nDeals 30 damage on hit", false, false, false, 0, 0, Textures::get("items/combat_knife"));
-    Item ti8("Lockpick", "Tool\nCan be used to open locked doors and boxes", false, false, false, 0, 0, Textures::get("items/lockpick"));
+    Item ti0("Small Caliber Ammo", ItemType::SMALL_CALIBER_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_small"));
+    Item ti1("Shotgun Ammo", ItemType::SHOTGUN_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_spread"));
+    Item ti2("Large Caliber Ammo", ItemType::LARGE_CALIBER_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_large"));
+    Item ti3("Medium Caliber Ammo", ItemType::MEDIUM_CALIBER_AMMO, ItemCategory::AMMUNITION, "Ammunition", false, false, false, 0, 0, Textures::get("items/bullet_medium"));
+    Item ti4("Bandage", ItemType::BANDAGE, ItemCategory::CONSUMABLE, "Consumable\nHeals 20 HP on use", false, false, false, 0, 0, Textures::get("items/bandage"));
+    Item ti5("Medkit", ItemType::MEDKIT, ItemCategory::CONSUMABLE, "Consumable\nHeals 80 HP on use", false, false, false, 0, 0, Textures::get("items/medkit3d"));
+    Item ti6("Kitchen Knife", ItemType::KITCHEN_KNIFE, ItemCategory::COLD_WEAPON, "Weapon\nDeals 20 damage on hit", false, false, false, 0, 0, Textures::get("items/kitchen_knife"));
+    Item ti7("Combat Knife", ItemType::COMBAT_KNIFE, ItemCategory::COLD_WEAPON, "Weapon\nDeals 30 damage on hit", false, false, false, 0, 0, Textures::get("items/combat_knife"));
+    Item ti8("Lockpick", ItemType::LOCKPICK, ItemCategory::TOOL, "Tool\nCan be used to open locked doors and boxes", false, false, false, 0, 0, Textures::get("items/lockpick"));
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
@@ -182,16 +181,13 @@ int main() {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventoryInterface.getOtherInventory() && !inventoryToggled && !fadeActive) {
                     sharedInventoryToggled = !sharedInventoryToggled;
                 }
-                if(keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled)
-                { 
-                    for(int i = 0; i < Door::pool.size(); i++)
-                    {
-                        if(Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition()))
-                        {
+                if (keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled) {
+                    for (int i = 0; i < Door::pool.size(); i++) {
+                        if (Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition())) {
                             fadeActive = true;
                             fadeTarget = 255;
                             teleportTargetPos = sf::Vector2f(
-                                Door::pool[i]->targetDoor->hitbox.position.x + Door::pool[i]->targetDoor->hitbox.size.x/2 - player.sprite.getSize().x/2,
+                                Door::pool[i]->targetDoor->hitbox.position.x + Door::pool[i]->targetDoor->hitbox.size.x / 2 - player.sprite.getSize().x / 2,
                                 Door::pool[i]->targetDoor->hitbox.position.y + Door::pool[i]->targetDoor->hitbox.size.y - player.sprite.getSize().y);
                             break;
                         }
@@ -214,8 +210,7 @@ int main() {
 
         // game outside of inventory
         if (!inventoryToggled && !sharedInventoryToggled) {
-            if(!fadeActive)
-            {
+            if (!fadeActive) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                     player.move({-player.speed * Physics::deltaTime, 0});
                 }
@@ -237,39 +232,31 @@ int main() {
                     Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
                     timeSinceLastShot = 0.0f;
                     cameraShakeRange = 3.0f;
-                    
-                    if(bulletMeter.currentBullets > 0)
-                    {
+
+                    if (bulletMeter.currentBullets > 0) {
                         bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
                         bulletMeter.ejectBullet(bulletMeter.maxBullets - bulletMeter.currentBullets - 1);
-                        if(bulletMeter.currentBullets <= 0)
-                        {
+                        if (bulletMeter.currentBullets <= 0) {
                             player.reloading = true;
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 cameraShakeRange = 0; // TODO
             }
         }
         timeSinceLastShot += Physics::deltaTime;
 
-        if(player.reloading)
-        {
+        if (player.reloading) {
             lastBulletReloadDelay += Physics::deltaTime;
 
-            if(lastBulletReloadDelay > 0.02f)
-            {
+            if (lastBulletReloadDelay > 0.02f) {
                 bulletMeter.currentBullets += 1;
                 bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
                 lastBulletReloadDelay = .0f;
-                if(bulletMeter.currentBullets == bulletMeter.maxBullets)
-                {
+                if (bulletMeter.currentBullets == bulletMeter.maxBullets) {
                     player.reloading = false;
-                    for(int i = 0; i < bulletMeter.maxBullets; i++)
-                    {
+                    for (int i = 0; i < bulletMeter.maxBullets; i++) {
                         bulletMeter.sprites[i].setFillColor(sf::Color::White);
                     }
                 }
@@ -302,21 +289,21 @@ int main() {
 
         // draw Camera (View)
         window.setView(player.view);
-        
+
         testChunk.draw(window);
         testChunk2.draw(window);
 
         chest.draw();
-        for(auto& it : Door::pool)
+        for (auto& it : Door::pool)
             it->debugDraw(window);
         Particle::drawOnlyNonActive(window);
         Bullet::drawAll(window);
 
         EntityRenderer::drawAll(window);
 
-        //Zombie::drawAll(window);
-        //player.draw(window);
-        //player.hitbox.debugDraw(window);
+        // Zombie::drawAll(window);
+        // player.draw(window);
+        // player.hitbox.debugDraw(window);
         testHitbox.debugDraw(window);
         Particle::drawOnlyActive(window);
         DamageIndicatorText::drawAll(window);
@@ -336,20 +323,17 @@ int main() {
         }
 
         ItemLabel::draw(window);
-        
-        if(fadeActive)
-        {
-            if(fadeValue < fadeTarget)
+
+        if (fadeActive) {
+            if (fadeValue < fadeTarget)
                 fadeValue = std::min(fadeValue + (int)(fadeSpeed * Physics::deltaTime), 255);
-            else if(fadeValue > fadeTarget)
-            {
+            else if (fadeValue > fadeTarget) {
                 fadeValue = std::max(fadeValue - (int)(fadeSpeed * Physics::deltaTime), 0);
-                if(fadeValue == 0)
+                if (fadeValue == 0)
                     fadeActive = false;
             }
-            
-            if(fadeValue == 255 && fadeTarget == 255)
-            {
+
+            if (fadeValue == 255 && fadeTarget == 255) {
                 fadeTarget = 0;
                 player.setPosition(teleportTargetPos);
             }
@@ -358,7 +342,7 @@ int main() {
             window.draw(fadeRect);
         }
 
-        if(cameraShakeRange > 0.01f)
+        if (cameraShakeRange > 0.01f)
             player.view.setCenter({player.view.getCenter().x + randomFloat(-cameraShakeRange, cameraShakeRange), player.view.getCenter().y + randomFloat(-cameraShakeRange, cameraShakeRange)});
 
         window.display();

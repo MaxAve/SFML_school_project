@@ -13,7 +13,6 @@ unsigned SharedInventoryInterface::slotSizeU = 95u;
 float SharedInventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
 SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory} {
-    LOG("SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory);");
     carriedItem = nullptr;
     carriedItemSprite.reset();
 
@@ -29,11 +28,8 @@ SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vecto
     foreground.setOutlineThickness(stdOutlineThickness);
     foreground.setOutlineColor(stdOutlineColor);
 
-    LOG("start setting inventories");
     setMainInventory(mainInventory);
     setOtherInventory(otherInventory);
-
-    LOG("leaving... SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory);");
 }
 
 InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
