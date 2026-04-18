@@ -10,10 +10,11 @@ const sf::Color InventoryInterface::stdOutlineColor(100, 105, 115);
 unsigned InventoryInterface::slotSizeU = 95u;
 float InventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
-InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) : title(Fonts::pixel, "Player", 20) {
+InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size, sf::Vector2f _position) : title(Fonts::pixel, "Player", 20), amountOfCarriedItem(Fonts::pixel, "0", 20) {
     inventory = _inventory;
     carriedItem = nullptr;
     carriedItemSprite.reset();
+    amountOfCarriedItem.setOrigin(amountOfCarriedItem.getLocalBounds().size);
 
     // setup background
     background.setSize({(float)defaultView.getSize().x, (float)defaultView.getSize().y});
@@ -66,11 +67,12 @@ void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
     }
 
 
-    // if same Itemsj
+    // if same Items
     if (targetSlot->getItem() && carriedItem && carriedItem->getType() == targetSlot->getItem()->getType()) {
         int diff = targetSlot->getItem()->addAmount(carriedItem->getAmount());
         if (diff > 0) {
             carriedItem->setAmount(diff);
+            amountOfCarriedItem.setString(std::to_string(diff));
         } else {
             carriedItem = nullptr;
             carriedItemSprite.reset();
@@ -89,6 +91,7 @@ void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
         float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
         carriedItemSprite->setScale({factor, factor});
         carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
+        amountOfCarriedItem.setString(std::to_string(carriedItem->getAmount()));
     } else {
         carriedItemSprite.reset();
     }
@@ -144,6 +147,7 @@ void InventoryInterface::update() {
 
     if (carriedItem) {
         carriedItemSprite->setPosition(mousePos);
+        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF/2.f - 4.f, mousePos.y + slotSizeF/2.f - 12.f});
     }
 
     for (auto& row : inventorySlots) {
@@ -181,5 +185,6 @@ void InventoryInterface::draw() {
 
     if (carriedItemSprite) {
         window.draw(*(carriedItemSprite));
+        window.draw(amountOfCarriedItem);
     }
 }

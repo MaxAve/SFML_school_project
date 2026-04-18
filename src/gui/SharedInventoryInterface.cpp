@@ -1,6 +1,6 @@
 #include "gui/SharedInventoryInterface.hpp"
-#include "resources/Fonts.hpp"
 #include "gui/InventoryInterface.hpp"
+#include "resources/Fonts.hpp"
 
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
@@ -12,9 +12,10 @@ const sf::Color SharedInventoryInterface::stdOutlineColor(100, 105, 115);
 unsigned SharedInventoryInterface::slotSizeU = 95u;
 float SharedInventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
-SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory} {
+SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory}, amountOfCarriedItem(Fonts::pixel, "0", 20) {
     carriedItem = nullptr;
     carriedItemSprite.reset();
+    amountOfCarriedItem.setOrigin(amountOfCarriedItem.getLocalBounds().size);
 
     // setup background
     background.setSize({(float)defaultView.getSize().x, (float)defaultView.getSize().y});
@@ -60,6 +61,20 @@ void SharedInventoryInterface::handleMousePress(sf::Vector2f mousePos) {
         return;
     }
 
+    // if same Items
+    if (targetSlot->getItem() && carriedItem && carriedItem->getType() == targetSlot->getItem()->getType()) {
+        int diff = targetSlot->getItem()->addAmount(carriedItem->getAmount());
+        if (diff > 0) {
+            carriedItem->setAmount(diff);
+            amountOfCarriedItem.setString(std::to_string(diff));
+        } else {
+            carriedItem = nullptr;
+            carriedItemSprite.reset();
+        }
+
+        return;
+    }
+
     selectedItem = targetSlot->popItem();
     targetSlot->setItem(carriedItem);
     carriedItem = selectedItem;
@@ -70,6 +85,7 @@ void SharedInventoryInterface::handleMousePress(sf::Vector2f mousePos) {
         float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
         carriedItemSprite->setScale({factor, factor});
         carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
+        amountOfCarriedItem.setString(std::to_string(carriedItem->getAmount()));
     } else {
         carriedItemSprite.reset();
     }
@@ -227,17 +243,20 @@ void SharedInventoryInterface::update() {
 
     if (carriedItem) {
         carriedItemSprite->setPosition(mousePos);
+        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF/2.f - 4.f, mousePos.y + slotSizeF/2.f - 12.f});
     }
 
     for (auto& row : mainInventorySlots) {
         for (auto& slot : row) {
             slot.setHovered(false);
+            slot.update();
         }
     }
 
     for (auto& row : otherInventorySlots) {
         for (auto& slot : row) {
             slot.setHovered(false);
+            slot.update();
         }
     }
 
@@ -245,8 +264,7 @@ void SharedInventoryInterface::update() {
         for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
-                if(slot.getItem() != nullptr)
-                {
+                if (slot.getItem() != nullptr) {
                     ItemLabel::visible = true;
                     ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
                 }
@@ -259,8 +277,7 @@ void SharedInventoryInterface::update() {
         for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
-                if(slot.getItem() != nullptr)
-                {
+                if (slot.getItem() != nullptr) {
                     ItemLabel::visible = true;
                     ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
                 }
@@ -291,5 +308,6 @@ void SharedInventoryInterface::draw() {
 
     if (carriedItemSprite) {
         window.draw(*(carriedItemSprite));
+        window.draw(amountOfCarriedItem);
     }
 }

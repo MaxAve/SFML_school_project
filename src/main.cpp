@@ -130,9 +130,8 @@ int main() {
     player.inventory.setItem({6, 1}, &ti6);
     player.inventory.setItem({7, 1}, &ti7);
     player.inventory.setItem({8, 1}, &ti8);
+    ti9.setAmount(64);
     player.inventory.setItem({9, 1}, &ti9);
-
-
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 

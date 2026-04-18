@@ -21,6 +21,7 @@ class InventoryInterface {
     // For Drag & Drop
     Item* carriedItem;
     std::optional<sf::Sprite> carriedItemSprite;
+    sf::Text amountOfCarriedItem;
 
     InventorySlot* hoveredSlot;
 
