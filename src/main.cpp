@@ -214,6 +214,11 @@ int main() {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     inventoryInterface.handleRMB(mousePos);
                 }
+                
+                if (mouseButtonPressed->button == sf::Mouse::Button::Right && sharedInventoryToggled) {
+                    sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                    sharedInventoryInterface.handleRMB(mousePos);
+                }
             }
         }
 

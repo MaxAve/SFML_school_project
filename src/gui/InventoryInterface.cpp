@@ -119,7 +119,7 @@ void InventoryInterface::handleRMB(sf::Vector2f mousePos) {
 
     // split stack
     if (!carriedItem && targetSlot->getItem() && targetSlot->getItem()->getAmount() > 1) {
-        carriedItem = new Item(*targetSlot->getItem()); // ! MAKE SURE TO AVOID MEMORY LEAKS
+        carriedItem = new Item(*targetSlot->getItem()); // !
         size_t prevAmount = targetSlot->getItem()->getAmount();
         targetSlot->getItem()->setAmount(prevAmount / 2);
         carriedItem->setAmount(prevAmount - targetSlot->getItem()->getAmount());
@@ -133,7 +133,7 @@ void InventoryInterface::handleRMB(sf::Vector2f mousePos) {
         return;
     }
     if (!targetSlot->getItem()) {
-        targetSlot->setItem(new Item(*carriedItem)); // ! MAKE SURE TO AVOID MEMORY LEAKS
+        targetSlot->setItem(new Item(*carriedItem)); // !
         targetSlot->getItem()->setAmount(1);
         carriedItem->addAmount(-1);
     } else if (targetSlot->getItem()->getType() == carriedItem->getType()) { // if slot not empty

@@ -33,7 +33,11 @@ public:
 
     SharedInventoryInterface(sf::Vector2f size, sf::Vector2f position = {0, 0}, Inventory* mainInventory = nullptr, Inventory* otherInventory = nullptr);
 
+    void setCarriedItemSprite(sf::Texture*);
+
     void handleLMB(sf::Vector2f mousePos);
+
+    void handleRMB(sf::Vector2f mousePos);
 
     void resizeForeground(sf::Vector2f);
 
