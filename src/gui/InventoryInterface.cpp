@@ -147,6 +147,7 @@ void InventoryInterface::update() {
     for (auto& row : inventorySlots) {
         for (auto& slot : row) {
             slot.setHovered(false);
+            slot.update();
         }
     }
 
