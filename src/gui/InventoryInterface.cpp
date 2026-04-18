@@ -65,12 +65,14 @@ void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
         return;
     }
 
-    // if same Items
+
+    // if same Itemsj
     if (targetSlot->getItem() && carriedItem && carriedItem->getType() == targetSlot->getItem()->getType()) {
         int diff = targetSlot->getItem()->addAmount(carriedItem->getAmount());
         if (diff > 0) {
             carriedItem->setAmount(diff);
         } else {
+            carriedItem = nullptr;
             carriedItemSprite.reset();
         }
          
