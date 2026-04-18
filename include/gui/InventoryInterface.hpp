@@ -35,7 +35,7 @@ public:
 
     InventoryInterface(Inventory* inventory, sf::Vector2f size, sf::Vector2f position = {0, 0});
 
-    void handleMousePress(sf::Vector2f mousePos);
+    void handleLMB(sf::Vector2f mousePos);
 
     void resizeForeground(sf::Vector2f);
 

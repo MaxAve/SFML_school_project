@@ -33,7 +33,7 @@ public:
 
     SharedInventoryInterface(sf::Vector2f size, sf::Vector2f position = {0, 0}, Inventory* mainInventory = nullptr, Inventory* otherInventory = nullptr);
 
-    void handleMousePress(sf::Vector2f mousePos);
+    void handleLMB(sf::Vector2f mousePos);
 
     void resizeForeground(sf::Vector2f);
 

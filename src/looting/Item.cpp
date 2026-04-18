@@ -42,14 +42,30 @@ size_t Item::getAmount() const {
 }
 
 void Item::setAmount(size_t val) {
+    if (val > _maximalAmount) {
+        _actualAmount = _maximalAmount;
+        return;
+    }
+
     _actualAmount = val;
 }
 
-// return the difference between given amount and maximum
+// returns the difference between given amount and maximum
 int Item::addAmount(int val) {
-    _actualAmount += val;
+   int spaceLeft = _maximalAmount - _actualAmount;
+   int amountToAdd = std::min(spaceLeft, val);
 
-    return val - _maximalAmount;
+   // swap
+   if (!spaceLeft) {
+        int prevAmount = _actualAmount;
+        _actualAmount = val;
+
+        return prevAmount;
+   }
+
+   _actualAmount += amountToAdd;
+   
+   return val - amountToAdd;
 }
 
 int Item::getDamage() const { return _damage; }

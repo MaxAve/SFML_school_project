@@ -34,8 +34,9 @@ class Item {
 
     ItemCategory _category;
     ItemType _type;
-    // ! has to be set in constructor
+    // ! should depend on item type
     size_t _maximalAmount = 64;
+    // ! has to be set in constructor
     size_t _actualAmount = 1;
 
 public:

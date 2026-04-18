@@ -121,6 +121,9 @@ int main() {
     Item ti7("Combat Knife", ItemType::COMBAT_KNIFE, ItemCategory::COLD_WEAPON, "Weapon\nDeals 30 damage on hit", false, false, false, 0, 0, Textures::get("items/combat_knife"));
     Item ti8("Lockpick", ItemType::LOCKPICK, ItemCategory::TOOL, "Tool\nCan be used to open locked doors and boxes", false, false, false, 0, 0, Textures::get("items/lockpick"));
     Item ti9("Medkit", ItemType::MEDKIT, ItemCategory::CONSUMABLE, "Consumable\nHeals 80 HP on use", false, false, false, 0, 0, Textures::get("items/medkit3d"));
+    ti5.setAmount(33);
+    ti9.setAmount(32);
+    ti2.setAmount(120);
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
@@ -130,7 +133,6 @@ int main() {
     player.inventory.setItem({6, 1}, &ti6);
     player.inventory.setItem({7, 1}, &ti7);
     player.inventory.setItem({8, 1}, &ti8);
-    ti9.setAmount(64);
     player.inventory.setItem({9, 1}, &ti9);
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
@@ -200,12 +202,12 @@ int main() {
                 // handle inventory mouse press
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left && inventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
-                    inventoryInterface.handleMousePress(mousePos);
+                    inventoryInterface.handleLMB(mousePos);
                 }
 
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
-                    sharedInventoryInterface.handleMousePress(mousePos);
+                    sharedInventoryInterface.handleLMB(mousePos);
                 }
             }
         }

@@ -46,7 +46,7 @@ InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size
     }
 }
 
-void InventoryInterface::handleMousePress(sf::Vector2f mousePos) {
+void InventoryInterface::handleLMB(sf::Vector2f mousePos) {
     InventorySlotGui* targetSlot = nullptr;
     Item* selectedItem = nullptr;
 
@@ -147,7 +147,7 @@ void InventoryInterface::update() {
 
     if (carriedItem) {
         carriedItemSprite->setPosition(mousePos);
-        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF/2.f - 4.f, mousePos.y + slotSizeF/2.f - 12.f});
+        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF/2.f - 13.f, mousePos.y + slotSizeF/2.f - 12.f});
     }
 
     for (auto& row : inventorySlots) {

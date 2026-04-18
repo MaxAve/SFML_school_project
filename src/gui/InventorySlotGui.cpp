@@ -89,7 +89,7 @@ sf::FloatRect InventorySlotGui::getGlobalBounds() const {
 
 void InventorySlotGui::setPosition(sf::Vector2f _position) {
     float size = slotShape.getSize().x;
-    itemAmount.setPosition({_position.x + size - 4.f, _position.y + size - 12.f});
+    itemAmount.setPosition({_position.x + size - 13.f, _position.y + size - 12.f});
     slotShape.setPosition(_position);
 
     if (itemSprite) {

@@ -53,7 +53,7 @@ InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
     return nullptr;
 }
 
-void SharedInventoryInterface::handleMousePress(sf::Vector2f mousePos) {
+void SharedInventoryInterface::handleLMB(sf::Vector2f mousePos) {
     InventorySlotGui* targetSlot = findHoveredSlot();
     Item* selectedItem = nullptr;
 
@@ -243,7 +243,7 @@ void SharedInventoryInterface::update() {
 
     if (carriedItem) {
         carriedItemSprite->setPosition(mousePos);
-        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF/2.f - 4.f, mousePos.y + slotSizeF/2.f - 12.f});
+        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF / 2.f - 13.f, mousePos.y + slotSizeF / 2.f - 12.f});
     }
 
     for (auto& row : mainInventorySlots) {
