@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <unordered_map>
 
 enum class ItemType {
     SMALL_CALIBER_AMMO,
@@ -14,25 +15,29 @@ enum class ItemType {
     LOCKPICK,
 };
 
-class Item {
-    bool _canDealMeleeDamage;  // true if the item is a close-range weapon like a knife
-    bool _canDealRangedDamage; // true if the item can fire bullets
-    bool _isHealthPack;        // true if the item can be used to heal the player
-    int _damage;               // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
-    float _useRate;            // how many times the item can be used per second
-    sf::Texture* _texture;     // texture to use when displaying the item
-    std::string _name;
-    std::string _description;
+struct ItemData {
+    std::string name;
+    std::string description;
+    bool canDealMeleeDamage;  // true if the item is a close-range weapon like a knife
+    bool canDealRangedDamage; // true if the item can fire bullets
+    bool isHealthPack;        // true if the item can be used to heal the player
+    int damage;               // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
+    float useRate;            // how many times the item can be used per second
+    sf::Texture* texture;     // texture to use when displaying the item
+    size_t maximalAmount;
+};
 
-    ItemType _type;
-    // ! should depend on item type
-    size_t _maximalAmount = 64;
-    size_t _actualAmount = 1;
+class Item {
+    ItemType type;
+    const ItemData& data;
+    size_t amount = 1;
 
 public:
     Item() = default;
 
-    Item(ItemType type, std::string name, std::string desc, size_t amount, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture);
+    Item(ItemType type, size_t amount);
+
+    static const ItemData& getItemData(ItemType type);
 
     std::string getName() const;
 
@@ -61,16 +66,4 @@ public:
     int addAmount(int val);
 
     sf::Texture* getTexture() const;
-
-    void setCanDealMeleeDamage(bool val);
-
-    void setCanDealRangedDamage(bool val);
-
-    void setIsHealthPack(bool val);
-
-    void setDamage(int val);
-
-    void setUseRate(float val);
-
-    void setTexture(sf::Texture* texture);
 };

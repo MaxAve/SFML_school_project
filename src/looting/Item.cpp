@@ -1,53 +1,141 @@
 #include "looting/Item.hpp"
+#include "resources/Textures.hpp"
 #include <iostream>
 
-Item::Item(ItemType itemType, std::string name, std::string desc, size_t amount, bool _canDealMeleeDamage, bool _canDealRangedDamage, bool _isHealthPack, int _damage, float _useRate, sf::Texture* _texture) {
-    this->_type = itemType;
-    this->_actualAmount = amount;
+const ItemData& Item::getItemData(ItemType type) {
+    switch (type) {
+    case ItemType::SMALL_CALIBER_AMMO: {
+        static const ItemData data{
+            "Small Caliber Ammo", "Standard low-caliber ammunition",
+            false, false, false,
+            0, 0.f,
+            Textures::get("items/bullet_small"),
+            16};
+        return data;
+    }
 
-    this->_name = name;
-    this->_description = desc;
-    this->_canDealMeleeDamage = _canDealMeleeDamage;
-    this->_canDealRangedDamage = _canDealRangedDamage;
-    this->_isHealthPack = _isHealthPack;
-    this->_damage = _damage;
-    this->_useRate = _useRate;
-    this->_texture = _texture;
+    case ItemType::SHOTGUN_AMMO: {
+        static const ItemData data{
+            "Shotgun Ammo", "Shells for shotguns",
+            false, false, false,
+            0, 0.f,
+            Textures::get("items/bullet_spread"),
+            16};
+        return data;
+    }
+
+    case ItemType::LARGE_CALIBER_AMMO: {
+        static const ItemData data{
+            "Large Caliber Ammo", "High-power ammunition",
+            false, false, false,
+            0, 0.f,
+            Textures::get("items/bullet_large"),
+            16};
+        return data;
+    }
+
+    case ItemType::MEDIUM_CALIBER_AMMO: {
+        static const ItemData data{
+            "Medium Caliber Ammo", "Standard firearm ammunition",
+            false, false, false,
+            0, 0.f,
+            Textures::get("items/bullet_medium"),
+            16};
+        return data;
+    }
+
+    case ItemType::BANDAGE: {
+        static const ItemData data{
+            "Bandage", "Consumable\nHeals 20 HP on use",
+            false, false, true,
+            20, 1.f,
+            Textures::get("items/bandage"),
+            32};
+        return data;
+    }
+
+    case ItemType::MEDKIT: {
+        static const ItemData data{
+            "Medkit", "Consumable\nHeals 80 HP on use",
+            false, false, true,
+            80, 0.5f,
+            Textures::get("items/medkit3d"),
+            16};
+        return data;
+    }
+
+    case ItemType::KITCHEN_KNIFE: {
+        static const ItemData data{
+            "Kitchen Knife", "Weapon\nDeals 20 damage on hit",
+            true, false, false,
+            20, 2.f,
+            Textures::get("items/kitchen_knife"),
+            1};
+        return data;
+    }
+
+    case ItemType::COMBAT_KNIFE: {
+        static const ItemData data{
+            "Combat Knife", "Weapon\nDeals 30 damage on hit",
+            true, false, false,
+            30, 1.5f,
+            Textures::get("items/combat_knife"),
+            1};
+        return data;
+    }
+
+    case ItemType::LOCKPICK: {
+        static const ItemData data{
+            "Lockpick", "Tool\nCan open locked doors and boxes",
+            false, false, false,
+            0, 1.f,
+            Textures::get("items/lockpick"),
+            10};
+        return data;
+    }
+    }
+    
+    assert(false); // crash: invalid item type passed
 }
 
-std::string Item::getName() const { return this->_name; }
+Item::Item(ItemType _type, size_t _amount) : data{getItemData(_type)} {
+    type = _type;
+    setAmount(_amount);
+}
 
-std::string Item::getDescription() const { return this->_description; }
+std::string Item::getName() const { return data.name; }
 
-bool Item::canDealMeleeDamage() const { return _canDealMeleeDamage; }
+std::string Item::getDescription() const { return data.description; }
 
-bool Item::canDealRangedDamage() const { return _canDealRangedDamage; }
+bool Item::canDealMeleeDamage() const { return data.canDealMeleeDamage; }
 
-bool Item::isHealthPack() const { return _isHealthPack; }
+bool Item::canDealRangedDamage() const { return data.canDealRangedDamage; }
+
+bool Item::isHealthPack() const { return data.isHealthPack; }
 
 ItemType Item::getType() const {
-    return _type;
+    return type;
 }
 
 size_t Item::getMaximalAmount() const {
-    return _maximalAmount;
+    return data.maximalAmount;
 }
 
 size_t Item::getAmount() const {
-    return _actualAmount;
+    return amount;
 }
 
 void Item::setAmount(size_t val) {
-    if (val > _maximalAmount) {
-        _actualAmount = _maximalAmount;
+    if (val > data.maximalAmount) {
+        amount = data.maximalAmount;
         return;
     }
 
-    _actualAmount = val;
+    amount = val;
 }
 
 bool Item::isFull() const {
-    return _actualAmount == _maximalAmount;
+    return amount == data.maximalAmount;
 }
 
 /**
@@ -62,53 +150,29 @@ bool Item::isFull() const {
  */
 int Item::addAmount(int val) {
     if (val < 0) {
-        int amountToRemove = std::min(static_cast<int>(_actualAmount), -val);
-        _actualAmount -= amountToRemove;
-        return val + amountToRemove; 
+        int amountToRemove = std::min(static_cast<int>(amount), -val);
+        amount -= amountToRemove;
+        return val + amountToRemove;
     }
 
-    int spaceLeft = _maximalAmount - _actualAmount;
+    int spaceLeft = data.maximalAmount - amount;
     int amountToAdd = std::min(spaceLeft, val);
 
     // swap
     if (!spaceLeft) {
-        int prevAmount = _actualAmount;
-        _actualAmount = val;
+        int prevAmount = amount;
+        amount = val;
 
         return prevAmount;
     }
 
-    _actualAmount += amountToAdd;
+    amount += amountToAdd;
 
     return val - amountToAdd;
 }
 
-int Item::getDamage() const { return _damage; }
+int Item::getDamage() const { return data.damage; }
 
-float Item::getUseRate() const { return _useRate; }
+float Item::getUseRate() const { return data.useRate; }
 
-sf::Texture* Item::getTexture() const { return _texture; }
-
-void Item::setCanDealMeleeDamage(bool val) {
-    _canDealMeleeDamage = val;
-}
-
-void Item::setCanDealRangedDamage(bool val) {
-    _canDealRangedDamage = val;
-}
-
-void Item::setIsHealthPack(bool val) {
-    _isHealthPack = val;
-}
-
-void Item::setDamage(int val) {
-    _damage = val;
-}
-
-void Item::setUseRate(float val) {
-    _useRate = val;
-}
-
-void Item::setTexture(sf::Texture* texture) {
-    _texture = texture;
-}
+sf::Texture* Item::getTexture() const { return data.texture; }

@@ -120,8 +120,11 @@ void InventorySlotGui::setSize(float _size) {
 }
 
 void InventorySlotGui::update() {
-    if (inventorySlot && inventorySlot->getItem())
+    if (inventorySlot && inventorySlot->getItem() && inventorySlot->getItem()->getMaximalAmount() > 1) {
         itemAmount.setString(std::to_string(inventorySlot->getItem()->getAmount()));
+        return;
+    }
+    itemAmount.setString("");
 }
 
 void InventorySlotGui::draw() const {
