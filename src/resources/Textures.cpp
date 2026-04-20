@@ -57,7 +57,7 @@ sf::Texture* get(TextureType type) {
     return &typeToTexture[type];
 }
 
-sf::Texture *Textures::get(std::string texName)
+sf::Texture* get(std::string texName)
 {
     if (stringToTexture.find(texName) == stringToTexture.end())
         return nullptr;
