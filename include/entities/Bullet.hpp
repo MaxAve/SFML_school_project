@@ -16,9 +16,11 @@ public:
 	static void updateAll(); // Updates every bullet in the pool
 	static void drawAll(sf::RenderWindow& window);
 
-    const float DEFAULT_SIZE = 20;
+    const float DEFAULT_SIZE = 18;
+    const float GLOW_SCALE = 1.3f;
 
     sf::RectangleShape sprite;
+    sf::RectangleShape glowSprite;
     sf::Vector2f velocity;
 	float speed;
 	float distanceTraveled; // The distance traveled from the bullet's starting position

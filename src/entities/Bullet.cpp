@@ -8,16 +8,22 @@ Bullet::Bullet(sf::Vector2f position, float speed, float direction)
 
     this->velocity = {std::cos(direction) * speed, std::sin(direction) * speed};
 
-    this->sprite = sf::RectangleShape({Bullet::DEFAULT_SIZE, Bullet::DEFAULT_SIZE});
+    this->sprite = sf::RectangleShape(sf::Vector2f(Bullet::DEFAULT_SIZE, Bullet::DEFAULT_SIZE));
     this->sprite.setPosition(position);
-    this->sprite.setFillColor(sf::Color::Yellow);
+    this->sprite.setFillColor(sf::Color(255, 255, 180));
 	this->sprite.setOrigin({Bullet::DEFAULT_SIZE/2, Bullet::DEFAULT_SIZE/2});
+
+	this->glowSprite = sf::RectangleShape(sf::Vector2f(Bullet::DEFAULT_SIZE * Bullet::GLOW_SCALE, Bullet::DEFAULT_SIZE * Bullet::GLOW_SCALE));
+    this->glowSprite.setPosition(position);
+    this->glowSprite.setFillColor(sf::Color(255, 255, 0, 100));
+	this->glowSprite.setOrigin({Bullet::DEFAULT_SIZE * Bullet::GLOW_SCALE /2, Bullet::DEFAULT_SIZE * Bullet::GLOW_SCALE /2});
 
 	Bullet::pool.push_back(this); // Add this bullet to the pool
 }
 
 void Bullet::draw(sf::RenderWindow& window)
 {
+	window.draw(this->glowSprite);
     window.draw(this->sprite);
 }
 
@@ -33,13 +39,14 @@ void Bullet::update()
 			Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 2, 500);
 			int damage = 20 + (rand() % 11) - 5;
 			Zombie::pool[i]->healthBar.setHealth(Zombie::pool[i]->healthBar.currentHealth - damage);
-			new DamageIndicatorText(sf::Vector2f(Zombie::pool[i]->sprite.getPosition().x + (float)((rand() % 20)), Zombie::pool[i]->sprite.getPosition().y + (float)((rand() % 20))), damage);
+			new DamageIndicatorText(sf::Vector2f(Zombie::pool[i]->sprite.getPosition().x + (float)((rand() % 40)) - 10.f, Zombie::pool[i]->sprite.getPosition().y + (float)((rand() % 40)) - 10.f), damage);
 			Zombie::pool[i]->bulletPushVelocity = this->velocity / 5.f;
 			this->distanceTraveled = 1000000000;
 			this->sprite.move({1000000, 1000000});
 			break;
 		}
 	}
+	this->glowSprite.setPosition(this->sprite.getPosition());
 }
 
 void Bullet::drawAll(sf::RenderWindow& window)

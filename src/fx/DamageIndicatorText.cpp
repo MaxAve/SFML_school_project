@@ -7,8 +7,8 @@ DamageIndicatorText::DamageIndicatorText(sf::Vector2f pos, int damage)
     this->timeRemaining = 0.6 + ((float)(rand() % 50) / 100.0f);
     this->text = new sf::Text(Fonts::pixel);
     this->text->setString(std::to_string(damage));
-    this->text->setFillColor(sf::Color::White);
-    this->text->setCharacterSize(32); 
+    this->text->setFillColor(sf::Color::Yellow);
+    this->text->setCharacterSize(26); 
     this->text->setPosition(pos);
     this->text->setStyle(sf::Text::Bold);
     DamageIndicatorText::pool.push_back(this);

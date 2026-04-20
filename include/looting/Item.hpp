@@ -13,6 +13,7 @@ enum class ItemType {
     KITCHEN_KNIFE,
     COMBAT_KNIFE,
     LOCKPICK,
+    SCOPE,
 };
 
 struct ItemData {

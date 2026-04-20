@@ -121,9 +121,7 @@ int main() {
     Item ti7(ItemType::COMBAT_KNIFE, 1);
     Item ti8(ItemType::LOCKPICK, 1);
     Item ti9(ItemType::MEDKIT, 1);
-    ti5.setAmount(33);
-    ti9.setAmount(32);
-    ti2.setAmount(120);
+    Item ti10(ItemType::SCOPE, 1);
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
@@ -134,6 +132,7 @@ int main() {
     player.inventory.setItem({7, 1}, &ti7);
     player.inventory.setItem({8, 1}, &ti8);
     player.inventory.setItem({9, 1}, &ti9);
+    player.inventory.setItem({0, 2}, &ti10);
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 

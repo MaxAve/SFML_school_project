@@ -19,6 +19,7 @@ void initTextures() {
         "items/kitchen_knife",
         "items/combat_knife",
         "items/lockpick",
+        "items/scope",
         "gui_hud/q_key_prompt",
     };
     for(int i = 0; i < textureNames.size(); i++)
