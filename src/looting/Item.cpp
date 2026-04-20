@@ -2,103 +2,18 @@
 #include "resources/Textures.hpp"
 #include <iostream>
 
-const ItemData& Item::getItemData(ItemType type) {
-    switch (type) {
-    case ItemType::SMALL_CALIBER_AMMO: {
-        static const ItemData data{
-            "Small Caliber Ammo", "Standard low-caliber ammunition",
-            false, false, false,
-            0, 0.f,
-            Textures::get("items/bullet_small"),
-            16};
-        return data;
-    }
+std::unordered_map<ItemType, ItemData> Item::typeToData{
+    {ItemType::SMALL_CALIBER_AMMO, {"Small Caliber Ammo", "Standard low-caliber ammunition", false, false, false, 0, 0.f, "items/bullet_small", 16}},
+    {ItemType::SHOTGUN_AMMO, {"Shotgun Ammo", "Shells for shotguns", false, false, false, 0, 0.f, "items/bullet_spread", 16}},
+    {ItemType::LARGE_CALIBER_AMMO, {"Large Caliber Ammo", "High-power ammunition", false, false, false, 0, 0.f, "items/bullet_large", 16}},
+    {ItemType::MEDIUM_CALIBER_AMMO, {"Medium Caliber Ammo", "Standard firearm ammunition", false, false, false, 0, 0.f, "items/bullet_medium", 16}},
+    {ItemType::BANDAGE, {"Bandage", "Consumable\nHeals 20 HP on use", false, false, true, 20, 1.f, "items/bandage", 32}},
+    {ItemType::MEDKIT, {"Medkit", "Consumable\nHeals 80 HP on use", false, false, true, 80, 0.5f, "items/medkit3d", 16}},
+    {ItemType::KITCHEN_KNIFE, {"Kitchen Knife", "Weapon\nDeals 20 damage on hit", true, false, false, 20, 2.f, "items/kitchen_knife", 1}},
+    {ItemType::COMBAT_KNIFE, {"Combat Knife", "Weapon\nDeals 30 damage on hit", true, false, false, 30, 1.5f, "items/combat_knife", 1}},
+    {ItemType::LOCKPICK, {"Lockpick", "Tool\nCan open locked doors and boxes", false, false, false, 0, 1.f, "items/lockpick", 10}}};
 
-    case ItemType::SHOTGUN_AMMO: {
-        static const ItemData data{
-            "Shotgun Ammo", "Shells for shotguns",
-            false, false, false,
-            0, 0.f,
-            Textures::get("items/bullet_spread"),
-            16};
-        return data;
-    }
-
-    case ItemType::LARGE_CALIBER_AMMO: {
-        static const ItemData data{
-            "Large Caliber Ammo", "High-power ammunition",
-            false, false, false,
-            0, 0.f,
-            Textures::get("items/bullet_large"),
-            16};
-        return data;
-    }
-
-    case ItemType::MEDIUM_CALIBER_AMMO: {
-        static const ItemData data{
-            "Medium Caliber Ammo", "Standard firearm ammunition",
-            false, false, false,
-            0, 0.f,
-            Textures::get("items/bullet_medium"),
-            16};
-        return data;
-    }
-
-    case ItemType::BANDAGE: {
-        static const ItemData data{
-            "Bandage", "Consumable\nHeals 20 HP on use",
-            false, false, true,
-            20, 1.f,
-            Textures::get("items/bandage"),
-            32};
-        return data;
-    }
-
-    case ItemType::MEDKIT: {
-        static const ItemData data{
-            "Medkit", "Consumable\nHeals 80 HP on use",
-            false, false, true,
-            80, 0.5f,
-            Textures::get("items/medkit3d"),
-            16};
-        return data;
-    }
-
-    case ItemType::KITCHEN_KNIFE: {
-        static const ItemData data{
-            "Kitchen Knife", "Weapon\nDeals 20 damage on hit",
-            true, false, false,
-            20, 2.f,
-            Textures::get("items/kitchen_knife"),
-            1};
-        return data;
-    }
-
-    case ItemType::COMBAT_KNIFE: {
-        static const ItemData data{
-            "Combat Knife", "Weapon\nDeals 30 damage on hit",
-            true, false, false,
-            30, 1.5f,
-            Textures::get("items/combat_knife"),
-            1};
-        return data;
-    }
-
-    case ItemType::LOCKPICK: {
-        static const ItemData data{
-            "Lockpick", "Tool\nCan open locked doors and boxes",
-            false, false, false,
-            0, 1.f,
-            Textures::get("items/lockpick"),
-            10};
-        return data;
-    }
-    }
-    
-    assert(false); // crash: invalid item type passed
-}
-
-Item::Item(ItemType _type, size_t _amount) : data{getItemData(_type)} {
+Item::Item(ItemType _type, size_t _amount) : data{typeToData.at(_type)} {
     type = _type;
     setAmount(_amount);
 }
@@ -175,4 +90,4 @@ int Item::getDamage() const { return data.damage; }
 
 float Item::getUseRate() const { return data.useRate; }
 
-sf::Texture* Item::getTexture() const { return data.texture; }
+sf::Texture* Item::getTexture() const { return Textures::get(data.texturePath); }

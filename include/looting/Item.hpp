@@ -23,7 +23,7 @@ struct ItemData {
     bool isHealthPack;        // true if the item can be used to heal the player
     int damage;               // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
     float useRate;            // how many times the item can be used per second
-    sf::Texture* texture;     // texture to use when displaying the item
+    std::string texturePath;     // texture to use when displaying the item
     size_t maximalAmount;
 };
 
@@ -32,12 +32,12 @@ class Item {
     const ItemData& data;
     size_t amount = 1;
 
+    static std::unordered_map<ItemType, ItemData> typeToData;
+
 public:
     Item() = default;
 
     Item(ItemType type, size_t amount);
-
-    static const ItemData& getItemData(ItemType type);
 
     std::string getName() const;
 
