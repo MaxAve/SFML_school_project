@@ -1,12 +1,12 @@
 #pragma once
-#include "looting/Inventory.hpp"
 #include "core/Window.hpp"
 #include "gui/InventorySlotGui.hpp"
-#include "resources/Fonts.hpp"
 #include "gui/ItemLabel.hpp"
+#include "looting/Inventory.hpp"
+#include "resources/Fonts.hpp"
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
 // manages the graphical implementation of the inventory
 class InventoryInterface {
@@ -21,6 +21,7 @@ class InventoryInterface {
     // For Drag & Drop
     Item* carriedItem;
     std::optional<sf::Sprite> carriedItemSprite;
+    sf::Text amountOfCarriedItem;
 
     InventorySlot* hoveredSlot;
 
@@ -34,7 +35,11 @@ public:
 
     InventoryInterface(Inventory* inventory, sf::Vector2f size, sf::Vector2f position = {0, 0});
 
-    void handleMousePress(sf::Vector2f mousePos);
+    void setCarriedItemSprite(sf::Texture*);
+
+    void handleLMB(sf::Vector2f mousePos);
+
+    void handleRMB(sf::Vector2f mousePos);
 
     void resizeForeground(sf::Vector2f);
 

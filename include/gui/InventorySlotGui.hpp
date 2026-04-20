@@ -13,9 +13,11 @@ class InventorySlotGui {
     sf::RectangleShape slotShape; // includes position
     bool hovered;
     std::optional<sf::Sprite> itemSprite;
+    sf::Text itemAmount;
 
 public:
 
+    // TODO: Make only one constructor
     InventorySlotGui(InventorySlot* _inventorySlot = nullptr);
 
     InventorySlotGui(sf::Vector2f position, float size);
@@ -45,6 +47,8 @@ public:
     void setInventorySlot(InventorySlot* _inventorySlot);
 
     void setSize(float _size);
+
+    void update();
 
     void draw() const;
 };

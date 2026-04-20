@@ -1,6 +1,6 @@
 #include "gui/SharedInventoryInterface.hpp"
-#include "resources/Fonts.hpp"
 #include "gui/InventoryInterface.hpp"
+#include "resources/Fonts.hpp"
 
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
@@ -12,10 +12,10 @@ const sf::Color SharedInventoryInterface::stdOutlineColor(100, 105, 115);
 unsigned SharedInventoryInterface::slotSizeU = 95u;
 float SharedInventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
-SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory} {
-    LOG("SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory);");
+SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory}, amountOfCarriedItem(Fonts::pixel, "0", 20) {
     carriedItem = nullptr;
     carriedItemSprite.reset();
+    amountOfCarriedItem.setOrigin(amountOfCarriedItem.getLocalBounds().size);
 
     // setup background
     background.setSize({(float)defaultView.getSize().x, (float)defaultView.getSize().y});
@@ -29,11 +29,8 @@ SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vecto
     foreground.setOutlineThickness(stdOutlineThickness);
     foreground.setOutlineColor(stdOutlineColor);
 
-    LOG("start setting inventories");
     setMainInventory(mainInventory);
     setOtherInventory(otherInventory);
-
-    LOG("leaving... SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory);");
 }
 
 InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
@@ -56,11 +53,32 @@ InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
     return nullptr;
 }
 
-void SharedInventoryInterface::handleMousePress(sf::Vector2f mousePos) {
+void SharedInventoryInterface::setCarriedItemSprite(sf::Texture* tex) {
+    carriedItemSprite.emplace(*(carriedItem->getTexture()));
+    sf::Vector2f textureSize = static_cast<sf::Vector2f>(carriedItem->getTexture()->getSize());
+    float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
+    carriedItemSprite->setScale({factor, factor});
+    carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
+}
+
+void SharedInventoryInterface::handleLMB(sf::Vector2f mousePos) {
     InventorySlotGui* targetSlot = findHoveredSlot();
     Item* selectedItem = nullptr;
 
     if (!targetSlot) {
+        return;
+    }
+
+    // if same Items
+    if (targetSlot->getItem() && carriedItem && carriedItem->getType() == targetSlot->getItem()->getType()) {
+        int diff = targetSlot->getItem()->addAmount(carriedItem->getAmount());
+        if (diff > 0) {
+            carriedItem->setAmount(diff);
+        } else {
+            carriedItem = nullptr;
+            carriedItemSprite.reset();
+        }
+
         return;
     }
 
@@ -69,15 +87,54 @@ void SharedInventoryInterface::handleMousePress(sf::Vector2f mousePos) {
     carriedItem = selectedItem;
 
     if (carriedItem) {
-        carriedItemSprite.emplace(*(carriedItem->getTexture()));
-        sf::Vector2f textureSize = static_cast<sf::Vector2f>(carriedItem->getTexture()->getSize());
-        float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
-        carriedItemSprite->setScale({factor, factor});
-        carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
+        setCarriedItemSprite(carriedItem->getTexture());
+        amountOfCarriedItem.setString(std::to_string(carriedItem->getAmount()));
     } else {
         carriedItemSprite.reset();
     }
 }
+
+void SharedInventoryInterface::handleRMB(sf::Vector2f mousePos) {
+    InventorySlotGui* targetSlot = findHoveredSlot();
+
+    if (!targetSlot) {
+        return;
+    }
+
+    // split stack
+    if (!carriedItem && targetSlot->getItem() && targetSlot->getItem()->getAmount() > 1) {
+        carriedItem = new Item(*targetSlot->getItem()); // !
+        size_t prevAmount = targetSlot->getItem()->getAmount();
+        targetSlot->getItem()->setAmount(prevAmount / 2);
+        carriedItem->setAmount(prevAmount - targetSlot->getItem()->getAmount());
+        setCarriedItemSprite(carriedItem->getTexture());
+
+        return;
+    }
+
+    // distribute one
+    if (!carriedItem || (carriedItem->getAmount() <= 1)) {
+        return;
+    }
+    if (!targetSlot->getItem()) {
+        targetSlot->setItem(new Item(*carriedItem)); // !
+        targetSlot->getItem()->setAmount(1);
+        carriedItem->addAmount(-1);
+    } else if (targetSlot->getItem()->getType() == carriedItem->getType()) { // if slot not empty
+        if (targetSlot->getItem()->isFull()) {
+            return;
+        }
+        targetSlot->getItem()->addAmount(1);
+        carriedItem->addAmount(-1);
+
+        if (!carriedItem->getAmount()) {
+            carriedItem = nullptr;
+            carriedItemSprite.reset();
+        }
+    }
+}
+
+
 
 void SharedInventoryInterface::resizeForeground(sf::Vector2f newSize) {
     foreground.setOrigin({0, 0});
@@ -231,17 +288,21 @@ void SharedInventoryInterface::update() {
 
     if (carriedItem) {
         carriedItemSprite->setPosition(mousePos);
+        amountOfCarriedItem.setString(std::to_string(carriedItem->getAmount()));
+        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF / 2.f - 13.f, mousePos.y + slotSizeF / 2.f - 12.f});
     }
 
     for (auto& row : mainInventorySlots) {
         for (auto& slot : row) {
             slot.setHovered(false);
+            slot.update();
         }
     }
 
     for (auto& row : otherInventorySlots) {
         for (auto& slot : row) {
             slot.setHovered(false);
+            slot.update();
         }
     }
 
@@ -249,8 +310,7 @@ void SharedInventoryInterface::update() {
         for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
-                if(slot.getItem() != nullptr)
-                {
+                if (slot.getItem() != nullptr) {
                     ItemLabel::visible = true;
                     ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
                 }
@@ -263,8 +323,7 @@ void SharedInventoryInterface::update() {
         for (auto& slot : row) {
             if (slot.getGlobalBounds().contains(mousePos)) {
                 slot.setHovered(true);
-                if(slot.getItem() != nullptr)
-                {
+                if (slot.getItem() != nullptr) {
                     ItemLabel::visible = true;
                     ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
                 }
@@ -295,5 +354,6 @@ void SharedInventoryInterface::draw() {
 
     if (carriedItemSprite) {
         window.draw(*(carriedItemSprite));
+        window.draw(amountOfCarriedItem);
     }
 }

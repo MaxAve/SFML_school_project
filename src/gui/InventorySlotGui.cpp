@@ -1,27 +1,34 @@
 #include "gui/InventorySlotGui.hpp"
 #include "gui/InventoryInterface.hpp"
+#include "resources/Fonts.hpp"
+
+#include <iostream>
+#define LOG(msg) std::cout << msg << std::endl;
 
 const float InventorySlotGui::outlineThickness = InventoryInterface::stdOutlineThickness;
 const sf::Color InventorySlotGui::outlineColor = InventoryInterface::stdOutlineColor;
 const sf::Color InventorySlotGui::backgroundColor = InventoryInterface::stdForegroundColor;
 const sf::Color InventorySlotGui::highlightColor = outlineColor;
 
-InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) {
+InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) : itemAmount(Fonts::pixel, "0", 20) {
     hovered = false;
     inventorySlot = _inventorySlot;
 
     if (_inventorySlot) {
+        if (_inventorySlot->getItem())
+            itemAmount.setString(std::to_string(_inventorySlot->getItem()->getAmount()));
         setupItemSprite(_inventorySlot->getItem());
     }
+    itemAmount.setOrigin(itemAmount.getLocalBounds().size);
 
     slotShape.setFillColor(backgroundColor);
     slotShape.setOutlineThickness(outlineThickness);
     slotShape.setOutlineColor(outlineColor);
 }
 
-InventorySlotGui::InventorySlotGui(sf::Vector2f position, float size) {
-    slotShape.setSize({size, size});
-    slotShape.setPosition(position);
+InventorySlotGui::InventorySlotGui(sf::Vector2f position, float size) : itemAmount(Fonts::pixel) {
+    setSize(size);
+    setPosition(position);
 
     InventorySlotGui(nullptr);
 }
@@ -81,6 +88,8 @@ sf::FloatRect InventorySlotGui::getGlobalBounds() const {
 }
 
 void InventorySlotGui::setPosition(sf::Vector2f _position) {
+    float size = slotShape.getSize().x;
+    itemAmount.setPosition({_position.x + size - 13.f, _position.y + size - 12.f});
     slotShape.setPosition(_position);
 
     if (itemSprite) {
@@ -110,10 +119,19 @@ void InventorySlotGui::setSize(float _size) {
     slotShape.setSize({_size, _size});
 }
 
+void InventorySlotGui::update() {
+    if (inventorySlot && inventorySlot->getItem() && inventorySlot->getItem()->getMaximalAmount() > 1) {
+        itemAmount.setString(std::to_string(inventorySlot->getItem()->getAmount()));
+        return;
+    }
+    itemAmount.setString("");
+}
+
 void InventorySlotGui::draw() const {
     window.draw(slotShape);
 
     if (itemSprite) {
         window.draw(*itemSprite);
+        window.draw(itemAmount);
     }
 }

@@ -6,6 +6,10 @@ InventorySlot::InventorySlot() {
     item = nullptr;
 }
 
+InventorySlot::InventorySlot(Item* item) {
+    item = item;
+}
+
 void InventorySlot::setItem(Item* _item) {
     item = _item;
 }
