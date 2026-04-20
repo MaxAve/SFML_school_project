@@ -1,6 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "core/Physics.hpp"
+#include <iostream>
 
 #define HBAR_WIDTH 69.0f
 #define HBAR_HEIGHT 5.0f
@@ -13,6 +15,10 @@ public:
 
     sf::RectangleShape healthRect;
     sf::RectangleShape fullRect;
+    sf::RectangleShape healthChangeAnimation;
+    float timeSinceHealthChangeAnimationBlink;
+    int blinkTimes;
+    float healthChangeAnimationDeltaX;
 
     HealthBar();
     HealthBar(int maxHealth);
