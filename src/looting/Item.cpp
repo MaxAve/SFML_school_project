@@ -3,15 +3,15 @@
 #include <iostream>
 
 std::unordered_map<ItemType, ItemData> Item::typeToData{
-    {ItemType::SMALL_CALIBER_AMMO, {"Small Caliber Ammo", "Standard low-caliber ammunition", false, false, false, 0, 0.f, "items/bullet_small", 16}},
-    {ItemType::SHOTGUN_AMMO, {"Shotgun Ammo", "Shells for shotguns", false, false, false, 0, 0.f, "items/bullet_spread", 16}},
-    {ItemType::LARGE_CALIBER_AMMO, {"Large Caliber Ammo", "High-power ammunition", false, false, false, 0, 0.f, "items/bullet_large", 16}},
-    {ItemType::MEDIUM_CALIBER_AMMO, {"Medium Caliber Ammo", "Standard firearm ammunition", false, false, false, 0, 0.f, "items/bullet_medium", 16}},
-    {ItemType::BANDAGE, {"Bandage", "Consumable\nHeals 20 HP on use", false, false, true, 20, 1.f, "items/bandage", 32}},
-    {ItemType::MEDKIT, {"Medkit", "Consumable\nHeals 80 HP on use", false, false, true, 80, 0.5f, "items/medkit3d", 16}},
+    {ItemType::SMALL_CALIBER_AMMO, {"Small Caliber Ammo", "Standard low-caliber ammunition", false, false, false, 0, 0.f, "items/bullet_small", 60}},
+    {ItemType::SHOTGUN_AMMO, {"Shotgun Ammo", "Shells for shotguns", false, false, false, 0, 0.f, "items/bullet_spread", 60}},
+    {ItemType::LARGE_CALIBER_AMMO, {"Large Caliber Ammo", "High-power ammunition", false, false, false, 0, 0.f, "items/bullet_large", 10}},
+    {ItemType::MEDIUM_CALIBER_AMMO, {"Medium Caliber Ammo", "Standard firearm ammunition", false, false, false, 0, 0.f, "items/bullet_medium", 120}},
+    {ItemType::BANDAGE, {"Bandage", "Consumable\nHeals 20 HP on use", false, false, true, 20, 1.f, "items/bandage", 3}},
+    {ItemType::MEDKIT, {"Medkit", "Consumable\nHeals 80 HP on use", false, false, true, 80, 0.5f, "items/medkit3d", 1}},
     {ItemType::KITCHEN_KNIFE, {"Kitchen Knife", "Weapon\nDeals 20 damage on hit", true, false, false, 20, 2.f, "items/kitchen_knife", 1}},
     {ItemType::COMBAT_KNIFE, {"Combat Knife", "Weapon\nDeals 30 damage on hit", true, false, false, 30, 1.5f, "items/combat_knife", 1}},
-    {ItemType::LOCKPICK, {"Lockpick", "Tool\nCan open locked doors and boxes", false, false, false, 0, 1.f, "items/lockpick", 10}}};
+    {ItemType::LOCKPICK, {"Lockpick", "Tool\nCan open locked doors and boxes", false, false, false, 0, 1.f, "items/lockpick", 1}}};
 
 Item::Item(ItemType _type, size_t _amount) : data{typeToData.at(_type)} {
     type = _type;
