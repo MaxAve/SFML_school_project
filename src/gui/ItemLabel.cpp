@@ -10,12 +10,11 @@ void ItemLabel::init()
 {
     ItemLabel::itemName.setString("");
     ItemLabel::itemName.setFillColor(sf::Color::White);
-    ItemLabel::itemName.setCharacterSize(20);
-    ItemLabel::itemName.setStyle(sf::Text::Bold);
+    ItemLabel::itemName.setCharacterSize(30);
 
     ItemLabel::itemDescription.setString("");
     ItemLabel::itemDescription.setFillColor(sf::Color(200, 200, 200));
-    ItemLabel::itemDescription.setCharacterSize(20);
+    ItemLabel::itemDescription.setCharacterSize(30);
 
     ItemLabel::box.setFillColor(sf::Color::Black);
     ItemLabel::box.setOutlineColor(sf::Color::White);
@@ -36,8 +35,8 @@ void ItemLabel::update(std::string name, std::string desc)
         if(itemDescription.getString().getData()[i] == '\n')
             lines++;
 
-    ItemLabel::box.setSize(sf::Vector2f(std::max(itemNameWidth, itemDescriptionWidth) + 40, (float)lines * 22 + 15));
-    ItemLabel::box2.setSize(sf::Vector2f(std::max(itemNameWidth, itemDescriptionWidth) + 40 + 8, (float)lines * 22 + 15 + 8));
+    ItemLabel::box.setSize(sf::Vector2f(std::max(itemNameWidth, itemDescriptionWidth) + 40, (float)lines * 30 + 30));
+    ItemLabel::box2.setSize(sf::Vector2f(std::max(itemNameWidth, itemDescriptionWidth) + 40 + 8, (float)lines * 30 + 15 + 23));
 }
 
 void ItemLabel::draw(sf::RenderWindow& window)
@@ -52,7 +51,7 @@ void ItemLabel::draw(sf::RenderWindow& window)
         ItemLabel::box.setPosition({mp.x + 25, mp.y + 25});
         ItemLabel::box2.setPosition({mp.x + 21, mp.y + 21});
         ItemLabel::itemName.setPosition({mp.x + 35, mp.y + 30});
-        ItemLabel::itemDescription.setPosition({mp.x + 35, mp.y + itemNameHeight + 35 + 15});
+        ItemLabel::itemDescription.setPosition({mp.x + 35, mp.y + itemNameHeight + 45 + 15});
 
         window.draw(ItemLabel::box2);
         window.draw(ItemLabel::box);

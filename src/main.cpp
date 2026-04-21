@@ -143,7 +143,7 @@ int main() {
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    int nzombies = 10;
+    int nzombies = 30;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }

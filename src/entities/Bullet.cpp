@@ -38,8 +38,11 @@ void Bullet::update()
 		{
 			Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 2, 500);
 			int damage = 20 + (rand() % 11) - 5;
+			bool crit = rand()%4==0; // todo
+			if(crit)
+				damage *= 2;
 			Zombie::pool[i]->healthBar.setHealth(Zombie::pool[i]->healthBar.currentHealth - damage);
-			new DamageIndicatorText(sf::Vector2f(Zombie::pool[i]->sprite.getPosition().x + (float)((rand() % 40)) - 10.f, Zombie::pool[i]->sprite.getPosition().y + (float)((rand() % 40)) - 10.f), damage);
+			new DamageIndicatorText(sf::Vector2f(Zombie::pool[i]->sprite.getPosition().x + (float)((rand() % 40)) - 10.f, Zombie::pool[i]->sprite.getPosition().y + (float)((rand() % 40)) - 10.f), damage, crit);
 			Zombie::pool[i]->bulletPushVelocity = this->velocity / 5.f;
 			this->distanceTraveled = 1000000000;
 			this->sprite.move({1000000, 1000000});
