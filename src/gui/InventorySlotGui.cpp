@@ -5,9 +5,9 @@
 #include <iostream>
 #define LOG(msg) std::cout << msg << std::endl;
 
-const float InventorySlotGui::outlineThickness = InventoryInterface::stdOutlineThickness;
-const sf::Color InventorySlotGui::outlineColor = InventoryInterface::stdOutlineColor;
-const sf::Color InventorySlotGui::backgroundColor = InventoryInterface::stdForegroundColor;
+const float InventorySlotGui::outlineThickness = InventoryInterface::outlineThickness;
+const sf::Color InventorySlotGui::outlineColor = InventoryInterface::outlineColor;
+const sf::Color InventorySlotGui::backgroundColor = InventoryInterface::foregroundColor;
 const sf::Color InventorySlotGui::highlightColor = outlineColor;
 
 InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) : itemAmount(Fonts::pixel, "0", 20) {

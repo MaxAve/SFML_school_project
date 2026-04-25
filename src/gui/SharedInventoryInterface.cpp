@@ -5,10 +5,10 @@
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
 
-const sf::Color SharedInventoryInterface::stdBackgroundColor(20, 20, 25, 150);
-const sf::Color SharedInventoryInterface::stdForegroundColor(45, 50, 55, 230);
-const float SharedInventoryInterface::stdOutlineThickness = 2;
-const sf::Color SharedInventoryInterface::stdOutlineColor(100, 105, 115);
+const sf::Color SharedInventoryInterface::backgroundColor(20, 20, 25, 150);
+const sf::Color SharedInventoryInterface::foregroundColor(45, 50, 55, 230);
+const float SharedInventoryInterface::outlineThickness = 2;
+const sf::Color SharedInventoryInterface::outlineColor(100, 105, 115);
 unsigned SharedInventoryInterface::slotSizeU = 95u;
 float SharedInventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
@@ -19,15 +19,15 @@ SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vecto
 
     // setup background
     background.setSize({(float)defaultView.getSize().x, (float)defaultView.getSize().y});
-    background.setFillColor(stdBackgroundColor);
+    background.setFillColor(backgroundColor);
 
     // setup foreground
     foreground.setSize(_size);
     foreground.setOrigin(foreground.getGeometricCenter());
     foreground.setPosition(_position);
-    foreground.setFillColor(stdForegroundColor);
-    foreground.setOutlineThickness(stdOutlineThickness);
-    foreground.setOutlineColor(stdOutlineColor);
+    foreground.setFillColor(foregroundColor);
+    foreground.setOutlineThickness(outlineThickness);
+    foreground.setOutlineColor(outlineColor);
 
     setMainInventory(mainInventory);
     setOtherInventory(otherInventory);

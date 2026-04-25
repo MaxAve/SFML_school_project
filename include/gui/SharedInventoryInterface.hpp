@@ -24,10 +24,10 @@ class SharedInventoryInterface {
     InventorySlot* hoveredSlot = nullptr;
 
 public:
-    static const sf::Color stdBackgroundColor;
-    static const sf::Color stdForegroundColor;
-    static const float stdOutlineThickness;
-    static const sf::Color stdOutlineColor;
+    static const sf::Color backgroundColor;
+    static const sf::Color foregroundColor;
+    static const float outlineThickness;
+    static const sf::Color outlineColor;
     static unsigned slotSizeU;
     static float slotSizeF;
 

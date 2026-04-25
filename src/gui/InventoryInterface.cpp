@@ -3,10 +3,10 @@
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
 
-const sf::Color InventoryInterface::stdBackgroundColor(20, 20, 25, 150);
-const sf::Color InventoryInterface::stdForegroundColor(45, 50, 55, 230);
-const float InventoryInterface::stdOutlineThickness = 2;
-const sf::Color InventoryInterface::stdOutlineColor(100, 105, 115);
+const sf::Color InventoryInterface::backgroundColor(20, 20, 25, 150);
+const sf::Color InventoryInterface::foregroundColor(45, 50, 55, 230);
+const float InventoryInterface::outlineThickness = 2;
+const sf::Color InventoryInterface::outlineColor(100, 105, 115);
 unsigned InventoryInterface::slotSizeU = 95u;
 float InventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
 
@@ -18,15 +18,15 @@ InventoryInterface::InventoryInterface(Inventory* _inventory, sf::Vector2f _size
 
     // setup background
     background.setSize({(float)defaultView.getSize().x, (float)defaultView.getSize().y});
-    background.setFillColor(stdBackgroundColor);
+    background.setFillColor(backgroundColor);
 
     // setup foreground
     foreground.setSize(_size);
     foreground.setOrigin(foreground.getGeometricCenter());
     foreground.setPosition(_position);
-    foreground.setFillColor(stdForegroundColor);
-    foreground.setOutlineThickness(stdOutlineThickness);
-    foreground.setOutlineColor(stdOutlineColor);
+    foreground.setFillColor(foregroundColor);
+    foreground.setOutlineThickness(outlineThickness);
+    foreground.setOutlineColor(outlineColor);
 
     // create inventory slots
     sf::Vector2f topLeftCorner = foreground.getPosition() - _size / 2.f;
