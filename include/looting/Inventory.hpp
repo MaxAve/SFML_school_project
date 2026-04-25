@@ -13,7 +13,7 @@ class Inventory {
 public:
     Inventory(sf::Vector2u _inventorySize, const std::string& _title);
 
-    Item* popItem(sf::Vector2i);
+    // Item* popItem(sf::Vector2i);
     sf::Vector2u getInventorySize() const;
 
     std::vector<std::vector<InventorySlot>>* getInventorySlots();

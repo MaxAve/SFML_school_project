@@ -238,6 +238,7 @@ void InventoryInterface::draw() {
 
     if (carriedItemSprite) {
         window.draw(*(carriedItemSprite));
-        window.draw(amountOfCarriedItem);
+        if (carriedItem->getMaximalAmount() > 1)
+            window.draw(amountOfCarriedItem);
     }
 }

@@ -134,8 +134,6 @@ void SharedInventoryInterface::handleRMB(sf::Vector2f mousePos) {
     }
 }
 
-
-
 void SharedInventoryInterface::resizeForeground(sf::Vector2f newSize) {
     foreground.setOrigin({0, 0});
     foreground.setSize(newSize);
@@ -354,6 +352,8 @@ void SharedInventoryInterface::draw() {
 
     if (carriedItemSprite) {
         window.draw(*(carriedItemSprite));
-        window.draw(amountOfCarriedItem);
+
+        if (carriedItem->getMaximalAmount() > 1)
+            window.draw(amountOfCarriedItem);
     }
 }
