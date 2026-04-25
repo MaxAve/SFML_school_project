@@ -205,7 +205,7 @@ int main() {
                             break;
                         }
                     }
-                } else if (keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
+                } else if (!inventoryToggled && !sharedInventoryToggled && keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
                     hotbarGui.setMarkedSlot(static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num0) - 1);
                 }
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
