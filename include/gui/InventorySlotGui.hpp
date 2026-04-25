@@ -1,13 +1,9 @@
 #pragma once
 #include "looting/InventorySlot.hpp"
+#include "gui/GuiParameters.hpp"
 
 // supposed to show the inventory slot in the gui
 class InventorySlotGui {
-    static const float outlineThickness;
-    static const sf::Color outlineColor;
-    static const sf::Color backgroundColor;
-    static const sf::Color highlightColor;
-
     InventorySlot* inventorySlot;
 
     sf::RectangleShape slotShape; // includes position
@@ -16,7 +12,6 @@ class InventorySlotGui {
     sf::Text itemAmount;
 
 public:
-
     // TODO: Make only one constructor
     InventorySlotGui(InventorySlot* _inventorySlot = nullptr);
 

@@ -5,13 +5,6 @@
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
 
-const sf::Color SharedInventoryInterface::backgroundColor(20, 20, 25, 150);
-const sf::Color SharedInventoryInterface::foregroundColor(45, 50, 55, 230);
-const float SharedInventoryInterface::outlineThickness = 2;
-const sf::Color SharedInventoryInterface::outlineColor(100, 105, 115);
-unsigned SharedInventoryInterface::slotSizeU = 95u;
-float SharedInventoryInterface::slotSizeF = static_cast<float>(slotSizeU);
-
 SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory}, amountOfCarriedItem(Fonts::pixel, "0", 20) {
     carriedItem = nullptr;
     carriedItemSprite.reset();
@@ -19,15 +12,15 @@ SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vecto
 
     // setup background
     background.setSize({(float)defaultView.getSize().x, (float)defaultView.getSize().y});
-    background.setFillColor(backgroundColor);
+    background.setFillColor(GuiParameters::backgroundColor);
 
     // setup foreground
     foreground.setSize(_size);
     foreground.setOrigin(foreground.getGeometricCenter());
     foreground.setPosition(_position);
-    foreground.setFillColor(foregroundColor);
-    foreground.setOutlineThickness(outlineThickness);
-    foreground.setOutlineColor(outlineColor);
+    foreground.setFillColor(GuiParameters::foregroundColor);
+    foreground.setOutlineThickness(GuiParameters::outlineThickness);
+    foreground.setOutlineColor(GuiParameters::outlineColor);
 
     setMainInventory(mainInventory);
     setOtherInventory(otherInventory);
@@ -56,7 +49,7 @@ InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
 void SharedInventoryInterface::setCarriedItemSprite(sf::Texture* tex) {
     carriedItemSprite.emplace(*(carriedItem->getTexture()));
     sf::Vector2f textureSize = static_cast<sf::Vector2f>(carriedItem->getTexture()->getSize());
-    float factor = slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
+    float factor = GuiParameters::slotSizeF * 0.9f / std::max(textureSize.x, textureSize.y);
     carriedItemSprite->setScale({factor, factor});
     carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
 }
@@ -158,7 +151,7 @@ void SharedInventoryInterface::setOtherInventory(Inventory* inventory) {
     sf::Vector2u invSize = inventory->getInventorySize();
 
     sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
-    paddingU = ((foreground.getSize() - sf::Vector2f{0, foreground.getSize().y / 2.f}) - static_cast<sf::Vector2f>(invSize) * slotSizeF) / 2.f;
+    paddingU = ((foreground.getSize() - sf::Vector2f{0, foreground.getSize().y / 2.f}) - static_cast<sf::Vector2f>(invSize) * GuiParameters::slotSizeF) / 2.f;
     std::vector<std::vector<InventorySlot>>* _inventorySlots = inventory->getInventorySlots();
 
     otherTitle.setPosition({upperLeftCorner.x + paddingU.x, upperLeftCorner.y});
@@ -167,9 +160,9 @@ void SharedInventoryInterface::setOtherInventory(Inventory* inventory) {
     for (size_t x = 0; x < invSize.x; x++) {
         otherInventorySlots[x].resize(invSize.y);
         for (size_t y = 0; y < invSize.y; y++) {
-            otherInventorySlots[x][y].setSize(SharedInventoryInterface::slotSizeF);
-            otherInventorySlots[x][y].setPosition({upperLeftCorner.x + paddingU.x + slotSizeF * x,
-                                                   upperLeftCorner.y + paddingU.y + slotSizeF * y});
+            otherInventorySlots[x][y].setSize(GuiParameters::slotSizeF);
+            otherInventorySlots[x][y].setPosition({upperLeftCorner.x + paddingU.x + GuiParameters::slotSizeF * x,
+                                                   upperLeftCorner.y + paddingU.y + GuiParameters::slotSizeF * y});
             otherInventorySlots[x][y].setInventorySlot(&(*_inventorySlots)[x][y]);
         }
     }
@@ -190,7 +183,7 @@ void SharedInventoryInterface::setMainInventory(Inventory* inventory) {
 
     sf::Vector2f halfSize = foreground.getSize() / 2.f;
     sf::Vector2f middleLeftCorner = {foreground.getPosition().x - halfSize.x, foreground.getPosition().y};
-    paddingL = ((foreground.getSize() - sf::Vector2f{0, halfSize.y}) - static_cast<sf::Vector2f>(invSize) * slotSizeF) / 2.f;
+    paddingL = ((foreground.getSize() - sf::Vector2f{0, halfSize.y}) - static_cast<sf::Vector2f>(invSize) * GuiParameters::slotSizeF) / 2.f;
     std::vector<std::vector<InventorySlot>>* _inventorySlots = inventory->getInventorySlots();
 
     mainTitle.setPosition({middleLeftCorner.x + paddingL.x, middleLeftCorner.y});
@@ -199,9 +192,9 @@ void SharedInventoryInterface::setMainInventory(Inventory* inventory) {
     for (size_t x = 0; x < invSize.x; x++) {
         mainInventorySlots[x].resize(invSize.y);
         for (size_t y = 0; y < invSize.y; y++) {
-            mainInventorySlots[x][y].setSize(SharedInventoryInterface::slotSizeF);
-            mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingL.x + slotSizeF * x,
-                                                  middleLeftCorner.y + paddingL.y + slotSizeF * y});
+            mainInventorySlots[x][y].setSize(GuiParameters::slotSizeF);
+            mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingL.x + GuiParameters::slotSizeF * x,
+                                                  middleLeftCorner.y + paddingL.y + GuiParameters::slotSizeF * y});
             mainInventorySlots[x][y].setInventorySlot(&(*_inventorySlots)[x][y]);
         }
     }
@@ -225,8 +218,8 @@ void SharedInventoryInterface::setPosition(sf::Vector2f newPosition) {
 
         for (size_t x = 0; x < otherInventorySlots.size(); x++) {
             for (size_t y = 0; y < otherInventorySlots[x].size(); y++) {
-                otherInventorySlots[x][y].setPosition({upperLeftCorner.x + paddingU.x + slotSizeF * x,
-                                                       upperLeftCorner.y + paddingU.y + slotSizeF * y});
+                otherInventorySlots[x][y].setPosition({upperLeftCorner.x + paddingU.x + GuiParameters::slotSizeF * x,
+                                                       upperLeftCorner.y + paddingU.y + GuiParameters::slotSizeF * y});
             }
         }
     }
@@ -239,8 +232,8 @@ void SharedInventoryInterface::setPosition(sf::Vector2f newPosition) {
 
         for (size_t x = 0; x < mainInventorySlots.size(); x++) {
             for (size_t y = 0; y < mainInventorySlots[x].size(); y++) {
-                mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingU.x + slotSizeF * x,
-                                                      middleLeftCorner.y + paddingU.y + slotSizeF * y});
+                mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingU.x + GuiParameters::slotSizeF * x,
+                                                      middleLeftCorner.y + paddingU.y + GuiParameters::slotSizeF * y});
             }
         }
     }
@@ -287,7 +280,7 @@ void SharedInventoryInterface::update() {
     if (carriedItem) {
         carriedItemSprite->setPosition(mousePos);
         amountOfCarriedItem.setString(std::to_string(carriedItem->getAmount()));
-        amountOfCarriedItem.setPosition({mousePos.x + slotSizeF / 2.f - 13.f, mousePos.y + slotSizeF / 2.f - 12.f});
+        amountOfCarriedItem.setPosition({mousePos.x + GuiParameters::slotSizeF / 2.f - 13.f, mousePos.y + GuiParameters::slotSizeF / 2.f - 12.f});
     }
 
     for (auto& row : mainInventorySlots) {

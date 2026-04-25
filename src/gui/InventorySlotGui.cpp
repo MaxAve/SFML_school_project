@@ -5,11 +5,6 @@
 #include <iostream>
 #define LOG(msg) std::cout << msg << std::endl;
 
-const float InventorySlotGui::outlineThickness = InventoryInterface::outlineThickness;
-const sf::Color InventorySlotGui::outlineColor = InventoryInterface::outlineColor;
-const sf::Color InventorySlotGui::backgroundColor = InventoryInterface::foregroundColor;
-const sf::Color InventorySlotGui::highlightColor = outlineColor;
-
 InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) : itemAmount(Fonts::pixel, "0", 20) {
     hovered = false;
     inventorySlot = _inventorySlot;
@@ -21,9 +16,9 @@ InventorySlotGui::InventorySlotGui(InventorySlot* _inventorySlot) : itemAmount(F
     }
     itemAmount.setOrigin(itemAmount.getLocalBounds().size);
 
-    slotShape.setFillColor(backgroundColor);
-    slotShape.setOutlineThickness(outlineThickness);
-    slotShape.setOutlineColor(outlineColor);
+    slotShape.setFillColor(GuiParameters::foregroundColor);
+    slotShape.setOutlineThickness(GuiParameters::outlineThickness);
+    slotShape.setOutlineColor(GuiParameters::outlineColor);
 }
 
 InventorySlotGui::InventorySlotGui(sf::Vector2f position, float size) : itemAmount(Fonts::pixel) {
@@ -41,10 +36,10 @@ void InventorySlotGui::setHovered(bool val) {
     hovered = val;
 
     if (hovered) {
-        slotShape.setFillColor(highlightColor);
+        slotShape.setFillColor(GuiParameters::highlightColor);
         return;
     }
-    slotShape.setFillColor(backgroundColor);
+    slotShape.setFillColor(GuiParameters::foregroundColor);
 }
 
 void InventorySlotGui::setItem(Item* _item) {

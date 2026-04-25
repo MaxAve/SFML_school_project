@@ -1,6 +1,7 @@
 #pragma once
 #include "gui/InventorySlotGui.hpp"
 #include "looting/Inventory.hpp"
+#include "gui/GuiParameters.hpp"
 
 class SharedInventoryInterface {
     Inventory* mainInventory;
@@ -24,13 +25,6 @@ class SharedInventoryInterface {
     InventorySlot* hoveredSlot = nullptr;
 
 public:
-    static const sf::Color backgroundColor;
-    static const sf::Color foregroundColor;
-    static const float outlineThickness;
-    static const sf::Color outlineColor;
-    static unsigned slotSizeU;
-    static float slotSizeF;
-
     SharedInventoryInterface(sf::Vector2f size, sf::Vector2f position = {0, 0}, Inventory* mainInventory = nullptr, Inventory* otherInventory = nullptr);
 
     void setCarriedItemSprite(sf::Texture*);

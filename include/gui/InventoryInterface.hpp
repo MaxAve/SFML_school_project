@@ -1,5 +1,6 @@
 #pragma once
 #include "core/Window.hpp"
+#include "gui/GuiParameters.hpp"
 #include "gui/InventorySlotGui.hpp"
 #include "gui/ItemLabel.hpp"
 #include "looting/Inventory.hpp"
@@ -26,13 +27,6 @@ class InventoryInterface {
     InventorySlot* hoveredSlot;
 
 public:
-    static const sf::Color backgroundColor;
-    static const sf::Color foregroundColor;
-    static const float outlineThickness;
-    static const sf::Color outlineColor;
-    static unsigned slotSizeU;
-    static float slotSizeF;
-
     InventoryInterface(Inventory* inventory, sf::Vector2f size, sf::Vector2f position = {0, 0});
 
     void setCarriedItemSprite(sf::Texture*);
