@@ -1,8 +1,5 @@
 #include "gui/HotbarGui.hpp"
 
-unsigned HotbarGui::slotSizeU = 95u;
-float HotbarGui::slotSizeF = static_cast<float>(slotSizeU);
-
 HotbarGui::HotbarGui(Hotbar* _hotbar, sf::Vector2f _position) : hotbar(_hotbar) {
     size_t size = hotbar->getSize();
     auto originalSlots = hotbar->getInventorySlots();
@@ -10,7 +7,7 @@ HotbarGui::HotbarGui(Hotbar* _hotbar, sf::Vector2f _position) : hotbar(_hotbar) 
     inventorySlots.resize(size);
     for (size_t i = 0; i < size; i++) {
         inventorySlots[i].setInventorySlot(&(*originalSlots)[i]);
-        inventorySlots[i].setSize(slotSizeF);
+        inventorySlots[i].setSize(GuiParameters::slotSizeF);
     }
 
     setPosition(_position);
@@ -36,7 +33,7 @@ void HotbarGui::setMarkedSlot(size_t idx) {
 void HotbarGui::setPosition(sf::Vector2f pos) {
     float idx = 0;
     for (auto& slot : inventorySlots) {
-        slot.setPosition(pos + sf::Vector2f{slotSizeF, 0} * idx);
+        slot.setPosition(pos + sf::Vector2f{GuiParameters::slotSizeF, 0} * idx);
         idx++;
     }
 }

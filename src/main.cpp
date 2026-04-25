@@ -102,8 +102,8 @@ int main() {
     LOG("creating playerHealthbar");
     PlayerHealthBar playerHealthBar({420, 40}, 100);
     LOG("creating HotbarGui");
-    HotbarGui hotbarGui(&player.hotbar, {((float)window.getSize().x - HotbarGui::slotSizeF * player.hotbar.getSize()) / 2.f,
-                                         (float)window.getSize().y - HotbarGui::slotSizeF - 7.5f});
+    HotbarGui hotbarGui(&player.hotbar, {((float)window.getSize().x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
+                                         (float)window.getSize().y - GuiParameters::slotSizeF - 7.5f});
     hotbarGui.setMarkedSlot(0);
     LOG("initializing inventoryInterface");
     InventoryInterface inventoryInterface(&player.inventory, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
@@ -185,8 +185,8 @@ int main() {
                 inventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
                 sharedInventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
 
-                hotbarGui.setPosition({(newSize.x - HotbarGui::slotSizeF * player.hotbar.getSize()) / 2.f,
-                                         newSize.y - HotbarGui::slotSizeF - 7.5f});
+                hotbarGui.setPosition({(newSize.x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
+                                         newSize.y - GuiParameters::slotSizeF - 7.5f});
             } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
