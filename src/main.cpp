@@ -8,6 +8,7 @@
 #include "environment/TileMapChunk.hpp"
 #include "fx/DamageIndicatorText.hpp"
 #include "gui/BulletMeter.hpp"
+#include "gui/HotbarGui.hpp"
 #include "gui/InventoryInterface.hpp"
 #include "gui/ItemLabel.hpp"
 #include "gui/PlayerHealthBar.hpp"
@@ -98,11 +99,16 @@ int main() {
 
     LOG("initializing player");
     Player player(window);
-    LOG("player object created");
+    LOG("creating playerHealthbar");
     PlayerHealthBar playerHealthBar({420, 40}, 100);
+    LOG("creating HotbarGui");
+    HotbarGui hotbarGui(&player.hotbar, {((float)window.getSize().x - HotbarGui::slotSizeF * player.hotbar.getSize()) / 2.f,
+                                         (float)window.getSize().y - HotbarGui::slotSizeF - 7.5f});
+    hotbarGui.setMarkedSlot(0);
     LOG("initializing inventoryInterface");
     InventoryInterface inventoryInterface(&player.inventory, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
     bool inventoryToggled = false;
+    LOG("initializing sharedInventoryInterface");
     SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, nullptr);
     bool sharedInventoryToggled = false;
 
@@ -122,6 +128,10 @@ int main() {
     Item ti8(ItemType::LOCKPICK, 1);
     Item ti9(ItemType::MEDKIT, 1);
     Item ti10(ItemType::SCOPE, 1);
+    Item ti11(ItemType::MEDIUM_CALIBER_AMMO, 1);
+
+    player.hotbar.setItem(0, &ti11);
+
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
@@ -163,7 +173,7 @@ int main() {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
-            if (event->is<sf::Event::Resized>()) {
+            else if (event->is<sf::Event::Resized>()) {
                 sf::Vector2f newSize = {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)};
 
                 defaultView.setSize({newSize.x, newSize.y});
@@ -174,17 +184,17 @@ int main() {
                 fadeRect.setSize(newSize);
                 inventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
                 sharedInventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
-            }
-            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+
+                hotbarGui.setPosition({(newSize.x - HotbarGui::slotSizeF * player.hotbar.getSize()) / 2.f,
+                                         newSize.y - HotbarGui::slotSizeF - 7.5f});
+            } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
-                if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled && !fadeActive) {
+                else if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled && !fadeActive) {
                     inventoryToggled = !inventoryToggled;
-                }
-                if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventoryInterface.getOtherInventory() && !inventoryToggled && !fadeActive) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventoryInterface.getOtherInventory() && !inventoryToggled && !fadeActive) {
                     sharedInventoryToggled = !sharedInventoryToggled;
-                }
-                if (keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled) {
                     for (int i = 0; i < Door::pool.size(); i++) {
                         if (Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition())) {
                             fadeActive = true;
@@ -195,26 +205,27 @@ int main() {
                             break;
                         }
                     }
+                } else if (keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
+                    hotbarGui.setMarkedSlot(static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num0) - 1);
                 }
-            }
-            if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+            } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 // handle inventory mouse press
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left && inventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     inventoryInterface.handleLMB(mousePos);
                 }
 
-                if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
+                else if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     sharedInventoryInterface.handleLMB(mousePos);
                 }
 
-                if (mouseButtonPressed->button == sf::Mouse::Button::Right && inventoryToggled) {
+                else if (mouseButtonPressed->button == sf::Mouse::Button::Right && inventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     inventoryInterface.handleRMB(mousePos);
                 }
 
-                if (mouseButtonPressed->button == sf::Mouse::Button::Right && sharedInventoryToggled) {
+                else if (mouseButtonPressed->button == sf::Mouse::Button::Right && sharedInventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
                     sharedInventoryInterface.handleRMB(mousePos);
                 }
@@ -289,6 +300,10 @@ int main() {
             sharedInventoryInterface.setOtherInventory(nullptr);
         }
 
+        if (!inventoryToggled && !sharedInventoryToggled) {
+            hotbarGui.update();
+        }
+
         if (inventoryToggled) {
             inventoryInterface.update();
         }
@@ -327,6 +342,10 @@ int main() {
 
         bulletMeter.updateAnimations();
         bulletMeter.draw(window);
+
+        if (!inventoryToggled && !sharedInventoryToggled) {
+            hotbarGui.draw();
+        }
 
         if (inventoryToggled) {
             inventoryInterface.draw();

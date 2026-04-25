@@ -5,6 +5,7 @@
 #include "core/Window.hpp"
 #include "looting/Inventory.hpp"
 #include "core/Hitbox.hpp"
+#include "looting/Hotbar.hpp"
 #include <iostream>
 
 #ifndef M_PI
@@ -18,7 +19,9 @@ public:
     sf::Vector2f velocity;
     sf::View view;
     float speed;
-    Inventory inventory; bool reloading;
+    Inventory inventory; 
+    Hotbar hotbar;
+    bool reloading;
     Hitbox hitbox;
 
 	sf::RectangleShape gunSprite; // Replace with sprite
