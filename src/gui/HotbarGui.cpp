@@ -1,6 +1,25 @@
 #include "gui/HotbarGui.hpp"
 
-HotbarGui::HotbarGui(Hotbar* _hotbar, sf::Vector2f _position) : hotbar(_hotbar) {
+HotbarGui::HotbarGui(Hotbar* _hotbar, sf::Vector2f _position) {
+    setHotbar(_hotbar);
+    setPosition(_position);
+}
+
+Hotbar* HotbarGui::getHotbar() {
+    return hotbar;
+}
+
+std::vector<InventorySlotGui>* HotbarGui::getGuiSlots() {
+    return &inventorySlots;
+}
+
+void HotbarGui::setHotbar(Hotbar* _hotbar) {
+    hotbar = _hotbar;
+    
+    if (!hotbar) {
+        return;
+    }
+
     size_t size = hotbar->getSize();
     auto originalSlots = hotbar->getInventorySlots();
 
@@ -9,12 +28,6 @@ HotbarGui::HotbarGui(Hotbar* _hotbar, sf::Vector2f _position) : hotbar(_hotbar) 
         inventorySlots[i].setInventorySlot(&(*originalSlots)[i]);
         inventorySlots[i].setSize(GuiParameters::slotSizeF);
     }
-
-    setPosition(_position);
-}
-
-Hotbar* HotbarGui::getHotbar() {
-    return hotbar;
 }
 
 void HotbarGui::setMarkedSlot(size_t idx) {
@@ -39,6 +52,10 @@ void HotbarGui::setPosition(sf::Vector2f pos) {
 }
 
 void HotbarGui::update() {
+    if (!hotbar) {
+        return;
+    }
+
     // set inventorySlotsGui according to original slots
     size_t size = hotbar->getSize();
     auto originalSlots = hotbar->getInventorySlots();

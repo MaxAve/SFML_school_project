@@ -5,7 +5,7 @@
 #include <iostream>
 #define LOG(message) std::cout << message << std::endl
 
-SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), mainInventory{_mainInventory}, otherInventory{_otherInventory}, amountOfCarriedItem(Fonts::pixel, "0", 20) {
+SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vector2f _position, Inventory* _mainInventory, Hotbar* _hotbar, Inventory* _otherInventory) : mainTitle(Fonts::pixel, "", 20), otherTitle(Fonts::pixel, "", 20), amountOfCarriedItem(Fonts::pixel, "0", 20) {
     carriedItem = nullptr;
     carriedItemSprite.reset();
     amountOfCarriedItem.setOrigin(amountOfCarriedItem.getLocalBounds().size);
@@ -22,8 +22,9 @@ SharedInventoryInterface::SharedInventoryInterface(sf::Vector2f _size, sf::Vecto
     foreground.setOutlineThickness(GuiParameters::outlineThickness);
     foreground.setOutlineColor(GuiParameters::outlineColor);
 
-    setMainInventory(mainInventory);
-    setOtherInventory(otherInventory);
+    setMainInventory(_mainInventory);
+    setHotbar(_hotbar);
+    setOtherInventory(_otherInventory);
 }
 
 InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
@@ -40,6 +41,12 @@ InventorySlotGui* SharedInventoryInterface::findHoveredSlot() {
             if (slot.isHovered()) {
                 return &slot;
             }
+        }
+    }
+
+    for (auto& slot : *hotbarGui.getGuiSlots()) {
+        if (slot.isHovered()) {
+            return &slot;
         }
     }
 
@@ -150,8 +157,11 @@ void SharedInventoryInterface::setOtherInventory(Inventory* inventory) {
     otherTitle.setString(inventory->getTitle());
     sf::Vector2u invSize = inventory->getInventorySize();
 
+    // space for both inventories (not including the hotbar)
+    sf::Vector2f inventorySpace = foreground.getSize() - sf::Vector2f{0, GuiParameters::slotSizeF + 0.f};
+
     sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
-    paddingU = ((foreground.getSize() - sf::Vector2f{0, foreground.getSize().y / 2.f}) - static_cast<sf::Vector2f>(invSize) * GuiParameters::slotSizeF) / 2.f;
+    paddingU = ((inventorySpace - sf::Vector2f{0, inventorySpace.y / 2.f}) - static_cast<sf::Vector2f>(invSize) * GuiParameters::slotSizeF) / 2.f;
     std::vector<std::vector<InventorySlot>>* _inventorySlots = inventory->getInventorySlots();
 
     otherTitle.setPosition({upperLeftCorner.x + paddingU.x, upperLeftCorner.y});
@@ -181,9 +191,13 @@ void SharedInventoryInterface::setMainInventory(Inventory* inventory) {
     mainTitle.setString(inventory->getTitle());
     sf::Vector2u invSize = inventory->getInventorySize();
 
-    sf::Vector2f halfSize = foreground.getSize() / 2.f;
-    sf::Vector2f middleLeftCorner = {foreground.getPosition().x - halfSize.x, foreground.getPosition().y};
-    paddingL = ((foreground.getSize() - sf::Vector2f{0, halfSize.y}) - static_cast<sf::Vector2f>(invSize) * GuiParameters::slotSizeF) / 2.f;
+    // space for both inventories (not including the hotbar)
+    sf::Vector2f inventorySpace = foreground.getSize() - sf::Vector2f{0, GuiParameters::slotSizeF + 0.f};
+
+    sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+    // place main inventory in the bottom half of the available inventorySpace
+    sf::Vector2f middleLeftCorner = {upperLeftCorner.x, upperLeftCorner.y + inventorySpace.y / 2.f};
+    paddingL = ((inventorySpace - sf::Vector2f{0, inventorySpace.y / 2.f}) - static_cast<sf::Vector2f>(invSize) * GuiParameters::slotSizeF) / 2.f;
     std::vector<std::vector<InventorySlot>>* _inventorySlots = inventory->getInventorySlots();
 
     mainTitle.setPosition({middleLeftCorner.x + paddingL.x, middleLeftCorner.y});
@@ -200,6 +214,21 @@ void SharedInventoryInterface::setMainInventory(Inventory* inventory) {
     }
 }
 
+void SharedInventoryInterface::setHotbar(Hotbar* _hotbar) {
+    hotbar = _hotbar;
+    hotbarGui.setHotbar(hotbar);
+
+    if (!hotbar) {
+        return;
+    }
+
+    sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+    float hotbarWidth = hotbar->getSize() * GuiParameters::slotSizeF;
+    sf::Vector2f hotbarPosition = {upperLeftCorner.x + (foreground.getSize().x - hotbarWidth) / 2.f,
+                                   upperLeftCorner.y + foreground.getSize().y - GuiParameters::slotSizeF - 7.5f};
+    hotbarGui.setPosition(hotbarPosition);
+}
+
 Inventory* SharedInventoryInterface::getOtherInventory() {
     return otherInventory;
 }
@@ -209,6 +238,8 @@ Inventory* SharedInventoryInterface::getMainInventory() {
 }
 
 void SharedInventoryInterface::setPosition(sf::Vector2f newPosition) {
+    // space for both inventories (not including the hotbar)
+    sf::Vector2f inventorySpace = foreground.getSize() - sf::Vector2f{0, GuiParameters::slotSizeF + 50.f};
     foreground.setPosition(newPosition);
 
     if (otherInventory) {
@@ -225,17 +256,27 @@ void SharedInventoryInterface::setPosition(sf::Vector2f newPosition) {
     }
 
     if (mainInventory) {
-        sf::Vector2f halfSize = foreground.getSize() / 2.f;
-        sf::Vector2f middleLeftCorner = {foreground.getPosition().x - halfSize.x, foreground.getPosition().y};
+        sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+        // origin for main inventory: start at left edge, halfway down the inventorySpace
+        sf::Vector2f middleLeftCorner = {upperLeftCorner.x, upperLeftCorner.y + inventorySpace.y / 2.f};
 
         mainTitle.setPosition({middleLeftCorner.x + paddingL.x, middleLeftCorner.y});
 
         for (size_t x = 0; x < mainInventorySlots.size(); x++) {
             for (size_t y = 0; y < mainInventorySlots[x].size(); y++) {
-                mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingU.x + GuiParameters::slotSizeF * x,
-                                                      middleLeftCorner.y + paddingU.y + GuiParameters::slotSizeF * y});
+                mainInventorySlots[x][y].setPosition({middleLeftCorner.x + paddingL.x + GuiParameters::slotSizeF * x,
+                                                      middleLeftCorner.y + paddingL.y + GuiParameters::slotSizeF * y});
             }
         }
+    }
+
+    if (hotbar) {
+        // reposition hotbar to remain centered at the bottom of the foreground
+        sf::Vector2f upperLeftCorner = foreground.getPosition() - foreground.getSize() / 2.f;
+        float hotbarWidth = hotbar->getSize() * GuiParameters::slotSizeF;
+        sf::Vector2f hotbarPosition = {upperLeftCorner.x + (foreground.getSize().x - hotbarWidth) / 2.f,
+                                       upperLeftCorner.y + foreground.getSize().y - GuiParameters::slotSizeF - 7.5f};
+        hotbarGui.setPosition(hotbarPosition);
     }
 }
 
@@ -265,6 +306,8 @@ void SharedInventoryInterface::update() {
         amountOfCarriedItem.setPosition({mousePos.x + GuiParameters::slotSizeF / 2.f - 13.f, mousePos.y + GuiParameters::slotSizeF / 2.f - 12.f});
     }
 
+    hotbarGui.update();
+
     for (auto& row : mainInventorySlots) {
         for (auto& slot : row) {
             slot.setHovered(false);
@@ -277,6 +320,11 @@ void SharedInventoryInterface::update() {
             slot.setHovered(false);
             slot.update();
         }
+    }
+
+    for (auto& slot : *hotbarGui.getGuiSlots()) {
+        slot.setHovered(false);
+        slot.update();
     }
 
     for (auto& row : mainInventorySlots) {
@@ -302,6 +350,17 @@ void SharedInventoryInterface::update() {
                 }
                 return;
             }
+        }
+    }
+
+    for (auto& slot : *hotbarGui.getGuiSlots()) {
+        if (slot.getGlobalBounds().contains(mousePos)) {
+            slot.setHovered(true);
+            if (slot.getItem() != nullptr) {
+                ItemLabel::visible = true;
+                ItemLabel::update(slot.getItem()->getName(), slot.getItem()->getDescription());
+            }
+            return;
         }
     }
 }
@@ -324,6 +383,8 @@ void SharedInventoryInterface::draw() {
             slot.draw();
         }
     }
+
+    hotbarGui.draw();
 
     if (carriedItemSprite) {
         window.draw(*(carriedItemSprite));

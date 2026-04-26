@@ -2,13 +2,17 @@
 #include "gui/InventorySlotGui.hpp"
 #include "looting/Inventory.hpp"
 #include "gui/GuiParameters.hpp"
+#include "gui/HotbarGui.hpp"
 
 class SharedInventoryInterface {
     Inventory* mainInventory;
+    Hotbar* hotbar;
     Inventory* otherInventory;
 
     std::vector<std::vector<InventorySlotGui>> mainInventorySlots;
     sf::Text mainTitle;
+    HotbarGui hotbarGui;
+
     std::vector<std::vector<InventorySlotGui>> otherInventorySlots;
     sf::Text otherTitle;
 
@@ -25,7 +29,7 @@ class SharedInventoryInterface {
     InventorySlot* hoveredSlot = nullptr;
 
 public:
-    SharedInventoryInterface(sf::Vector2f size, sf::Vector2f position = {0, 0}, Inventory* mainInventory = nullptr, Inventory* otherInventory = nullptr);
+    SharedInventoryInterface(sf::Vector2f size, sf::Vector2f position = {0, 0}, Inventory* mainInventory = nullptr, Hotbar* hotbar = 0, Inventory* otherInventory = nullptr);
 
     void setCarriedItemSprite(sf::Texture*);
 
@@ -39,11 +43,15 @@ public:
 
     void setMainInventory(Inventory* inventory);
 
+    void setHotbar(Hotbar* hotbar);
+
+    void setOtherInventory(Inventory* inventory);
+
     Inventory* getOtherInventory();
 
     Inventory* getMainInventory();
 
-    void setOtherInventory(Inventory* inventory);
+    Hotbar* getHotbar();
 
     InventorySlotGui* findHoveredSlot();
 

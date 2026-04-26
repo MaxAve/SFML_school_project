@@ -106,10 +106,10 @@ int main() {
                                          (float)window.getSize().y - GuiParameters::slotSizeF - 7.5f});
     hotbarGui.setMarkedSlot(0);
     LOG("initializing inventoryInterface");
-    InventoryInterface inventoryInterface(&player.inventory, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
+    InventoryInterface inventoryInterface(&player.inventory, &player.hotbar, {1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2});
     bool inventoryToggled = false;
     LOG("initializing sharedInventoryInterface");
-    SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, nullptr);
+    SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, &player.hotbar, nullptr);
     bool sharedInventoryToggled = false;
 
     float lastBulletReloadDelay = .0f;
@@ -117,7 +117,7 @@ int main() {
     LOG("TEST: Item and inventory stuff");
     // ! TEST
 
-    Item ti0(ItemType::SMALL_CALIBER_AMMO, 1);
+    Item ti0(ItemType::SMALL_CALIBER_AMMO, 32);
     Item ti1(ItemType::SHOTGUN_AMMO, 1);
     Item ti2(ItemType::LARGE_CALIBER_AMMO, 1);
     Item ti3(ItemType::MEDIUM_CALIBER_AMMO, 1);

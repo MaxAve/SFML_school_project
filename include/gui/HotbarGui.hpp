@@ -10,13 +10,17 @@ class HotbarGui {
     size_t markedSlot;
 public:
 
-    HotbarGui(Hotbar* hotbar, sf::Vector2f position = {0, 0});
+    HotbarGui(Hotbar* hotbar = nullptr, sf::Vector2f position = {0, 0});
 
     Hotbar* getHotbar();
+
+    std::vector<InventorySlotGui>* getGuiSlots();
 
     void setMarkedSlot(size_t idx);
 
     void setPosition(sf::Vector2f);
+
+    void setHotbar(Hotbar* _hotbar);
 
     void update();
 
