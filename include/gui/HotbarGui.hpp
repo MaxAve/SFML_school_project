@@ -1,6 +1,7 @@
 #pragma once 
 #include "looting/Hotbar.hpp"
 #include "gui/InventorySlotGui.hpp"
+#include "GuiParameters.hpp"
 
 class HotbarGui {
     Hotbar* hotbar;
@@ -8,18 +9,18 @@ class HotbarGui {
 
     size_t markedSlot;
 public:
-    static const float stdOutlineThickness;
-    static const sf::Color stdOutlineColor;
-    static unsigned slotSizeU;
-    static float slotSizeF;
 
-    HotbarGui(Hotbar* hotbar, sf::Vector2f size, sf::Vector2f position = {0, 0});
+    HotbarGui(Hotbar* hotbar = nullptr, sf::Vector2f position = {0, 0});
 
     Hotbar* getHotbar();
 
-    void setMarkedSlot();
+    std::vector<InventorySlotGui>* getGuiSlots();
+
+    void setMarkedSlot(size_t idx);
 
     void setPosition(sf::Vector2f);
+
+    void setHotbar(Hotbar* _hotbar);
 
     void update();
 
