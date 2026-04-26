@@ -186,7 +186,7 @@ int main() {
                 sharedInventoryInterface.setPosition({newSize.x / 2, newSize.y / 2});
 
                 hotbarGui.setPosition({(newSize.x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
-                                         newSize.y - GuiParameters::slotSizeF - 7.5f});
+                                       newSize.y - GuiParameters::slotSizeF - 7.5f});
             } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();

@@ -242,24 +242,6 @@ void SharedInventoryInterface::setPosition(sf::Vector2f newPosition) {
 void SharedInventoryInterface::update() {
     ItemLabel::visible = false;
 
-    // checking if the slotGui corresponds with slot status
-    // occurs because we set the item directly to the corresponding slot instead of slotGui
-    // ? perhaps fix by solving the inconsistency of inventorySlot::setItem()
-    for (auto& row : mainInventorySlots) {
-        for (auto& slot : row) {
-            if (!slot.getItem()) {
-                if (slot.getSpriteTexture()) {
-                    slot.setupItemSprite(nullptr);
-                }
-                continue;
-            }
-
-            if (slot.getSpriteTexture() != slot.getItem()->getTexture()) {
-                slot.setupItemSprite(slot.getItem());
-            }
-        }
-    }
-
     for (auto& row : otherInventorySlots) {
         for (auto& slot : row) {
             if (!slot.getItem()) {

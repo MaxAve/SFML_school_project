@@ -115,6 +115,15 @@ void InventorySlotGui::setSize(float _size) {
 }
 
 void InventorySlotGui::update() {
+    const sf::Texture* currentTexture = getSpriteTexture();
+    if (!inventorySlot->getItem()) {
+        if (currentTexture) {
+            setupItemSprite(nullptr);
+        }
+    } else if (currentTexture != inventorySlot->getItem()->getTexture()) {
+        setupItemSprite(inventorySlot->getItem());
+    }
+
     if (inventorySlot && inventorySlot->getItem() && inventorySlot->getItem()->getMaximalAmount() > 1) {
         itemAmount.setString(std::to_string(inventorySlot->getItem()->getAmount()));
         return;

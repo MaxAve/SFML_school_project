@@ -171,24 +171,6 @@ void InventoryInterface::resizeBackground(sf::Vector2f newSize) {
 void InventoryInterface::update() {
     ItemLabel::visible = false;
 
-    // checking if the slotGui corresponds with slot status
-    // occurs because we set the item directly to the corresponding slot instead of slotGui
-    // ? perhaps fix by solving the inconsistency of inventorySlot::setItem()
-    for (auto& row : inventorySlots) {
-        for (auto& slot : row) {
-            if (!slot.getItem()) {
-                if (slot.getSpriteTexture()) {
-                    slot.setupItemSprite(nullptr);
-                }
-                continue;
-            }
-
-            if (slot.getSpriteTexture() != slot.getItem()->getTexture()) {
-                slot.setupItemSprite(slot.getItem());
-            }
-        }
-    }
-
     sf::Vector2f mousePos = (sf::Vector2f)Window::getMousePos();
 
     if (carriedItem) {
