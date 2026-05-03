@@ -14,7 +14,7 @@ void ItemLabel::init()
 
     ItemLabel::itemDescription.setString("");
     ItemLabel::itemDescription.setFillColor(sf::Color(200, 200, 200));
-    ItemLabel::itemDescription.setCharacterSize(30);
+    ItemLabel::itemDescription.setCharacterSize(25);
 
     ItemLabel::box.setFillColor(sf::Color::Black);
     ItemLabel::box.setOutlineColor(sf::Color::White);
@@ -51,7 +51,7 @@ void ItemLabel::draw(sf::RenderWindow& window)
         ItemLabel::box.setPosition({mp.x + 25, mp.y + 25});
         ItemLabel::box2.setPosition({mp.x + 21, mp.y + 21});
         ItemLabel::itemName.setPosition({mp.x + 35, mp.y + 30});
-        ItemLabel::itemDescription.setPosition({mp.x + 35, mp.y + itemNameHeight + 45 + 15});
+        ItemLabel::itemDescription.setPosition({mp.x + 35, mp.y + itemNameHeight + 45 + 30});
 
         window.draw(ItemLabel::box2);
         window.draw(ItemLabel::box);
