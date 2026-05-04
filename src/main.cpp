@@ -129,9 +129,10 @@ int main() {
     Item ti9(ItemType::MEDKIT, 1);
     Item ti10(ItemType::SCOPE, 1);
     Item ti11(ItemType::MEDIUM_CALIBER_AMMO, 1);
+    Item ti12(ItemType::GUN_SMG, 1);
+    Item ti13(ItemType::GUN_AR, 1);
 
     player.hotbar.setItem(0, &ti11);
-
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
@@ -143,6 +144,8 @@ int main() {
     player.inventory.setItem({8, 1}, &ti8);
     player.inventory.setItem({9, 1}, &ti9);
     player.inventory.setItem({0, 2}, &ti10);
+    player.inventory.setItem({1, 2}, &ti12);
+    player.inventory.setItem({2, 2}, &ti13);
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 

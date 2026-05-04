@@ -9,10 +9,12 @@ std::unordered_map<ItemType, ItemData> Item::typeToData{
     {ItemType::MEDIUM_CALIBER_AMMO, {"Medium Caliber Ammo", "Standard firearm ammunition", false, false, false, 0, 0.f, "items/bullet_medium", 120}},
     {ItemType::BANDAGE, {"Bandage", "Consumable\nHeals 20 HP on use", false, false, true, 20, 1.f, "items/bandage", 3}},
     {ItemType::MEDKIT, {"Medkit", "Consumable\nHeals 80 HP on use", false, false, true, 80, 0.5f, "items/medkit3d", 1}},
-    {ItemType::KITCHEN_KNIFE, {"Kitchen Knife", "Weapon\nDeals 20 damage on hit (15% crit chance)", true, false, false, 20, 2.f, "items/kitchen_knife", 1}},
-    {ItemType::COMBAT_KNIFE, {"Combat Knife", "Weapon\nDeals 30 damage on hit (20% crit chance)", true, false, false, 30, 1.5f, "items/combat_knife", 1}},
+    {ItemType::KITCHEN_KNIFE, {"Kitchen Knife", "Weapon\nDamage: 20\nCrit chance: 15%", true, false, false, 20, 2.f, "items/kitchen_knife", 1}},
+    {ItemType::COMBAT_KNIFE, {"Combat Knife", "Weapon\nDamage: 30\nCrit chance: 20%", true, false, false, 30, 1.5f, "items/combat_knife", 1}},
     {ItemType::LOCKPICK, {"Lockpick", "Tool\nCan open locked doors and boxes", false, false, false, 0, 1.f, "items/lockpick", 1}},
     {ItemType::SCOPE, {"Scope", "Weapon Extension\nIncreases crit chance by +100% when crafted onto a gun", false, false, false, 0, 0.f, "items/scope", 1}},
+    {ItemType::GUN_SMG, {"SMG", "Weapon\nDamage/round: 15\nRate of fire: 600/min\nCrit chance: 5%\nMagazine size: 60\nCaliber: small              ", false, false, false, 0, 0.f, "items/gun_smg", 1}},
+    {ItemType::GUN_AR, {"Assault Rifle", "Weapon\nDamage/round: 25\nRate of fire: 450/min\nCrit chance: 15%\nMagazine size: 30\nCaliber: medium         ", false, false, false, 0, 0.f, "items/gun_ar", 1}},
 };
 
 Item::Item(ItemType _type, size_t _amount) : data{typeToData.at(_type)} {

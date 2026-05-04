@@ -14,6 +14,8 @@ enum class ItemType {
     COMBAT_KNIFE,
     LOCKPICK,
     SCOPE,
+    GUN_SMG,
+    GUN_AR,
 };
 
 struct ItemData {

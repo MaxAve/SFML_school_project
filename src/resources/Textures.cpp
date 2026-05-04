@@ -20,6 +20,8 @@ void initTextures() {
         "items/combat_knife",
         "items/lockpick",
         "items/scope",
+        "items/gun_smg",
+        "items/gun_ar",
         "gui_hud/q_key_prompt",
     };
     for(int i = 0; i < textureNames.size(); i++)
