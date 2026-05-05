@@ -131,6 +131,7 @@ int main() {
     Item ti11(ItemType::MEDIUM_CALIBER_AMMO, 1);
     Item ti12(ItemType::GUN_SMG, 1);
     Item ti13(ItemType::GUN_AR, 1);
+    Item ti14(ItemType::GUN_REVOLVER, 1);
 
     player.hotbar.setItem(0, &ti11);
     player.inventory.setItem({0, 1}, &ti0);
@@ -146,6 +147,7 @@ int main() {
     player.inventory.setItem({0, 2}, &ti10);
     player.inventory.setItem({1, 2}, &ti12);
     player.inventory.setItem({2, 2}, &ti13);
+    player.inventory.setItem({3, 2}, &ti14);
     LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 
@@ -156,7 +158,7 @@ int main() {
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    int nzombies = 30;
+    int nzombies = 0;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
