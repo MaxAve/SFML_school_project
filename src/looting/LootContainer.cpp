@@ -4,7 +4,7 @@
 float LootContainer::promptDistanceFromContainer = 8.f;
 
 LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
-    : range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get(Textures::TextureType::GUI_Q_KEY_PROMPT)) {
+    : range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get("gui_hud/q_key_prompt")) {
 
     box.setSize(size);
     box.setOrigin(box.getLocalBounds().getCenter());
