@@ -4,9 +4,10 @@
 #include "resources/Fonts.hpp"
 #include "core/Physics.hpp"
 
-#define BULLET_SPRITE_WIDTH 10
-#define BULLET_SPRITE_DISTANCE 6
-#define BULLET_SPRITE_HEIGHT 40
+#define BULLET_SPRITE_WIDTH 10.0f
+#define BULLET_SPRITE_DISTANCE 0.0f
+#define BULLET_SPRITE_HEIGHT 40.0f
+#define BAR_WIDTH 498.0f
 
 class BulletMeter
 {
