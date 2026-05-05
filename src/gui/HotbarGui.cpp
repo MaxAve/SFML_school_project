@@ -1,5 +1,8 @@
 #include "gui/HotbarGui.hpp"
 
+#include <iostream>
+#define LOG(msg) std::cout << msg << std::endl;
+
 HotbarGui::HotbarGui(Hotbar* _hotbar, sf::Vector2f _position) {
     setHotbar(_hotbar);
     setPosition(_position);
@@ -31,7 +34,7 @@ void HotbarGui::setHotbar(Hotbar* _hotbar) {
 }
 
 void HotbarGui::setMarkedSlot(size_t idx) {
-    if (idx > hotbar->getSize()) {
+    if (idx >= hotbar->getSize()) {
         return;
     }
     
