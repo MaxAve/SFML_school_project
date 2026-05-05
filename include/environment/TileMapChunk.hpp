@@ -1,5 +1,4 @@
 #pragma once
-#include "environment/Tile.hpp"
 #include "resources/Textures.hpp"
 #include <SFML/Graphics.hpp>
 
