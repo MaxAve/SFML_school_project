@@ -19,5 +19,5 @@ public:
     TileMapChunk(sf::Vector2i position);
 
     bool updateTextures(); // Update textures based on the tile IDs stored
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, sf::Shader& shader);
 };

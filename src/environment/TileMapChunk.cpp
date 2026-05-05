@@ -56,7 +56,10 @@ bool TileMapChunk::updateTextures()
     return true;
 }
 
-void TileMapChunk::draw(sf::RenderWindow& window)
+void TileMapChunk::draw(sf::RenderWindow& window, sf::Shader& shader)
 {
-    window.draw(this->mesh, &TileMapChunk::tilesetAtlas);
+    sf::RenderStates states;
+    states.texture = &TileMapChunk::tilesetAtlas;
+    states.shader = &shader;
+    window.draw(this->mesh, states);
 }

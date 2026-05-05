@@ -45,13 +45,18 @@ int main() {
     float cameraShakeRange = 0.0f;
 
     window.setFramerateLimit(60); // to avoid pc flying into space
-    window.setView(defaultView);
+    window.setView(defaultView);    
 
     LOG("Loading tileset");
     if (!TileMapChunk::tilesetAtlas.loadFromFile("resources/textures/environment/tilemap.png")) {
         LOG("Failed to load tileset");
         return 1;
     }
+
+    sf::Shader shader;
+	if (!shader.loadFromFile("resources/shaders/lighting.glsl", sf::Shader::Type::Fragment)) {
+		std::cout << "Failed to load lighting.glsl\n";
+	}
 
     ItemLabel::init();
 
@@ -237,6 +242,8 @@ int main() {
             }
         }
 
+        shader.setUniform("resolution", sf::Vector2f(window.getSize()));
+
         // game outside of inventory
         if (!inventoryToggled && !sharedInventoryToggled) {
             if (!fadeActive) {
@@ -323,8 +330,8 @@ int main() {
         // draw Camera (View)
         window.setView(player.view);
 
-        testChunk.draw(window);
-        testChunk2.draw(window);
+        testChunk.draw(window, shader);
+        testChunk2.draw(window, shader);
 
         chest.draw();
         for (auto& it : Door::pool)
