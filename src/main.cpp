@@ -57,6 +57,7 @@ int main() {
 	if (!shader.loadFromFile("resources/shaders/lighting.glsl", sf::Shader::Type::Fragment)) {
 		std::cout << "Failed to load lighting.glsl\n";
 	}
+    shader.setUniform("amountLightSources", 0);
 
     ItemLabel::init();
 
@@ -323,6 +324,19 @@ int main() {
             selectedItemLabel.setOrigin(sf::Vector2f((selectedItemLabel.findCharacterPos(selectedItemLabel.getString().getSize() - 1).x - selectedItemLabel.findCharacterPos(0).x) / 2, 0));
             selectedItemLabel.setPosition(sf::Vector2f(window.getSize().x/2, window.getSize().y-150));
         }
+
+        // LIGHT TEST
+        shader.setUniform("amountLightSources", 2);
+        
+        shader.setUniform("lightSources[0].position", sf::Vector2f(600.0f, 200.0f));
+        shader.setUniform("lightSources[0].color", sf::Vector3f(1.0f, 0.0f, 0.0f));
+        shader.setUniform("lightSources[0].range", 100.f);
+        shader.setUniform("lightSources[0].intensity", 5.0f);
+
+        shader.setUniform("lightSources[1].position", sf::Vector2f(700.0f, 200.0f));
+        shader.setUniform("lightSources[1].color", sf::Vector3f(0.0f, 1.0f, 0.0f));
+        shader.setUniform("lightSources[1].range", 100.f);
+        shader.setUniform("lightSources[1].intensity", 5.0f);
 
         Bullet::updateAll();
         player.update();
