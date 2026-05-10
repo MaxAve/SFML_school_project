@@ -12,7 +12,7 @@ class TileMapChunk
 public:
     static sf::Texture tilesetAtlas;
 
-    int tiles[16][16]; // Tile IDs (0-255)
+    int tiles[CHUNK_HEIGHT][CHUNK_WIDTH]; // Tile IDs (0-255)
     sf::VertexArray mesh;
 
     TileMapChunk(sf::Vector2i position);

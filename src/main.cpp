@@ -1,3 +1,4 @@
+#include "environment/GameMap.hpp"
 #include "core/Physics.hpp"
 #include "core/Window.hpp"
 #include "entities/Bullet.hpp"
@@ -60,38 +61,7 @@ int main() {
 
     ItemLabel::init();
 
-    // Test chunk
-    TileMapChunk testChunk({0, 0});
-
-    // Fill the chunk with some tiles
-    for (int x = 0; x < 16; x++)
-        for (int y = 0; y < 16; y++)
-            testChunk.tiles[y][x] = 0;
-    for (int x = 0; x < 16; x++)
-        testChunk.tiles[7][x] = 16;
-    for (int x = 0; x < 16; x++)
-        testChunk.tiles[8][x] = 17;
-    testChunk.tiles[8][8] = 18;
-    for (int x = 0; x < 16; x++)
-        for (int y = 9; y < 13; y++)
-            testChunk.tiles[y][x] = 34;
-    for (int x = 0; x < 16; x++)
-        if (x % 2 == 0)
-            testChunk.tiles[10][x] = 33;
-    for (int x = 0; x < 16; x++)
-        testChunk.tiles[13][x] = 64;
-
-    testChunk.updateTextures();
-
-    // Second layer for tall grass
-    TileMapChunk testChunk2({0, 0});
-    for (int x = 0; x < 16; x++)
-        for (int y = 0; y < 16; y++)
-            if ((y < 7 || y >= 13) && (rand() % 3) == 0)
-                testChunk2.tiles[y][x] = 80; // tall grass
-            else
-                testChunk2.tiles[y][x] = 96; // air
-    testChunk2.updateTextures();
+    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 1, 1);
 
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
     fadeRect.setPosition({0, 0});
@@ -163,7 +133,7 @@ int main() {
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    int nzombies = 0;
+    int nzombies = 5;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
@@ -330,8 +300,7 @@ int main() {
         // draw Camera (View)
         window.setView(player.view);
 
-        testChunk.draw(window, shader);
-        testChunk2.draw(window, shader);
+        mainMap.draw(player.hitbox.position, window, shader);
 
         chest.draw();
         for (auto& it : Door::pool)
