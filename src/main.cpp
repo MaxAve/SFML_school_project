@@ -1,3 +1,4 @@
+#include "environment/GameMap.hpp"
 #include "core/Physics.hpp"
 #include "core/Window.hpp"
 #include "entities/Bullet.hpp"
@@ -369,8 +370,7 @@ int main() {
         // draw Camera (View)
         window.setView(player.view);
 
-        testChunk.draw(window, shader);
-        testChunk2.draw(window, shader);
+        mainMap.draw(player.hitbox.position, window, shader);
 
         chest.draw();
         for (auto& it : Door::pool)
