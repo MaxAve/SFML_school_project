@@ -5,19 +5,40 @@
 #define LOG(msg) std::cout << msg << std::endl
 
 GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _mapWidth, size_t _mapHeight) : firstPos{_firstPos}, mapWidth{_mapWidth}, mapHeight{_mapHeight} {
+    generateMap();
 
-    loadChunksFromFile(chunks1L, _path1L);
-    loadChunksFromFile(chunks2L, _path2L);
+    // loadChunksFromFile(chunks1L, _path1L);
+    // loadChunksFromFile(chunks2L, _path2L);
+}
 
-#if 0
-    // generating map (temporary)
-    chunks1L.reserve(1);
-    chunks2L.reserve(1);
+void fillTiles(TileMapChunk& chunk, int code) {
+    for (size_t i = 0; i < CHUNK_HEIGHT; i++) {
+        for (size_t j = 0; j < CHUNK_WIDTH; j++) {
+            chunk.tiles[i][j] = code;
+        }
+    }
+}
 
-    chunks1L.emplace_back(sf::Vector2i{0, 0});
-    for (int x = 0; x < 16; x++)
-        for (int y = 0; y < 16; y++)
-            chunks1L[0].tiles[y][x] = 0;
+void GameMap::generateMap() {
+    const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH, TILE_SIZE * CHUNK_HEIGHT};
+    size_t n = mapWidth * mapHeight;
+
+    // generate tiles
+    for (size_t i = 0; i < n; i++) {
+        chunks1L.emplace_back(sf::Vector2i{
+            static_cast<int>(firstPos.x + chunkSize.x * (i % mapWidth)),
+            static_cast<int>(firstPos.y + chunkSize.y * (i / mapWidth))});
+        chunks2L.emplace_back(sf::Vector2i{
+            static_cast<int>(firstPos.x + chunkSize.x * (i % mapWidth)),
+            static_cast<int>(firstPos.y + chunkSize.y * (i / mapWidth))});
+
+        fillTiles(chunks1L[i], 0); // 0 nothing
+        fillTiles(chunks2L[i], 96);
+        
+        chunks1L[i].updateTextures();
+        chunks2L[i].updateTextures();
+    }
+
     for (int x = 0; x < 16; x++)
         chunks1L[0].tiles[7][x] = 16;
     for (int x = 0; x < 16; x++)
@@ -33,7 +54,6 @@ GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::
         chunks1L[0].tiles[13][x] = 64;
     chunks1L[0].updateTextures();
 
-    chunks2L.emplace_back(sf::Vector2i{0, 0});
     for (int x = 0; x < 16; x++)
         for (int y = 0; y < 16; y++)
             if ((y < 7 || y >= 13) && (rand() % 3) == 0)
@@ -41,10 +61,6 @@ GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::
             else
                 chunks2L[0].tiles[y][x] = 96; // air
     chunks2L[0].updateTextures();
-
-    loadChunksToFile(chunks1L, _path1L);
-    loadChunksToFile(chunks2L, _path2L);
-#endif
 }
 
 void GameMap::loadChunksFromFile(std::vector<TileMapChunk>& chunks, const std::string& path) {
