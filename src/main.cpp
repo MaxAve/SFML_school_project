@@ -68,38 +68,7 @@ int main() {
     selectedItemLabel.setFillColor(sf::Color::White);
     selectedItemLabel.setCharacterSize(30);
 
-    // Test chunk
-    TileMapChunk testChunk({0, 0});
-
-    // Fill the chunk with some tiles
-    for (int x = 0; x < 16; x++)
-        for (int y = 0; y < 16; y++)
-            testChunk.tiles[y][x] = 0;
-    for (int x = 0; x < 16; x++)
-        testChunk.tiles[7][x] = 16;
-    for (int x = 0; x < 16; x++)
-        testChunk.tiles[8][x] = 17;
-    testChunk.tiles[8][8] = 18;
-    for (int x = 0; x < 16; x++)
-        for (int y = 9; y < 13; y++)
-            testChunk.tiles[y][x] = 34;
-    for (int x = 0; x < 16; x++)
-        if (x % 2 == 0)
-            testChunk.tiles[10][x] = 33;
-    for (int x = 0; x < 16; x++)
-        testChunk.tiles[13][x] = 64;
-
-    testChunk.updateTextures();
-
-    // Second layer for tall grass
-    TileMapChunk testChunk2({0, 0});
-    for (int x = 0; x < 16; x++)
-        for (int y = 0; y < 16; y++)
-            if ((y < 7 || y >= 13) && (rand() % 3) == 0)
-                testChunk2.tiles[y][x] = 80; // tall grass
-            else
-                testChunk2.tiles[y][x] = 96; // air
-    testChunk2.updateTextures();
+    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 1, 1);
 
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
     fadeRect.setPosition({0, 0});
