@@ -58,10 +58,48 @@ int main() {
 	if (!shader.loadFromFile("resources/shaders/lighting.glsl", sf::Shader::Type::Fragment)) {
 		std::cout << "Failed to load lighting.glsl\n";
 	}
+    shader.setUniform("amountLightSources", 0);
 
     ItemLabel::init();
 
-    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 1, 1);
+    sf::Text selectedItemLabel(Fonts::pixel);
+    
+    selectedItemLabel.setOrigin(sf::Vector2f((selectedItemLabel.findCharacterPos(selectedItemLabel.getString().getSize() - 1).x - selectedItemLabel.findCharacterPos(0).x) / 2, 0));
+    selectedItemLabel.setFillColor(sf::Color::White);
+    selectedItemLabel.setCharacterSize(30);
+
+    // Test chunk
+    TileMapChunk testChunk({0, 0});
+
+    // Fill the chunk with some tiles
+    for (int x = 0; x < 16; x++)
+        for (int y = 0; y < 16; y++)
+            testChunk.tiles[y][x] = 0;
+    for (int x = 0; x < 16; x++)
+        testChunk.tiles[7][x] = 16;
+    for (int x = 0; x < 16; x++)
+        testChunk.tiles[8][x] = 17;
+    testChunk.tiles[8][8] = 18;
+    for (int x = 0; x < 16; x++)
+        for (int y = 9; y < 13; y++)
+            testChunk.tiles[y][x] = 34;
+    for (int x = 0; x < 16; x++)
+        if (x % 2 == 0)
+            testChunk.tiles[10][x] = 33;
+    for (int x = 0; x < 16; x++)
+        testChunk.tiles[13][x] = 64;
+
+    testChunk.updateTextures();
+
+    // Second layer for tall grass
+    TileMapChunk testChunk2({0, 0});
+    for (int x = 0; x < 16; x++)
+        for (int y = 0; y < 16; y++)
+            if ((y < 7 || y >= 13) && (rand() % 3) == 0)
+                testChunk2.tiles[y][x] = 80; // tall grass
+            else
+                testChunk2.tiles[y][x] = 96; // air
+    testChunk2.updateTextures();
 
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
     fadeRect.setPosition({0, 0});
@@ -75,7 +113,7 @@ int main() {
     LOG("initializing player");
     Player player(window);
     LOG("creating playerHealthbar");
-    PlayerHealthBar playerHealthBar({420, 40}, 100);
+    PlayerHealthBar playerHealthBar({500, 40}, 100);
     LOG("creating HotbarGui");
     HotbarGui hotbarGui(&player.hotbar, {((float)window.getSize().x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
                                          (float)window.getSize().y - GuiParameters::slotSizeF - 7.5f});
@@ -108,7 +146,7 @@ int main() {
     Item ti13(ItemType::GUN_AR, 1);
     Item ti14(ItemType::GUN_REVOLVER, 1);
 
-    player.hotbar.setItem(0, &ti11);
+    player.hotbar.setItem(0, &ti12);
     player.inventory.setItem({0, 1}, &ti0);
     player.inventory.setItem({1, 1}, &ti1);
     player.inventory.setItem({2, 1}, &ti2);
@@ -127,13 +165,13 @@ int main() {
     // !
 
     LOG("Initializing shoot mechanics");
-    BulletMeter bulletMeter(sf::Vector2f(6, 50), 50);
+    BulletMeter bulletMeter(sf::Vector2f(6, 50), 40);
 
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
 
     LOG("Spawning zombies");
-    int nzombies = 5;
+    int nzombies = 10;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
@@ -187,6 +225,15 @@ int main() {
                     }
                 } else if (!inventoryToggled && !sharedInventoryToggled && keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
                     hotbarGui.setMarkedSlot(static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num0) - 1);
+                    
+                    Item* a = hotbarGui.getSelectedItem();
+                    if(a != nullptr)
+                    {
+                        if(a->getType() == ItemType::GUN_AR || a->getType() == ItemType::GUN_SMG || a->getType() == ItemType::GUN_REVOLVER)
+                        {
+                            fireRate = a->getUseRate();
+                        }
+                    }
                 }
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 // handle inventory mouse press
@@ -264,10 +311,33 @@ int main() {
                     player.reloading = false;
                     for (int i = 0; i < bulletMeter.maxBullets; i++) {
                         bulletMeter.sprites[i].setFillColor(sf::Color::White);
+                        bulletMeter.sprites[i].setOutlineColor(sf::Color(180, 180, 180));
                     }
                 }
             }
         }
+
+        selectedItemLabel.setString("");
+        Item* hotbarItem = hotbarGui.getSelectedItem();
+        if(hotbarItem != nullptr)
+        {
+            selectedItemLabel.setString(hotbarItem->getName());
+            selectedItemLabel.setOrigin(sf::Vector2f((selectedItemLabel.findCharacterPos(selectedItemLabel.getString().getSize() - 1).x - selectedItemLabel.findCharacterPos(0).x) / 2, 0));
+            selectedItemLabel.setPosition(sf::Vector2f(window.getSize().x/2, window.getSize().y-150));
+        }
+
+        // LIGHT TEST
+        shader.setUniform("amountLightSources", 2);
+        
+        shader.setUniform("lightSources[0].position", sf::Vector2f(600.0f, 200.0f));
+        shader.setUniform("lightSources[0].color", sf::Vector3f(1.0f, 0.0f, 0.0f));
+        shader.setUniform("lightSources[0].range", 100.f);
+        shader.setUniform("lightSources[0].intensity", 5.0f);
+
+        shader.setUniform("lightSources[1].position", sf::Vector2f(700.0f, 200.0f));
+        shader.setUniform("lightSources[1].color", sf::Vector3f(0.0f, 1.0f, 0.0f));
+        shader.setUniform("lightSources[1].range", 100.f);
+        shader.setUniform("lightSources[1].intensity", 5.0f);
 
         Bullet::updateAll();
         player.update();
@@ -321,8 +391,14 @@ int main() {
         window.setView(defaultView);
         playerHealthBar.draw(window);
 
-        bulletMeter.updateAnimations();
-        bulletMeter.draw(window);
+        if(hotbarItem != nullptr)
+        {
+            if(hotbarItem->getType() == ItemType::GUN_AR || hotbarItem->getType() == ItemType::GUN_SMG || hotbarItem->getType() == ItemType::GUN_REVOLVER)
+            {
+                bulletMeter.updateAnimations();
+                bulletMeter.draw(window);
+            }
+        }
 
         if (!inventoryToggled && !sharedInventoryToggled) {
             hotbarGui.draw();
@@ -334,6 +410,8 @@ int main() {
         if (sharedInventoryToggled) {
             sharedInventoryInterface.draw();
         }
+
+        window.draw(selectedItemLabel);
 
         ItemLabel::draw(window);
 

@@ -22,6 +22,10 @@ public:
 
     void setHotbar(Hotbar* _hotbar);
 
+    Item* getItem(size_t slot);
+    
+    Item* getSelectedItem();
+
     void update();
 
     void draw();

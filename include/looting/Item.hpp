@@ -19,6 +19,14 @@ enum class ItemType {
     GUN_REVOLVER,
 };
 
+enum class AmmoType {
+    NONE,
+    SMALL,
+    MEDIUM,
+    LARGE,
+    SPREAD
+};
+
 struct ItemData {
     std::string name;
     std::string description;
@@ -29,6 +37,9 @@ struct ItemData {
     float useRate;            // how many times the item can be used per second
     std::string texturePath;     // texture to use when displaying the item
     size_t maximalAmount;
+    int magSize;
+    float reloadTime;
+    AmmoType ammoType;
 };
 
 class Item {

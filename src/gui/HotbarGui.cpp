@@ -43,6 +43,7 @@ void HotbarGui::setMarkedSlot(size_t idx) {
     }
 
     inventorySlots[idx].setHovered(true);
+    this->markedSlot = idx;
 }
 
 // start with left upper corner of all slots
@@ -52,6 +53,18 @@ void HotbarGui::setPosition(sf::Vector2f pos) {
         slot.setPosition(pos + sf::Vector2f{GuiParameters::slotSizeF, 0} * idx);
         idx++;
     }
+}
+
+Item *HotbarGui::getItem(size_t slot)
+{
+    if(slot < 0 || slot > 4)
+        return nullptr;
+    return this->inventorySlots[slot].getInventorySlot()->getItem();
+}
+
+Item *HotbarGui::getSelectedItem()
+{
+    return this->getItem(this->markedSlot);
 }
 
 void HotbarGui::update() {
