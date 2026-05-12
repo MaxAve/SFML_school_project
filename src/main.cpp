@@ -95,6 +95,7 @@ int main() {
     bool sharedInventoryToggled = false;
 
     float lastBulletReloadDelay = .0f;
+    float reloadTime = .0f;
 
     LOG("TEST: Item and inventory stuff");
     // ! TEST
@@ -138,6 +139,7 @@ int main() {
 
     float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
+    int weaponDamage = 0;
 
     LOG("Spawning zombies");
     int nzombies = 10;
@@ -154,6 +156,20 @@ int main() {
 
     doorA->targetDoor = doorB;
     doorB->targetDoor = doorA;
+
+    // TODO this is so that the item that the player equips on game start gets registered. Remove this later
+    Item* a = hotbarGui.getSelectedItem();
+    if(a != nullptr)
+    {
+        if(a->getType() == ItemType::GUN_AR || a->getType() == ItemType::GUN_SMG || a->getType() == ItemType::GUN_REVOLVER)
+        {
+            fireRate = a->getData()->useRate;
+            bulletMeter.initSprites(a->getData()->magSize);
+            reloadTime = a->getData()->reloadTime;
+            weaponDamage = a->getData()->damage;
+            player.reloading = false;
+        }
+    }
 
     LOG("Starting game loop");
     while (window.isOpen()) {
@@ -200,7 +216,11 @@ int main() {
                     {
                         if(a->getType() == ItemType::GUN_AR || a->getType() == ItemType::GUN_SMG || a->getType() == ItemType::GUN_REVOLVER)
                         {
-                            fireRate = a->getUseRate();
+                            fireRate = a->getData()->useRate;
+                            bulletMeter.initSprites(a->getData()->magSize);
+                            reloadTime = a->getData()->reloadTime;
+                            weaponDamage = a->getData()->damage;
+                            player.reloading = false;
                         }
                     }
                 }
@@ -251,7 +271,7 @@ int main() {
                 if (timeSinceLastShot >= (1.0f / fireRate) && !player.reloading) {
                     sf::Vector2i mousePos = Window::getMousePos();
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
-                    Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle);
+                    Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle, weaponDamage);
                     timeSinceLastShot = 0.0f;
                     cameraShakeRange = 3.0f;
 
@@ -272,7 +292,7 @@ int main() {
         if (player.reloading) {
             lastBulletReloadDelay += Physics::deltaTime;
 
-            if (lastBulletReloadDelay > 0.02f) {
+            if (lastBulletReloadDelay > reloadTime) {
                 bulletMeter.currentBullets += 1;
                 bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
                 lastBulletReloadDelay = .0f;
@@ -296,17 +316,17 @@ int main() {
         }
 
         // LIGHT TEST
-        shader.setUniform("amountLightSources", 2);
+        // shader.setUniform("amountLightSources", 2);
         
-        shader.setUniform("lightSources[0].position", sf::Vector2f(600.0f, 200.0f));
-        shader.setUniform("lightSources[0].color", sf::Vector3f(1.0f, 0.0f, 0.0f));
-        shader.setUniform("lightSources[0].range", 100.f);
-        shader.setUniform("lightSources[0].intensity", 5.0f);
+        // shader.setUniform("lightSources[0].position", sf::Vector2f(600.0f, 200.0f));
+        // shader.setUniform("lightSources[0].color", sf::Vector3f(1.0f, 0.0f, 0.0f));
+        // shader.setUniform("lightSources[0].range", 100.f);
+        // shader.setUniform("lightSources[0].intensity", 5.0f);
 
-        shader.setUniform("lightSources[1].position", sf::Vector2f(700.0f, 200.0f));
-        shader.setUniform("lightSources[1].color", sf::Vector3f(0.0f, 1.0f, 0.0f));
-        shader.setUniform("lightSources[1].range", 100.f);
-        shader.setUniform("lightSources[1].intensity", 5.0f);
+        // shader.setUniform("lightSources[1].position", sf::Vector2f(700.0f, 200.0f));
+        // shader.setUniform("lightSources[1].color", sf::Vector3f(0.0f, 1.0f, 0.0f));
+        // shader.setUniform("lightSources[1].range", 100.f);
+        // shader.setUniform("lightSources[1].intensity", 5.0f);
 
         Bullet::updateAll();
         player.update();

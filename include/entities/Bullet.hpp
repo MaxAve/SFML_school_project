@@ -25,8 +25,9 @@ public:
 	float speed;
 	float distanceTraveled; // The distance traveled from the bullet's starting position
     sf::Vector2f prevPosition;
+    int damage;
 
-    Bullet(sf::Vector2f position, float speed, float direction);
+    Bullet(sf::Vector2f position, float speed, float direction, float damage);
     void draw(sf::RenderWindow& window);
     void update();
     bool hit(Zombie* zombie); // Returns true if the bullet touched or went through the zombie in the current frame

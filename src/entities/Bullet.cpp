@@ -2,10 +2,10 @@
 
 std::vector<Bullet*> Bullet::pool;
 
-Bullet::Bullet(sf::Vector2f position, float speed, float direction)
+Bullet::Bullet(sf::Vector2f position, float speed, float direction, float damage)
 {
 	this->speed = speed;
-
+	this->damage = damage;
     this->velocity = {std::cos(direction) * speed, std::sin(direction) * speed};
 
     this->sprite = sf::RectangleShape(sf::Vector2f(Bullet::DEFAULT_SIZE, Bullet::DEFAULT_SIZE));
@@ -37,11 +37,10 @@ void Bullet::update()
 		if(this->hit(Zombie::pool[i]))
 		{
 			Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 2, 500);
-			int damage = 20 + (rand() % 11) - 5;
 			bool crit = rand()%4==0; // todo
 			if(crit)
-				damage *= 2;
-			Zombie::pool[i]->healthBar.setHealth(Zombie::pool[i]->healthBar.currentHealth - damage);
+				this->damage *= 2;
+			Zombie::pool[i]->healthBar.setHealth(Zombie::pool[i]->healthBar.currentHealth - this->damage);
 			new DamageIndicatorText(sf::Vector2f(Zombie::pool[i]->sprite.getPosition().x + (float)((rand() % 40)) - 10.f, Zombie::pool[i]->sprite.getPosition().y + (float)((rand() % 40)) - 10.f), damage, crit);
 			Zombie::pool[i]->bulletPushVelocity = this->velocity / 5.f;
 			this->distanceTraveled = 1000000000;

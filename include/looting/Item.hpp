@@ -54,6 +54,8 @@ public:
 
     Item(ItemType type, size_t amount);
 
+    const ItemData* getData();
+
     std::string getName() const;
 
     std::string getDescription() const;
@@ -73,6 +75,8 @@ public:
     size_t getMaximalAmount() const;
 
     size_t getAmount() const;
+
+    int getMagSize() const;
 
     void setAmount(size_t val);
 
