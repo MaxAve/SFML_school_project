@@ -68,7 +68,7 @@ int main() {
     selectedItemLabel.setFillColor(sf::Color::White);
     selectedItemLabel.setCharacterSize(30);
 
-    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 2, 2);
+    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 16, 16); // ! yet not ready for big size
 
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
     fadeRect.setPosition({0, 0});

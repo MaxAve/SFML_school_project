@@ -20,7 +20,7 @@ void fillTiles(TileMapChunk& chunk, int code) {
 }
 
 void GameMap::generateMap() {
-    const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH, TILE_SIZE * CHUNK_HEIGHT};
+    const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
     size_t n = mapWidth * mapHeight;
 
     // generate tiles
@@ -32,11 +32,8 @@ void GameMap::generateMap() {
             static_cast<int>(firstPos.x + chunkSize.x * (i % mapWidth)),
             static_cast<int>(firstPos.y + chunkSize.y * (i / mapWidth))});
 
-        fillTiles(chunks1L[i], 0); // 0 nothing
-        fillTiles(chunks2L[i], 96);
-        
-        chunks1L[i].updateTextures();
-        chunks2L[i].updateTextures();
+        fillTiles(chunks1L[i], 0); 
+        fillTiles(chunks2L[i], 96); // 96 air
     }
 
     for (int x = 0; x < 16; x++)
@@ -52,7 +49,6 @@ void GameMap::generateMap() {
             chunks1L[0].tiles[10][x] = 33;
     for (int x = 0; x < 16; x++)
         chunks1L[0].tiles[13][x] = 64;
-    chunks1L[0].updateTextures();
 
     for (int x = 0; x < 16; x++)
         for (int y = 0; y < 16; y++)
@@ -60,7 +56,11 @@ void GameMap::generateMap() {
                 chunks2L[0].tiles[y][x] = 80; // tall grass
             else
                 chunks2L[0].tiles[y][x] = 96; // air
-    chunks2L[0].updateTextures();
+
+    for (size_t i = 0; i < n; i++) {
+        chunks1L[i].updateTextures();
+        chunks2L[i].updateTextures();
+    }
 }
 
 void GameMap::loadChunksFromFile(std::vector<TileMapChunk>& chunks, const std::string& path) {
@@ -74,7 +74,7 @@ void GameMap::loadChunksFromFile(std::vector<TileMapChunk>& chunks, const std::s
     }
 
     size_t n = mapWidth * mapHeight;
-    const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH, TILE_SIZE * CHUNK_HEIGHT};
+    const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
 
     for (size_t i = 0; i < n; i++) {
         chunks.emplace_back(sf::Vector2i{
