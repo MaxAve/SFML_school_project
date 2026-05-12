@@ -9,6 +9,7 @@ Player::Player(sf::RenderWindow& window) : inventory({10, 3}, "Player"), hotbar(
     this->speed = 300.0f;
     this->reloading = false;
     this->hitbox = Hitbox(this->sprite.getPosition(), this->sprite.getSize(), false);
+    this->equippedItem = nullptr;
 
     this->gunSprite = sf::RectangleShape(sf::Vector2f(70.f, 30.f));
     this->gunSprite.setFillColor(sf::Color::Red);

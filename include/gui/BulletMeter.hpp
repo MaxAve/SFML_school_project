@@ -19,7 +19,7 @@ public:
     std::vector<sf::RectangleShape> ejectedBulletSprites; // animation
 
     BulletMeter(sf::Vector2f position, int maxBullets);
-    void initSprites(int maxBullets);
+    void initSprites(int maxBullets); // Resets the bullet meter
     void draw(sf::RenderWindow& window);
     void setCurrentBullets(int newCurrentBullets);
     void updateAnimations();

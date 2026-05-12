@@ -13,8 +13,10 @@ public:
     int currentHealth;
     int maxHealth;
 
-    sf::RectangleShape healthRect;
-    sf::RectangleShape fullRect;
+    sf::RectangleShape healthRect; // Green bar
+    sf::RectangleShape fullRect; // Red background
+
+    // Blinking animation variables (activated upon recieving damage)
     sf::RectangleShape healthChangeAnimation;
     float timeSinceHealthChangeAnimationBlink;
     int blinkTimes;

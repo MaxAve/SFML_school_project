@@ -27,20 +27,20 @@ enum class AmmoType {
     SPREAD
 };
 
-struct ItemData {
+typedef struct ItemData {
     std::string name;
     std::string description;
     bool canDealMeleeDamage;  // true if the item is a close-range weapon like a knife
-    bool canDealRangedDamage; // true if the item can fire bullets
+    bool isGun;               // true if the item is a gun (what a surpise)
     bool isHealthPack;        // true if the item can be used to heal the player
     int damage;               // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
-    float useRate;            // how many times the item can be used per second
-    std::string texturePath;     // texture to use when displaying the item
-    size_t maximalAmount;
-    int magSize;
-    float reloadTime;
-    AmmoType ammoType;
-};
+    float useRate;            // how many times the item can be used per second (= fire rate for guns)
+    std::string texturePath;  // texture to use when displaying the item
+    size_t maximalAmount;     // Amount of this item that can be stacked in a single inventory slot
+    int magSize;              // Magazine size (guns)
+    float reloadTime;         // Reload time for a single bullet (guns)
+    AmmoType ammoType;        // Caliber required for reloading (guns)
+} ItemData_s;
 
 class Item {
     ItemType type;
@@ -54,7 +54,7 @@ public:
 
     Item(ItemType type, size_t amount);
 
-    const ItemData* getData();
+    const ItemData* getData(); // Get full data struct (TODO replace all usage of below getters with this)
 
     std::string getName() const;
 
@@ -62,7 +62,7 @@ public:
 
     bool canDealMeleeDamage() const;
 
-    bool canDealRangedDamage() const;
+    bool isGun() const;
 
     bool isHealthPack() const;
 

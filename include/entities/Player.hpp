@@ -23,6 +23,7 @@ public:
     Hotbar hotbar;
     bool reloading;
     Hitbox hitbox;
+    Item* equippedItem;
 
 	sf::RectangleShape gunSprite; // Replace with sprite
 

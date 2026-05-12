@@ -22,7 +22,8 @@
 #include <iostream>
 #include <random>
 
-#define LOG(message) std::cout << message << std::endl
+#define LOG(message) std::cout << "[LOG] " message << std::endl
+#define ERR(message) std::cout << "[ERR] " message << std::endl
 
 float randomFloat(float min, float max) {
     static std::random_device rd;  // seed
@@ -48,15 +49,17 @@ int main() {
     window.setFramerateLimit(60); // to avoid pc flying into space
     window.setView(defaultView);    
 
+    // Load tileset
     LOG("Loading tileset");
     if (!TileMapChunk::tilesetAtlas.loadFromFile("resources/textures/environment/tilemap.png")) {
-        LOG("Failed to load tileset");
+        ERR("Failed to load tileset");
         return 1;
     }
 
+    // Load shader
     sf::Shader shader;
 	if (!shader.loadFromFile("resources/shaders/lighting.glsl", sf::Shader::Type::Fragment)) {
-		std::cout << "Failed to load lighting.glsl\n";
+		ERR("Failed to load lighting.glsl");
 	}
     shader.setUniform("amountLightSources", 0);
 
@@ -64,12 +67,14 @@ int main() {
 
     sf::Text selectedItemLabel(Fonts::pixel);
     
+    // Item label
     selectedItemLabel.setOrigin(sf::Vector2f((selectedItemLabel.findCharacterPos(selectedItemLabel.getString().getSize() - 1).x - selectedItemLabel.findCharacterPos(0).x) / 2, 0));
     selectedItemLabel.setFillColor(sf::Color::White);
     selectedItemLabel.setCharacterSize(30);
 
     GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 16, 16); // ! yet not ready for big size
 
+    // Values for fading out effect
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
     fadeRect.setPosition({0, 0});
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -95,11 +100,10 @@ int main() {
     bool sharedInventoryToggled = false;
 
     float lastBulletReloadDelay = .0f;
-    float reloadTime = .0f;
 
+
+    // TEST: items
     LOG("TEST: Item and inventory stuff");
-    // ! TEST
-
     Item ti0(ItemType::SMALL_CALIBER_AMMO, 32);
     Item ti1(ItemType::SHOTGUN_AMMO, 1);
     Item ti2(ItemType::LARGE_CALIBER_AMMO, 1);
@@ -137,10 +141,10 @@ int main() {
     LOG("Initializing shoot mechanics");
     BulletMeter bulletMeter(sf::Vector2f(6, 50), 40);
 
-    float fireRate = 20.0f;
     float timeSinceLastShot = 0.0f;
     int weaponDamage = 0;
 
+    // TEST: Spawn zombies
     LOG("Spawning zombies");
     int nzombies = 10;
     for (int i = 0; i < nzombies; i++) {
@@ -158,19 +162,11 @@ int main() {
     doorB->targetDoor = doorA;
 
     // TODO this is so that the item that the player equips on game start gets registered. Remove this later
-    Item* a = hotbarGui.getSelectedItem();
-    if(a != nullptr)
-    {
-        if(a->getType() == ItemType::GUN_AR || a->getType() == ItemType::GUN_SMG || a->getType() == ItemType::GUN_REVOLVER)
-        {
-            fireRate = a->getData()->useRate;
-            bulletMeter.initSprites(a->getData()->magSize);
-            reloadTime = a->getData()->reloadTime;
-            weaponDamage = a->getData()->damage;
-            player.reloading = false;
-        }
-    }
+    player.equippedItem = hotbarGui.getSelectedItem();
+    if(player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
+        bulletMeter.initSprites(player.equippedItem->getData()->magSize);
 
+    // Game loop
     LOG("Starting game loop");
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
@@ -179,6 +175,7 @@ int main() {
             else if (event->is<sf::Event::Resized>()) {
                 sf::Vector2f newSize = {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)};
 
+                // Resize window along with some GUI elements to fit the new size
                 defaultView.setSize({newSize.x, newSize.y});
                 defaultView.setCenter({newSize.x / 2, newSize.y / 2});
                 player.view.setSize({newSize.x, newSize.y});
@@ -191,6 +188,9 @@ int main() {
                 hotbarGui.setPosition({(newSize.x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
                                        newSize.y - GuiParameters::slotSizeF - 7.5f});
             } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+                /*
+                Key press events
+                */
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
                 else if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled && !fadeActive) {
@@ -198,6 +198,7 @@ int main() {
                 } else if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventoryInterface.getOtherInventory() && !inventoryToggled && !fadeActive) {
                     sharedInventoryToggled = !sharedInventoryToggled;
                 } else if (keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled) {
+                    // Entering doors (teleports player to the door's target door)
                     for (int i = 0; i < Door::pool.size(); i++) {
                         if (Door::pool[i]->hitbox.withinBounds(player.sprite.getPosition())) {
                             fadeActive = true;
@@ -209,20 +210,13 @@ int main() {
                         }
                     }
                 } else if (!inventoryToggled && !sharedInventoryToggled && keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
+                    // Selecting hotbar slot
                     hotbarGui.setMarkedSlot(static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num0) - 1);
                     
-                    Item* a = hotbarGui.getSelectedItem();
-                    if(a != nullptr)
-                    {
-                        if(a->getType() == ItemType::GUN_AR || a->getType() == ItemType::GUN_SMG || a->getType() == ItemType::GUN_REVOLVER)
-                        {
-                            fireRate = a->getData()->useRate;
-                            bulletMeter.initSprites(a->getData()->magSize);
-                            reloadTime = a->getData()->reloadTime;
-                            weaponDamage = a->getData()->damage;
-                            player.reloading = false;
-                        }
-                    }
+                    // Set player's equipped item
+                    player.equippedItem = hotbarGui.getSelectedItem();
+                    if(player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
+                        bulletMeter.initSprites(player.equippedItem->getData()->magSize); // Initialize/reset bullet meter if the player equipped a gun
                 }
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 // handle inventory mouse press
@@ -248,10 +242,12 @@ int main() {
             }
         }
 
+        // Update shader resolution
         shader.setUniform("resolution", sf::Vector2f(window.getSize()));
 
         // game outside of inventory
         if (!inventoryToggled && !sharedInventoryToggled) {
+            // Player movement
             if (!fadeActive) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                     player.move({-player.speed * Physics::deltaTime, 0});
@@ -268,13 +264,18 @@ int main() {
             }
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
-                if (timeSinceLastShot >= (1.0f / fireRate) && !player.reloading) {
+                // Shooting
+                if (player.equippedItem != nullptr && timeSinceLastShot >= (1.0f / player.equippedItem->getData()->useRate) && !player.reloading) {
+                    // Calculate firing angle and spawn new bullet instance
                     sf::Vector2i mousePos = Window::getMousePos();
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
-                    Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2}, 2000, angle, weaponDamage);
+                    Bullet* b = new Bullet({
+                        player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2},
+                        2000, angle, player.equippedItem->getData()->damage);
                     timeSinceLastShot = 0.0f;
                     cameraShakeRange = 3.0f;
-
+                    
+                    // Remove 1 bullet from the bullet meter
                     if (bulletMeter.currentBullets > 0) {
                         bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
                         bulletMeter.ejectBullet(bulletMeter.maxBullets - bulletMeter.currentBullets - 1);
@@ -288,11 +289,12 @@ int main() {
             }
         }
         timeSinceLastShot += Physics::deltaTime;
-
-        if (player.reloading) {
+        
+        // Reloading gun
+        if (player.reloading && player.equippedItem != nullptr) {
             lastBulletReloadDelay += Physics::deltaTime;
 
-            if (lastBulletReloadDelay > reloadTime) {
+            if (lastBulletReloadDelay > player.equippedItem->getData()->reloadTime) {
                 bulletMeter.currentBullets += 1;
                 bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
                 lastBulletReloadDelay = .0f;
@@ -306,6 +308,7 @@ int main() {
             }
         }
 
+        // Update item label (inventory)
         selectedItemLabel.setString("");
         Item* hotbarItem = hotbarGui.getSelectedItem();
         if(hotbarItem != nullptr)
@@ -328,6 +331,7 @@ int main() {
         // shader.setUniform("lightSources[1].range", 100.f);
         // shader.setUniform("lightSources[1].intensity", 5.0f);
 
+        // Update physics
         Bullet::updateAll();
         player.update();
         Zombie::updateAll();
@@ -352,7 +356,11 @@ int main() {
             sharedInventoryInterface.update();
         }
 
-        EntityRenderer::sortEntities(&player, Zombie::pool);
+        EntityRenderer::sortEntities(&player, Zombie::pool); // Sort enemies so that those higher above are rendered behind those lower on the screen
+
+        /*
+        Draw everything
+        */
 
         window.clear(sf::Color::Black);
 
@@ -380,7 +388,7 @@ int main() {
         window.setView(defaultView);
         playerHealthBar.draw(window);
 
-        if(hotbarItem != nullptr)
+        if(player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
         {
             if(hotbarItem->getType() == ItemType::GUN_AR || hotbarItem->getType() == ItemType::GUN_SMG || hotbarItem->getType() == ItemType::GUN_REVOLVER)
             {
