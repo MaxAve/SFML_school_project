@@ -15,7 +15,7 @@ std::unordered_map<ItemType, ItemData> Item::typeToData{
     {ItemType::SCOPE, {"Scope", "Weapon Extension\nIncreases crit chance by +100% when crafted onto a gun", false, false, false, 0, 0.f, "items/scope", 1, 0,0,AmmoType::NONE}},
     {ItemType::GUN_SMG, {"SMG", "Weapon\nDamage: 8\nCrit chance: 5%\nMagazine size: 40\nCaliber: small\nFire rate: 3000/min",
                          false, true, false, 8, 50.f, "items/gun_smg", 1, 40, 0.02, AmmoType::SMALL}},
-    {ItemType::GUN_AR, {"Assault Rifle", "Weapon\nDamage: 25\nCrit chance: 15%\nMagazine size: 30\nCaliber: medium\nFire rate: 900/min",
+    {ItemType::GUN_AR, {"Assault Rifle", "Weapon\nDamage: 8\nCrit chance: 15%\nMagazine size: 30\nCaliber: medium\nFire rate: 900/min",
                         false, true, false, 25, 15.f, "items/gun_ar", 1, 30, 0.02, AmmoType::MEDIUM}},
     {ItemType::GUN_REVOLVER, {"Revolver", "Weapon\nDamage: 70\nCrit chance: 30%\nMagazine size: 6\nCaliber: small\nFire rate: 240/min",
                               false, true, false, 70, 4.f, "items/gun_revolver", 1, 6, 0.5, AmmoType::SMALL}},
