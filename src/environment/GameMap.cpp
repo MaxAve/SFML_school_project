@@ -24,7 +24,10 @@ void GameMap::generateMap() {
     size_t n = mapWidth * mapHeight;
 
     // generate tiles
+
+    LOG("Generating tiles");
     for (size_t i = 0; i < n; i++) {
+        LOG("Tile..." << i + 1);
         chunks1L.emplace_back(sf::Vector2i{
             static_cast<int>(firstPos.x + chunkSize.x * (i % mapWidth)),
             static_cast<int>(firstPos.y + chunkSize.y * (i / mapWidth))});
@@ -32,7 +35,7 @@ void GameMap::generateMap() {
             static_cast<int>(firstPos.x + chunkSize.x * (i % mapWidth)),
             static_cast<int>(firstPos.y + chunkSize.y * (i / mapWidth))});
 
-        fillTiles(chunks1L[i], 0); 
+        fillTiles(chunks1L[i], 0);
         fillTiles(chunks2L[i], 96); // 96 air
     }
 
@@ -105,8 +108,22 @@ void GameMap::loadChunksToFile(const std::vector<TileMapChunk>& chunks, const st
     out.close();
 }
 
-void GameMap::draw(sf::Vector2f playerPos, sf::RenderWindow& target, sf::Shader& shader) {
+void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader) {
+    sf::View currentView = target.getView();
+    sf::Vector2f viewSize = {(float)currentView.getSize().x, (float)currentView.getSize().y};
+    const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
+
+    sf::FloatRect windowFrame(currentView.getCenter() - viewSize / 2.f, viewSize);
+
     for (size_t i = 0; i < (mapWidth * mapHeight); i++) {
+        sf::Vector2f chunkPos = {firstPos.x + chunkSize.x * (i % mapWidth),
+                                 firstPos.y + chunkSize.y * (i / mapWidth)};
+        sf::FloatRect chunkRect(chunkPos, chunkSize);
+
+        if (!windowFrame.findIntersection(chunkRect).has_value()) {
+            continue;
+        }
+
         chunks1L[i].draw(target, shader);
         chunks2L[i].draw(target, shader);
     }

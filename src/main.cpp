@@ -72,7 +72,7 @@ int main() {
     selectedItemLabel.setFillColor(sf::Color::White);
     selectedItemLabel.setCharacterSize(30);
 
-    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 16, 16); // ! yet not ready for big size
+    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 16, 16);
 
     // Values for fading out effect
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
@@ -367,7 +367,7 @@ int main() {
         // draw Camera (View)
         window.setView(player.view);
 
-        mainMap.draw(player.hitbox.position, window, shader);
+        mainMap.draw(window, shader);
 
         chest.draw();
         for (auto& it : Door::pool)
