@@ -22,6 +22,5 @@ public:
 
     void loadChunksToFile(const std::vector<TileMapChunk>& chunks, const std::string& path);
 
-    // TODO: Make it O(1)
     void draw(sf::RenderWindow& target, sf::Shader& shader);
 };

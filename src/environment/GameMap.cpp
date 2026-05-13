@@ -109,22 +109,24 @@ void GameMap::loadChunksToFile(const std::vector<TileMapChunk>& chunks, const st
 }
 
 void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader) {
-    sf::View currentView = target.getView();
-    sf::Vector2f viewSize = {(float)currentView.getSize().x, (float)currentView.getSize().y};
     const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
+    sf::View windowView = target.getView();
+    sf::Vector2f viewCenter = windowView.getCenter();
+    sf::Vector2f viewSize = windowView.getSize();
 
-    sf::FloatRect windowFrame(currentView.getCenter() - viewSize / 2.f, viewSize);
+    sf::Vector2f upperLeftView = viewCenter - viewSize / 2.f;
+    sf::Vector2f bottomRightView = viewCenter + viewSize / 2.f;
 
-    for (size_t i = 0; i < (mapWidth * mapHeight); i++) {
-        sf::Vector2f chunkPos = {firstPos.x + chunkSize.x * (i % mapWidth),
-                                 firstPos.y + chunkSize.y * (i / mapWidth)};
-        sf::FloatRect chunkRect(chunkPos, chunkSize);
+    size_t fromX = std::max(0.f, upperLeftView.x / chunkSize.x);
+    size_t toX = std::min(mapWidth, static_cast<size_t>(bottomRightView.x / chunkSize.x) + 1);
+    size_t fromY = std::max(0.f, upperLeftView.y / chunkSize.y);
+    size_t toY = std::min(mapHeight, static_cast<size_t>(bottomRightView.y / chunkSize.y) + 1);
 
-        if (!windowFrame.findIntersection(chunkRect).has_value()) {
-            continue;
+    for (size_t y = fromY; y < toY; ++y) {
+        size_t idk = mapWidth * y;
+        for (size_t x = fromX; x < toX; ++x) {
+            chunks1L[x + idk].draw(target, shader);
+            chunks2L[x + idk].draw(target, shader);
         }
-
-        chunks1L[i].draw(target, shader);
-        chunks2L[i].draw(target, shader);
     }
 }
