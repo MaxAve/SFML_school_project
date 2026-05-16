@@ -18,9 +18,11 @@
 #include "looting/LootContainer.hpp"
 #include "resources/Fonts.hpp"
 #include "resources/Textures.hpp"
+#include "TileMapEditor.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
+#include <string.h>
 
 #define LOG(message) std::cout << "[LOG] " message << std::endl
 #define ERR(message) std::cout << "[ERR] " message << std::endl
@@ -33,7 +35,20 @@ float randomFloat(float min, float max) {
     return dist(gen);
 }
 
-int main() {
+int main(int argc, char** argv) {
+    // Tile map editor
+    char s[] = "--edit";
+    if(argc > 1 && strncmp(argv[1], s, 6) == 0)
+    {
+        LOG("Entering edit mode");
+
+        TileMapEditor::start();
+
+        return 0;
+    }
+
+    // Actual game
+
     LOG("main()");
 
     LOG("initializing time, physics, textures, fonts");

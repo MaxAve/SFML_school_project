@@ -31,12 +31,6 @@ void main(void)
     {
         float ldist = distance(gl_FragCoord.xy, lightSources[i].position);
 
-        /*color = vec4(
-            color.x * lightSources[i].color.x * lightSources[i].intensity * (1.0 - max(0.0, ldist / lightSources[i].range)),
-            color.y * lightSources[i].color.y * lightSources[i].intensity * (1.0 - max(0.0, ldist / lightSources[i].range)), 
-            color.z * lightSources[i].color.z * lightSources[i].intensity * (1.0 - max(0.0, ldist / lightSources[i].range)),
-            color.w);*/
-
         color = vec4(
             color.x + color.x * lightSources[i].color.x * lightSources[i].intensity * (max(0.0, (lightSources[i].range - ldist) / lightSources[i].range)),
             color.y + color.y * lightSources[i].color.y * lightSources[i].intensity * (max(0.0, (lightSources[i].range - ldist) / lightSources[i].range)), 

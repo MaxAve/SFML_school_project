@@ -7,3 +7,5 @@ Makefile
 build
 CMakeFiles
 *swp
+cmake_install.cmake
+CMakeCache.txt
