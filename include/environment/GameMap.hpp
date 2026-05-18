@@ -4,7 +4,7 @@
 
 
 class GameMap {
-
+public:
     const size_t mapWidth, mapHeight; // in chunks
 
     std::vector<TileMapChunk> chunks1L; // normal tiles
@@ -12,8 +12,9 @@ class GameMap {
 
     sf::Vector2f firstPos; // upper left corner
 
-public:
+
     GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _chunksWidth, size_t _chunksHeight);
+    GameMap(size_t _chunksWidth, size_t _chunksHeight);
 
     // temp
     void generateMap();

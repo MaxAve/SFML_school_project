@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include "environment/GameMap.hpp"
 
 class TileMapEditor
 {
@@ -31,8 +32,8 @@ static constexpr float ZOOM_STEP = 1.15f;
 // ── types ─────────────────────────────────────────────────
 struct TileCoord { int x, y; };
 
-static TileCoord topLeftCorner = {9999, 9999};
-static TileCoord bottomRightCorne = {-9999, -9999};
+inline static TileCoord topLeftCorner = {9999, 9999};
+inline static TileCoord bottomRightCorner = {-9999, -9999};
 
 // Key: world tile position, Value: tile index in the spritesheet (0-255)
 using TileMap = std::unordered_map<int, std::unordered_map<int, int>>;
@@ -45,7 +46,13 @@ static sf::IntRect tileRect(int index)
     return { { col * TILE_PX, row * TILE_PX }, { TILE_PX, TILE_PX } };
 }
 
-static void 
+static void saveMap(std::string fileName)
+{
+    sf::Vector2i mapSize = {bottomRightCorner.x - topLeftCorner.x + 1, bottomRightCorner.y - topLeftCorner.y + 1};
+    sf::Vector2i mapChunkSize = {mapSize.x / 16 + ((mapSize.x % 16 != 0) ? 1 : 0), mapSize.y / 16 + ((mapSize.y % 16 != 0) ? 1 : 0)};
+    GameMap map(mapChunkSize.x, mapChunkSize.y);
+    
+}
 
 public:
 // ── main ─────────────────────────────────────────────────
@@ -382,6 +389,8 @@ static int start()
             countText.setFillColor(sf::Color(160, 220, 160));
             countText.setPosition({ SHEET_OFFSET_X, SHEET_OFFSET_Y + UI_SHEET_PX + 48.f });
             window.draw(countText);
+
+            std::cout << topLeftCorner.x << ", " << topLeftCorner.y << " | " << bottomRightCorner.x << ", " << bottomRightCorner.y << "\n";
 
             // Keybind reminder
             sf::Text help(font,

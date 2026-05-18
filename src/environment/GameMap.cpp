@@ -11,6 +11,18 @@ GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::
     // loadChunksFromFile(chunks2L, _path2L);
 }
 
+GameMap::GameMap(size_t _mapWidth, size_t _mapHeight) : mapWidth{_mapWidth}, mapHeight{_mapHeight}
+{
+    for(int y = 0; y < mapWidth; y++)
+    {
+        for(int x = 0; x < mapHeight; x++)
+        {
+            this->chunks1L.push_back(TileMapChunk(sf::Vector2i(x * CHUNK_WIDTH * SCALE * TILE_SIZE, y * CHUNK_HEIGHT * SCALE * TILE_SIZE)));
+            this->chunks2L.push_back(TileMapChunk(sf::Vector2i(x * CHUNK_WIDTH * SCALE * TILE_SIZE, y * CHUNK_HEIGHT * SCALE * TILE_SIZE)));
+        }
+    }
+}
+
 void fillTiles(TileMapChunk& chunk, int code) {
     for (size_t i = 0; i < CHUNK_HEIGHT; i++) {
         for (size_t j = 0; j < CHUNK_WIDTH; j++) {
