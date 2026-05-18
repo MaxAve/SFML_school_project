@@ -31,6 +31,9 @@ static constexpr float ZOOM_STEP = 1.15f;
 // ── types ─────────────────────────────────────────────────
 struct TileCoord { int x, y; };
 
+static TileCoord topLeftCorner = {9999, 9999};
+static TileCoord bottomRightCorne = {-9999, -9999};
+
 // Key: world tile position, Value: tile index in the spritesheet (0-255)
 using TileMap = std::unordered_map<int, std::unordered_map<int, int>>;
 
@@ -41,6 +44,8 @@ static sf::IntRect tileRect(int index)
     int row = index / SHEET_TILES;
     return { { col * TILE_PX, row * TILE_PX }, { TILE_PX, TILE_PX } };
 }
+
+static void 
 
 public:
 // ── main ─────────────────────────────────────────────────
@@ -236,6 +241,10 @@ static int start()
         {
             TileCoord tc = screenToTile(mousePos);
             tileMap[tc.x][tc.y] = selectedTile;
+            topLeftCorner.x = std::min(tc.x, topLeftCorner.x);
+            topLeftCorner.y = std::min(tc.y, topLeftCorner.y);
+            bottomRightCorner.x = std::max(tc.x, bottomRightCorner.x);
+            bottomRightCorner.y = std::max(tc.y, bottomRightCorner.y);
         }
 
         // ── Draw ──────────────────────────────────────────

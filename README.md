@@ -11,8 +11,20 @@
 ### Features (high priority):
 
 - **Deniel:**
-    - [ ] Tilemap:
-        - [ ] Make it possible to save a large tile map as a single file and load chunks from that file. Note: it's possible to load parts from a file by specifying the starting index and how many bytes you want to read. If you save a chunk from a tilemap as a string of bytes where each byte represents the ID of the tile, you should be able to implement the feature.
+    - Map:
+        - Make items droppable
+        - Make it possible to save doors, structures, lootboxes\
+        Data:
+        - Door: ID (int), Target door ID (int), Position (x,y), Size (x, y)
+        - Structure: Type (int), Position (x,y) <-- Do this later (once we have a structure class)
+        - Loot box: Type (int), Position (x,y), Items it contains (list of item ID's)\
+        Example:
+```
+door(0, 1, (10,10), (50,150))
+door(1, 0, (200,200), (50,150))
+structure(69, (400, 500))
+box(0, (-140, 230), (1, 0, 0, 2, 4))
+```
 - **Maks:**
     - [ ] Gun recoil animation
 
