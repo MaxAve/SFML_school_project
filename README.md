@@ -11,8 +11,6 @@
 ### Features (high priority):
 
 - **Deniel:**
-    - [ ] Tilemap:
-        - [ ] Make it possible to save a large tile map as a single file and load chunks from that file. Note: it's possible to load parts from a file by specifying the starting index and how many bytes you want to read. If you save a chunk from a tilemap as a string of bytes where each byte represents the ID of the tile, you should be able to implement the feature.
 - **Maks:**
     - [ ] Gun recoil animation
 
