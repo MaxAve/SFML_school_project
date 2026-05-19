@@ -14,10 +14,10 @@
     - Map:
         - [ ] Make items droppable
         - [ ] Make it possible to save doors, structures, lootboxes\
-        Data:
-        - [ ] Door: ID (int), Target door ID (int), Position (x,y), Size (x, y)
-        - [ ] Structure: Type (int), Position (x,y) <-- Do this later (once we have a structure class)
-        - [ ] Loot box: Type (int), Position (x,y), Items it contains (list of item ID's)\
+        - [ ] Data:
+            - Door: ID (int), Target door ID (int), Position (x,y), Size (x, y)
+            - Structure: Type (int), Position (x,y) <-- Do this later (once we have a structure class)
+            - Loot box: Type (int), Position (x,y), Items it contains (list of item ID's)\
         Example:
 ```
 door(0, 1, (10,10), (50,150))
