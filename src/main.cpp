@@ -1,4 +1,4 @@
-#include "environment/GameMap.hpp"
+#include "TileMapEditor.hpp"
 #include "core/Physics.hpp"
 #include "core/Window.hpp"
 #include "entities/Bullet.hpp"
@@ -6,6 +6,7 @@
 #include "entities/Player.hpp"
 #include "entities/Zombie.hpp"
 #include "environment/Door.hpp"
+#include "environment/GameMap.hpp"
 #include "environment/TileMapChunk.hpp"
 #include "fx/DamageIndicatorText.hpp"
 #include "gui/BulletMeter.hpp"
@@ -18,7 +19,6 @@
 #include "looting/LootContainer.hpp"
 #include "resources/Fonts.hpp"
 #include "resources/Textures.hpp"
-#include "TileMapEditor.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -38,8 +38,7 @@ float randomFloat(float min, float max) {
 int main(int argc, char** argv) {
     // Tile map editor
     char s[] = "--edit";
-    if(argc > 1 && strncmp(argv[1], s, 6) == 0)
-    {
+    if (argc > 1 && strncmp(argv[1], s, 6) == 0) {
         LOG("Entering edit mode");
 
         TileMapEditor::start();
@@ -62,7 +61,7 @@ int main(int argc, char** argv) {
     float cameraShakeRange = 0.0f;
 
     window.setFramerateLimit(60); // to avoid pc flying into space
-    window.setView(defaultView);    
+    window.setView(defaultView);
 
     // Load tileset
     LOG("Loading tileset");
@@ -73,15 +72,15 @@ int main(int argc, char** argv) {
 
     // Load shader
     sf::Shader shader;
-	if (!shader.loadFromFile("resources/shaders/lighting.glsl", sf::Shader::Type::Fragment)) {
-		ERR("Failed to load lighting.glsl");
-	}
+    if (!shader.loadFromFile("resources/shaders/lighting.glsl", sf::Shader::Type::Fragment)) {
+        ERR("Failed to load lighting.glsl");
+    }
     shader.setUniform("amountLightSources", 0);
 
     ItemLabel::init();
 
     sf::Text selectedItemLabel(Fonts::pixel);
-    
+
     // Item label
     selectedItemLabel.setOrigin(sf::Vector2f((selectedItemLabel.findCharacterPos(selectedItemLabel.getString().getSize() - 1).x - selectedItemLabel.findCharacterPos(0).x) / 2, 0));
     selectedItemLabel.setFillColor(sf::Color::White);
@@ -113,9 +112,10 @@ int main(int argc, char** argv) {
     LOG("initializing sharedInventoryInterface");
     SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, &player.hotbar, nullptr);
     bool sharedInventoryToggled = false;
+    float rmbCooldownTimer = 0.f;
+    const float RMB_DELAY = 0.10f; 
 
     float lastBulletReloadDelay = .0f;
-
 
     // TEST: items
     LOG("TEST: Item and inventory stuff");
@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
 
     // TODO this is so that the item that the player equips on game start gets registered. Remove this later
     player.equippedItem = hotbarGui.getSelectedItem();
-    if(player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
+    if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
         bulletMeter.initSprites(player.equippedItem->getData()->magSize);
 
     // Game loop
@@ -227,10 +227,10 @@ int main(int argc, char** argv) {
                 } else if (!inventoryToggled && !sharedInventoryToggled && keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
                     // Selecting hotbar slot
                     hotbarGui.setMarkedSlot(static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num0) - 1);
-                    
+
                     // Set player's equipped item
                     player.equippedItem = hotbarGui.getSelectedItem();
-                    if(player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
+                    if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
                         bulletMeter.initSprites(player.equippedItem->getData()->magSize); // Initialize/reset bullet meter if the player equipped a gun
                 }
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -245,15 +245,15 @@ int main(int argc, char** argv) {
                     sharedInventoryInterface.handleLMB(mousePos);
                 }
 
-                else if (mouseButtonPressed->button == sf::Mouse::Button::Right && inventoryToggled) {
-                    sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
-                    inventoryInterface.handleRMB(mousePos);
-                }
+                // else if (mouseButtonPressed->button == sf::Mouse::Button::Right && inventoryToggled) {
+                //     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                //     inventoryInterface.handleRMB(mousePos);
+                // }
 
-                else if (mouseButtonPressed->button == sf::Mouse::Button::Right && sharedInventoryToggled) {
-                    sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
-                    sharedInventoryInterface.handleRMB(mousePos);
-                }
+                // else if (mouseButtonPressed->button == sf::Mouse::Button::Right && sharedInventoryToggled) {
+                //     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                //     sharedInventoryInterface.handleRMB(mousePos);
+                // }
             }
         }
 
@@ -284,12 +284,11 @@ int main(int argc, char** argv) {
                     // Calculate firing angle and spawn new bullet instance
                     sf::Vector2i mousePos = Window::getMousePos();
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
-                    Bullet* b = new Bullet({
-                        player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2},
-                        2000, angle, player.equippedItem->getData()->damage);
+                    Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2},
+                                           2000, angle, player.equippedItem->getData()->damage);
                     timeSinceLastShot = 0.0f;
                     cameraShakeRange = 3.0f;
-                    
+
                     // Remove 1 bullet from the bullet meter
                     if (bulletMeter.currentBullets > 0) {
                         bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
@@ -304,7 +303,7 @@ int main(int argc, char** argv) {
             }
         }
         timeSinceLastShot += Physics::deltaTime;
-        
+
         // Reloading gun
         if (player.reloading && player.equippedItem != nullptr) {
             lastBulletReloadDelay += Physics::deltaTime;
@@ -326,16 +325,15 @@ int main(int argc, char** argv) {
         // Update item label (inventory)
         selectedItemLabel.setString("");
         Item* hotbarItem = hotbarGui.getSelectedItem();
-        if(hotbarItem != nullptr)
-        {
+        if (hotbarItem != nullptr) {
             selectedItemLabel.setString(hotbarItem->getName());
             selectedItemLabel.setOrigin(sf::Vector2f((selectedItemLabel.findCharacterPos(selectedItemLabel.getString().getSize() - 1).x - selectedItemLabel.findCharacterPos(0).x) / 2, 0));
-            selectedItemLabel.setPosition(sf::Vector2f(window.getSize().x/2, window.getSize().y-150));
+            selectedItemLabel.setPosition(sf::Vector2f(window.getSize().x / 2, window.getSize().y - 150));
         }
 
         // LIGHT TEST
         // shader.setUniform("amountLightSources", 2);
-        
+
         // shader.setUniform("lightSources[0].position", sf::Vector2f(600.0f, 200.0f));
         // shader.setUniform("lightSources[0].color", sf::Vector3f(1.0f, 0.0f, 0.0f));
         // shader.setUniform("lightSources[0].range", 100.f);
@@ -364,10 +362,23 @@ int main(int argc, char** argv) {
             hotbarGui.update();
         }
 
+        if (rmbCooldownTimer > 0.f) // to avoid going into -infinity
+            rmbCooldownTimer -= Physics::deltaTime;
+
         if (inventoryToggled) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) && rmbCooldownTimer <= 0.f) {
+                sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                inventoryInterface.handleRMB(mousePos);
+                rmbCooldownTimer = RMB_DELAY;
+            }
             inventoryInterface.update();
         }
         if (sharedInventoryToggled) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) && rmbCooldownTimer <= 0.f) {
+                sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
+                sharedInventoryInterface.handleRMB(mousePos);
+                rmbCooldownTimer = RMB_DELAY;
+            }
             sharedInventoryInterface.update();
         }
 
@@ -403,10 +414,8 @@ int main(int argc, char** argv) {
         window.setView(defaultView);
         playerHealthBar.draw(window);
 
-        if(player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
-        {
-            if(hotbarItem->getType() == ItemType::GUN_AR || hotbarItem->getType() == ItemType::GUN_SMG || hotbarItem->getType() == ItemType::GUN_REVOLVER)
-            {
+        if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun) {
+            if (hotbarItem->getType() == ItemType::GUN_AR || hotbarItem->getType() == ItemType::GUN_SMG || hotbarItem->getType() == ItemType::GUN_REVOLVER) {
                 bulletMeter.updateAnimations();
                 bulletMeter.draw(window);
             }
