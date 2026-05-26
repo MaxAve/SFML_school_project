@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <fstream>
 #include "environment/GameMap.hpp"
 
 class TileMapEditor
@@ -29,11 +30,20 @@ static constexpr float ZOOM_MIN = 0.25f;
 static constexpr float ZOOM_MAX = 8.f;
 static constexpr float ZOOM_STEP = 1.15f;
 
+static constexpr int EMPTY_TILE = 96;
+static constexpr int CHUNK_SIZE = 16;
+
 // ── types ─────────────────────────────────────────────────
 struct TileCoord { int x, y; };
 
 inline static TileCoord topLeftCorner = {9999, 9999};
 inline static TileCoord bottomRightCorner = {-9999, -9999};
+
+inline static bool rectangleMode = false;
+inline static TileCoord rectToolCorner;
+
+inline static mapSizeX = 0;
+inline static mapSizeY = 0;
 
 // Key: world tile position, Value: tile index in the spritesheet (0-255)
 using TileMap = std::unordered_map<int, std::unordered_map<int, int>>;
@@ -46,17 +56,175 @@ static sf::IntRect tileRect(int index)
     return { { col * TILE_PX, row * TILE_PX }, { TILE_PX, TILE_PX } };
 }
 
-static void saveMap(std::string fileName)
+static bool loadTileMap(TileMap& tileMap, const std::string& path)
 {
-    sf::Vector2i mapSize = {bottomRightCorner.x - topLeftCorner.x + 1, bottomRightCorner.y - topLeftCorner.y + 1};
-    sf::Vector2i mapChunkSize = {mapSize.x / 16 + ((mapSize.x % 16 != 0) ? 1 : 0), mapSize.y / 16 + ((mapSize.y % 16 != 0) ? 1 : 0)};
-    GameMap map(mapChunkSize.x, mapChunkSize.y);
-    
+    std::ifstream in(path, std::ios::binary);
+
+    if (!in.is_open())
+        return false;
+
+    tileMap.clear();
+
+    // --------------------------------------------------------
+    // Read header
+    // --------------------------------------------------------
+
+    size_t mapSize[2] = { 0, 0 };
+
+    in.read(reinterpret_cast<char*>(mapSize), sizeof(size_t) * 2);
+
+    size_t chunkCountX = mapSize[0];
+    size_t chunkCountY = mapSize[1];
+
+    // --------------------------------------------------------
+    // Read chunks
+    // --------------------------------------------------------
+
+    for (size_t chunkY = 0; chunkY < chunkCountY; ++chunkY)
+    {
+        for (size_t chunkX = 0; chunkX < chunkCountX; ++chunkX)
+        {
+            int chunk[16][16];
+
+            in.read(reinterpret_cast<char*>(chunk), sizeof(chunk));
+
+            // Reconstruct tiles
+            for (int localY = 0; localY < CHUNK_SIZE; ++localY)
+            {
+                for (int localX = 0; localX < CHUNK_SIZE; ++localX)
+                {
+                    uint8_t tile =
+                        chunk[localY][localX];
+
+                    // Skip empty tiles
+                    // if (tile == EMPTY_TILE)
+                    //     continue;
+
+                    int worldX =
+                        static_cast<int>(chunkX) * CHUNK_SIZE + localX;
+
+                    int worldY =
+                        static_cast<int>(chunkY) * CHUNK_SIZE + localY;
+
+                    tileMap[worldX][worldY] = tile;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+static bool saveTileMap(const TileMap& tileMap, const std::string& path)
+{
+    if (tileMap.empty())
+        return false;
+
+    // --------------------------------------------------------
+    // Find map bounds
+    // --------------------------------------------------------
+
+    int minX = INT32_MAX;
+    int minY = INT32_MAX;
+    int maxX = INT32_MIN;
+    int maxY = INT32_MIN;
+
+    for (const auto& xPair : tileMap)
+    {
+        int x = xPair.first;
+
+        for (const auto& yPair : xPair.second)
+        {
+            int y = yPair.first;
+
+            minX = std::min(minX, x);
+            minY = std::min(minY, y);
+
+            maxX = std::max(maxX, x);
+            maxY = std::max(maxY, y);
+        }
+    }
+
+    std::cout << minX << "," << minY << "," << maxX << "," << maxY << "\n";
+
+    // int minX = topLeftCorner.x;
+    // int minY = topLeftCorner.y;
+    // int maxX = bottomRightCorner.x;
+    // int maxY = bottomRightCorner.y;
+
+    // --------------------------------------------------------
+    // Convert tile bounds to chunk bounds
+    // --------------------------------------------------------
+
+    int minChunkX = minX / CHUNK_SIZE;
+    int minChunkY = minY / CHUNK_SIZE;
+
+    int maxChunkX = maxX / CHUNK_SIZE;
+    int maxChunkY = maxY / CHUNK_SIZE;
+
+    size_t chunkCountX = static_cast<size_t>(maxChunkX - minChunkX + 1);
+    size_t chunkCountY = static_cast<size_t>(maxChunkY - minChunkY + 1);
+
+    // --------------------------------------------------------
+    // Open file
+    // --------------------------------------------------------
+
+    std::ofstream out(path, std::ios::binary | std::ios::trunc);
+    if (!out.is_open())
+        return false;
+
+    // --------------------------------------------------------
+    // Write header
+    // --------------------------------------------------------
+
+    size_t header[2] = { chunkCountX, chunkCountY };
+
+    out.write(reinterpret_cast<char*>(header), sizeof(size_t) * 2);
+
+    // --------------------------------------------------------
+    // Write chunks (top-left to bottom-right)
+    // --------------------------------------------------------
+
+    for (int chunkY = minChunkY; chunkY <= maxChunkY; ++chunkY)
+    {
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; ++chunkX)
+        {
+            // Fill with EMPTY_TILE by default
+            int chunk[16][16];
+
+            // Fill chunk
+            for (int localY = 0; localY < CHUNK_SIZE; ++localY)
+            {
+                for (int localX = 0; localX < CHUNK_SIZE; ++localX)
+                {
+                    int worldX = chunkX * CHUNK_SIZE + localX;
+                    int worldY = chunkY * CHUNK_SIZE + localY;
+
+                    auto xIt = tileMap.find(worldX);
+
+                    if (xIt != tileMap.end())
+                    {
+                        auto yIt = xIt->second.find(worldY);
+
+                        if (yIt != xIt->second.end())
+                        {
+                            chunk[localY][localX] =
+                                static_cast<uint8_t>(yIt->second);
+                        }
+                    }
+                }
+            }
+
+            out.write(reinterpret_cast<char*>(chunk), sizeof(chunk));
+        }
+    }
+
+    return true;
 }
 
 public:
 // ── main ─────────────────────────────────────────────────
-static int start()
+static int start(std::string layer1Path="", std::string layer1PathSave="", std::string layer2Path="", std::string layer2PathSave="")
 {
     // Window
     sf::RenderWindow window(
@@ -113,6 +281,7 @@ static int start()
 
     // ── State ─────────────────────────────────────────────
     TileMap  tileMap;
+    int tileMapData[16*16][16*16]; // TODO this is stupid
     int      selectedTile = 0;   // spritesheet index 0-255
     float    zoom         = 1.f;
     sf::Vector2f viewOffset(0.f, 0.f); // canvas pan in world pixels
@@ -131,6 +300,9 @@ static int start()
                    font.openFromFile("/System/Library/Fonts/Helvetica.ttc") ||
                    font.openFromFile("C:/Windows/Fonts/arial.ttf");
     (void)hasFont;
+
+    if(layer1Path.length() > 0)
+        loadTileMap(tileMap, layer1Path);
 
     // ── Grid / chunk helper rectangles ───────────────────
     sf::RectangleShape chunkBorder, tileCursor;
@@ -185,6 +357,57 @@ static int start()
         {
             if (ev->is<sf::Event::Closed>())
                 window.close();
+
+            if (const auto* mouseButtonPressed = ev->getIf<sf::Event::MouseButtonPressed>())
+            {
+                if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+                {
+                    if(rectangleMode)
+                    {
+                        rectToolCorner = screenToTile(mousePos);
+                    }
+                }
+            }
+
+            if (const auto* mouseButtonPressed = ev->getIf<sf::Event::MouseButtonReleased>())
+            {
+                if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+                {
+                    if(rectangleMode)
+                    {
+                        auto rectToolCorner2 = screenToTile(mousePos);
+                        for(int x = std::min(rectToolCorner.x, rectToolCorner2.x); x <= std::max(rectToolCorner.x, rectToolCorner2.x); x++)
+                        {
+                            for(int y = std::min(rectToolCorner.y, rectToolCorner2.y); y <= std::max(rectToolCorner.y, rectToolCorner2.y); y++)
+                            {
+                                tileMap[x][y] = selectedTile;
+                                tileMapData[y][x] = selectedTile; // More stupid
+                                topLeftCorner.x = std::min(x, topLeftCorner.x);
+                                topLeftCorner.y = std::min(y, topLeftCorner.y);
+                                bottomRightCorner.x = std::max(x, bottomRightCorner.x);
+                                bottomRightCorner.y = std::max(y, bottomRightCorner.y);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(const auto* keyPressed = ev->getIf<sf::Event::KeyPressed>())
+            {
+                if(keyPressed->scancode == sf::Keyboard::Scan::S)
+                {
+                    if(layer1PathSave.length() > 0)
+                    {
+                        //layer1PathSave += "2";
+                        std::cout << "[LOG] Saving map as " << layer1PathSave << "\n";
+                        saveTileMap(tileMap, layer1PathSave);
+                    }
+                    else
+                    {
+                        std::cout << "[ERR] No save path provided\n";
+                    }
+                }
+            }
 
             // ── Zoom ──────────────────────────────────
             if (const auto* mw = ev->getIf<sf::Event::MouseWheelScrolled>())
@@ -244,7 +467,7 @@ static int start()
         }
 
         // ── Continuous tile placement ─────────────────────
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && mouseOnCanvas)
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && mouseOnCanvas && !rectangleMode)
         {
             TileCoord tc = screenToTile(mousePos);
             tileMap[tc.x][tc.y] = selectedTile;
@@ -252,6 +475,15 @@ static int start()
             topLeftCorner.y = std::min(tc.y, topLeftCorner.y);
             bottomRightCorner.x = std::max(tc.x, bottomRightCorner.x);
             bottomRightCorner.y = std::max(tc.y, bottomRightCorner.y);
+        }
+
+        
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
+            rectangleMode = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::B)) {
+            rectangleMode = false;
         }
 
         // ── Draw ──────────────────────────────────────────
@@ -390,17 +622,22 @@ static int start()
             countText.setPosition({ SHEET_OFFSET_X, SHEET_OFFSET_Y + UI_SHEET_PX + 48.f });
             window.draw(countText);
 
-            std::cout << topLeftCorner.x << ", " << topLeftCorner.y << " | " << bottomRightCorner.x << ", " << bottomRightCorner.y << "\n";
+            //std::cout << topLeftCorner.x << ", " << topLeftCorner.y << " | " << bottomRightCorner.x << ", " << bottomRightCorner.y << "\n";
 
             // Keybind reminder
             sf::Text help(font,
                 "LMB (sheet) = select\n"
                 "LMB (canvas) = place\n"
                 "RMB drag = pan\n"
-                "Wheel = zoom", 11u);
+                "Wheel = zoom\nB = bush mode (normal)\nR = rectangle mode", 11u);
             help.setFillColor(sf::Color(110, 110, 130));
             help.setPosition({ SHEET_OFFSET_X, SHEET_OFFSET_Y + UI_SHEET_PX + 75.f });
             window.draw(help);
+
+            sf::Text mode(font, rectangleMode ? "Brush: rectangle" : "Brush: normal", 11u);
+            mode.setFillColor(sf::Color(110, 110, 130));
+            mode.setPosition({ SHEET_OFFSET_X, SHEET_OFFSET_Y + UI_SHEET_PX + 75.f - 15.f });
+            window.draw(mode);
         }
 
         window.display();

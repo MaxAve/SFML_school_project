@@ -5,10 +5,13 @@
 #define LOG(msg) std::cout << msg << std::endl
 
 GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _mapWidth, size_t _mapHeight) : firstPos{_firstPos}, mapWidth{_mapWidth}, mapHeight{_mapHeight} {
-    generateMap();
+    //generateMap();
 
-    // loadChunksFromFile(chunks1L, _path1L);
-    // loadChunksFromFile(chunks2L, _path2L);
+    //loadChunksToFile(chunks1L, _path1L);
+    //loadChunksToFile(chunks2L, _path2L);
+
+    loadChunksFromFile(chunks1L, _path1L);
+    loadChunksFromFile(chunks2L, _path2L);
 }
 
 GameMap::GameMap(size_t _mapWidth, size_t _mapHeight) : mapWidth{_mapWidth}, mapHeight{_mapHeight}
@@ -79,14 +82,23 @@ void GameMap::generateMap() {
 }
 
 void GameMap::loadChunksFromFile(std::vector<TileMapChunk>& chunks, const std::string& path) {
-    chunks.clear();
-    chunks.reserve(mapWidth * mapHeight);
     std::ifstream in(path, std::ios::binary);
 
     if (!in) {
         LOG("Failed to open file. Path: " << path);
         return;
     }
+
+    size_t ms[2] = {0, 0};
+    in.read(reinterpret_cast<char*>(ms), sizeof(size_t) * 2);
+
+    mapWidth = ms[0];
+    mapHeight = ms[1];
+
+    std::cout << "[LOG] Loading " << mapWidth << "x" << mapHeight << " tile map layer\n";
+
+    chunks.clear();
+    chunks.reserve(mapWidth * mapHeight);
 
     size_t n = mapWidth * mapHeight;
     const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
@@ -112,6 +124,11 @@ void GameMap::loadChunksToFile(const std::vector<TileMapChunk>& chunks, const st
     }
 
     size_t chunksAmount = chunks.size();
+
+    std::cout << "[LOG] Saving " << mapWidth << "x" << mapHeight << " tile map layer\n";
+
+    size_t ms[2] = {mapWidth, mapHeight};
+    out.write(reinterpret_cast<const char*>(ms), sizeof(size_t) * 2);
 
     for (size_t i = 0; i < chunksAmount; i++) {
         out.write(reinterpret_cast<const char*>(chunks[i].tiles), sizeof(int) * CHUNK_HEIGHT * CHUNK_WIDTH);

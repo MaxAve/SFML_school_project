@@ -5,7 +5,7 @@
 
 class GameMap {
 public:
-    const size_t mapWidth, mapHeight; // in chunks
+    size_t mapWidth, mapHeight; // in chunks
 
     std::vector<TileMapChunk> chunks1L; // normal tiles
     std::vector<TileMapChunk> chunks2L; // f.e. tall grass

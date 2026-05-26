@@ -42,7 +42,11 @@ int main(int argc, char** argv) {
     {
         LOG("Entering edit mode");
 
-        TileMapEditor::start();
+        std::string p = "";
+        if(argc > 2)
+            p = std::string(argv[2]);
+
+        TileMapEditor::start(p, p);
 
         return 0;
     }

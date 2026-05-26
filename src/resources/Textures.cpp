@@ -28,7 +28,7 @@ void initTextures() {
     for(int i = 0; i < textureNames.size(); i++)
     {
         std::string path = "resources/textures/" + textureNames[i] + ".png";
-        std::cout << "Loading " << path << "\n";
+        std::cout << "[LOG] Loading " << path << "\n";
         stringToTexture.insert({textureNames[i], sf::Texture(path)});
     }
 }
