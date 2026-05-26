@@ -281,7 +281,6 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
 
     // ── State ─────────────────────────────────────────────
     TileMap  tileMap;
-    int tileMapData[16*16][16*16]; // TODO this is stupid
     int      selectedTile = 0;   // spritesheet index 0-255
     float    zoom         = 1.f;
     sf::Vector2f viewOffset(0.f, 0.f); // canvas pan in world pixels
@@ -380,12 +379,14 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
                         {
                             for(int y = std::min(rectToolCorner.y, rectToolCorner2.y); y <= std::max(rectToolCorner.y, rectToolCorner2.y); y++)
                             {
-                                tileMap[x][y] = selectedTile;
-                                tileMapData[y][x] = selectedTile; // More stupid
-                                topLeftCorner.x = std::min(x, topLeftCorner.x);
-                                topLeftCorner.y = std::min(y, topLeftCorner.y);
-                                bottomRightCorner.x = std::max(x, bottomRightCorner.x);
-                                bottomRightCorner.y = std::max(y, bottomRightCorner.y);
+                                if(x >= 0 && y >= 0)
+                                {
+                                    tileMap[x][y] = selectedTile;
+                                    topLeftCorner.x = std::min(x, topLeftCorner.x);
+                                    topLeftCorner.y = std::min(y, topLeftCorner.y);
+                                    bottomRightCorner.x = std::max(x, bottomRightCorner.x);
+                                    bottomRightCorner.y = std::max(y, bottomRightCorner.y);
+                                }
                             }
                         }
                     }
@@ -470,11 +471,14 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
         if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && mouseOnCanvas && !rectangleMode)
         {
             TileCoord tc = screenToTile(mousePos);
-            tileMap[tc.x][tc.y] = selectedTile;
-            topLeftCorner.x = std::min(tc.x, topLeftCorner.x);
-            topLeftCorner.y = std::min(tc.y, topLeftCorner.y);
-            bottomRightCorner.x = std::max(tc.x, bottomRightCorner.x);
-            bottomRightCorner.y = std::max(tc.y, bottomRightCorner.y);
+            if(tc.x >= 0 && tc.y >= 0)
+            {
+                tileMap[tc.x][tc.y] = selectedTile;
+                topLeftCorner.x = std::min(tc.x, topLeftCorner.x);
+                topLeftCorner.y = std::min(tc.y, topLeftCorner.y);
+                bottomRightCorner.x = std::max(tc.x, bottomRightCorner.x);
+                bottomRightCorner.y = std::max(tc.y, bottomRightCorner.y);
+            }
         }
 
         

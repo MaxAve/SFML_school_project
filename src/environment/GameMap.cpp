@@ -5,10 +5,9 @@
 #define LOG(msg) std::cout << msg << std::endl
 
 GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _mapWidth, size_t _mapHeight) : firstPos{_firstPos}, mapWidth{_mapWidth}, mapHeight{_mapHeight} {
-    //generateMap();
-
-    //loadChunksToFile(chunks1L, _path1L);
-    //loadChunksToFile(chunks2L, _path2L);
+    // generateMap();
+    // loadChunksToFile(chunks1L, _path1L);
+    // loadChunksToFile(chunks2L, _path2L);
 
     loadChunksFromFile(chunks1L, _path1L);
     loadChunksFromFile(chunks2L, _path2L);
