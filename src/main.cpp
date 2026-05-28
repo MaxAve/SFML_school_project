@@ -154,7 +154,6 @@ int main(int argc, char** argv) {
     player.inventory.setItem({1, 2}, &ti12);
     player.inventory.setItem({2, 2}, &ti13);
     player.inventory.setItem({3, 2}, &ti14);
-    LootContainer chest(0, player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 
     LOG("Initializing shoot mechanics");
@@ -172,13 +171,18 @@ int main(int argc, char** argv) {
 
     Hitbox testHitbox({300, 500}, {100, 100}, true);
 
-    // DOOR TEST
-    LOG("TEST: Doors");
-    Door* doorA = new Door(0, Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
-    Door* doorB = new Door(1, Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
+    // // Environment TEST
+    // LOG("TEST: Environment stuff");
+    // Door* doorA = new Door(0, Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
+    // Door* doorB = new Door(1, Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
 
-    doorA->targetDoor = doorB;
-    doorB->targetDoor = doorA;
+    // // LootContainer chest(0, player.hitbox.position, {100.f, 75.f}, 125.f);
+    // LootContainer* chest = LootContainer::create(0, player.hitbox.position, sf::Vector2f{100.f, 75.f}, 125.f);
+
+    // doorA->targetDoor = doorB;
+    // doorB->targetDoor = doorA;
+
+    GameMap::loadEnvironment("map/environment.bin");
 
     // TODO this is so that the item that the player equips on game start gets registered. Remove this later
     player.equippedItem = hotbarGui.getSelectedItem();
@@ -355,9 +359,9 @@ int main(int argc, char** argv) {
         Particle::updateAll();
 
         // TODO: optimization needed to support many lootboxes
-        chest.update(player);
-        if (chest.isPlayerInRange()) {
-            sharedInventoryInterface.setOtherInventory(chest.getInventory());
+        LootContainer::pool[0]->update(player);
+        if (LootContainer::pool[0]->isPlayerInRange()) {
+            sharedInventoryInterface.setOtherInventory(LootContainer::pool[0]->getInventory());
         } else {
             sharedInventoryInterface.setOtherInventory(nullptr);
         }
@@ -399,7 +403,7 @@ int main(int argc, char** argv) {
 
         mainMap.draw(window, shader);
 
-        chest.draw();
+        LootContainer::pool[0]->draw();
         for (auto& it : Door::pool)
             it->debugDraw(window);
         Particle::drawOnlyNonActive(window);
@@ -466,6 +470,8 @@ int main(int argc, char** argv) {
         sf::Time dt = deltaClock.restart();
         Physics::deltaTime = dt.asSeconds();
     }
+
+    GameMap::saveEnvironment("map/environment.bin");
 
     return 0;
 }

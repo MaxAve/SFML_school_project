@@ -3,7 +3,9 @@
 
 float LootContainer::promptDistanceFromContainer = 8.f;
 
-LootContainer::LootContainer(size_t _type, sf::Vector2f _pos, sf::Vector2f _size, float _range) 
+std::vector<LootContainer*> LootContainer::pool;
+
+LootContainer::LootContainer(size_t _type, sf::Vector2f _pos, sf::Vector2f _size, float _range)
     : type{_type}, range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get("gui_hud/q_key_prompt")) {
 
     box.setSize(_size);
@@ -44,14 +46,6 @@ bool LootContainer::isPlayerInRange() const {
 
 bool LootContainer::inRangeSq(double distance) {
     return (range * range) >= distance ? true : false;
-}
-
-template<typename... Args>
-LootContainer* LootContainer::create(Args&&... args) {
-    LootContainer* ptr = new LootContainer(std::forward(args));
-    LootContainer::pool.push_back(ptr);
-
-    return ptr;
 }
 
 void LootContainer::update(const Player& player) {

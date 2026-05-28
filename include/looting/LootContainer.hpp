@@ -46,3 +46,12 @@ public:
 
     void draw();
 };
+
+// template function together with header
+template <typename... Args>
+LootContainer* LootContainer::create(Args&&... args) {
+    LootContainer* ptr = new LootContainer(args...);
+    LootContainer::pool.push_back(ptr);
+
+    return ptr;
+}
