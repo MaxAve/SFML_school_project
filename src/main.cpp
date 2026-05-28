@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
     player.inventory.setItem({1, 2}, &ti12);
     player.inventory.setItem({2, 2}, &ti13);
     player.inventory.setItem({3, 2}, &ti14);
-    LootContainer chest(player.hitbox.position, {100.f, 75.f}, 125.f);
+    LootContainer chest(0, player.hitbox.position, {100.f, 75.f}, 125.f);
     // !
 
     LOG("Initializing shoot mechanics");
@@ -174,8 +174,8 @@ int main(int argc, char** argv) {
 
     // DOOR TEST
     LOG("TEST: Doors");
-    Door* doorA = new Door(Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
-    Door* doorB = new Door(Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
+    Door* doorA = new Door(0, Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
+    Door* doorB = new Door(1, Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
 
     doorA->targetDoor = doorB;
     doorB->targetDoor = doorA;

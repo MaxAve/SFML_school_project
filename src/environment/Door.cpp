@@ -2,7 +2,7 @@
 
 std::vector<Door*> Door::pool;
 
-Door::Door(Hitbox hb)
+Door::Door(size_t id_, Hitbox hb) : id{id_}
 {
     this->hitbox = hb;
     Door::pool.push_back(this);

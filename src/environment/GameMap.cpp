@@ -1,8 +1,68 @@
 #include "environment/GameMap.hpp"
+#include "environment/Door.hpp"
+#include "looting/LootContainer.hpp"
 #include <fstream>
 
 #include <iostream>
 #define LOG(msg) std::cout << msg << std::endl
+
+void GameMap::loadEnvironment(const std::string& path) {
+    std::ifstream in(path, std::ios_base::binary);
+
+    // door: constructor already adds to the pool
+
+    // Lootbox: .create(...) handles that
+
+    // TODO: implement for structure
+
+    in.close();
+}
+
+void GameMap::saveEnvironment(const std::string& path) {
+    std::ofstream out(path, std::ios_base::binary);
+
+    if (!out) {
+        LOG("GameMap::saveEnvironment(): File not found");
+        return;
+    }
+
+    size_t doorCount = Door::pool.size();
+    out.write(reinterpret_cast<const char*>(&doorCount), sizeof(size_t));
+    for (auto* door : Door::pool) {
+        out.write(reinterpret_cast<const char*>(&door->id), sizeof(size_t)); // id
+        size_t targetDoorId = door->targetDoor ? door->targetDoor->id : 0;
+        out.write(reinterpret_cast<const char*>(&targetDoorId), sizeof(size_t));                // target id
+        out.write(reinterpret_cast<const char*>(&door->hitbox.position), sizeof(sf::Vector2f)); // position
+        out.write(reinterpret_cast<const char*>(&door->hitbox.size), sizeof(sf::Vector2f));     // size
+    }
+
+    size_t lootboxCount = LootContainer::pool.size();
+    out.write(reinterpret_cast<char*>(&lootboxCount), sizeof(size_t));
+    for (auto* lootbox : LootContainer::pool) {
+        out.write(reinterpret_cast<const char*>(&lootbox->type), sizeof(size_t)); // type
+        sf::Vector2f pos = lootbox->getPosition();
+        out.write(reinterpret_cast<const char*>(&pos), sizeof(sf::Vector2f)); // position
+
+        auto& inventorySlots = *(lootbox->getInventorySlots());
+        size_t rowCnt = inventorySlots.size();
+        out.write(reinterpret_cast<const char*>(&rowCnt), sizeof(size_t));
+
+        for (auto& row : inventorySlots) {
+            size_t yCnt = row.size();
+            out.write(reinterpret_cast<const char*>(&yCnt), sizeof(size_t));
+            for (auto& slot : row) {
+                ItemType itemType = slot.getItem()->getType();
+                out.write(reinterpret_cast<const char*>(&itemType), sizeof(ItemType)); // type
+                size_t itemAmount = slot.getItem()->getAmount();
+                out.write(reinterpret_cast<const char*>(&itemAmount), sizeof(size_t)); // amount
+            }
+        }
+    }
+
+    // TODO: save Structures
+
+    out.close();
+}
 
 GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _mapWidth, size_t _mapHeight) : firstPos{_firstPos}, mapWidth{_mapWidth}, mapHeight{_mapHeight} {
     // generateMap();
@@ -13,12 +73,9 @@ GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::
     loadChunksFromFile(chunks2L, _path2L);
 }
 
-GameMap::GameMap(size_t _mapWidth, size_t _mapHeight) : mapWidth{_mapWidth}, mapHeight{_mapHeight}
-{
-    for(int y = 0; y < mapWidth; y++)
-    {
-        for(int x = 0; x < mapHeight; x++)
-        {
+GameMap::GameMap(size_t _mapWidth, size_t _mapHeight) : mapWidth{_mapWidth}, mapHeight{_mapHeight} {
+    for (int y = 0; y < mapWidth; y++) {
+        for (int x = 0; x < mapHeight; x++) {
             this->chunks1L.push_back(TileMapChunk(sf::Vector2i(x * CHUNK_WIDTH * SCALE * TILE_SIZE, y * CHUNK_HEIGHT * SCALE * TILE_SIZE)));
             this->chunks2L.push_back(TileMapChunk(sf::Vector2i(x * CHUNK_WIDTH * SCALE * TILE_SIZE, y * CHUNK_HEIGHT * SCALE * TILE_SIZE)));
         }

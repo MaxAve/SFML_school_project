@@ -13,7 +13,7 @@
 - **Deniel:**
     - Map:
         - [ ] Make items droppable
-        - [ ] Make it possible to save doors, structures, lootboxes\
+        - [ ] Make it possible to save doors, structures, lootboxes
         - [ ] Data:
             - Door: ID (int), Target door ID (int), Position (x,y), Size (x, y)
             - Structure: Type (int), Position (x,y) <-- Do this later (once we have a structure class)

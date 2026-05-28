@@ -3,12 +3,12 @@
 
 float LootContainer::promptDistanceFromContainer = 8.f;
 
-LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
-    : range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get("gui_hud/q_key_prompt")) {
+LootContainer::LootContainer(size_t _type, sf::Vector2f _pos, sf::Vector2f _size, float _range) 
+    : type{_type}, range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get("gui_hud/q_key_prompt")) {
 
-    box.setSize(size);
+    box.setSize(_size);
     box.setOrigin(box.getLocalBounds().getCenter());
-    box.setPosition(pos);
+    box.setPosition(_pos);
     box.setOutlineThickness(3.f);
     box.setFillColor(sf::Color::Cyan);
 
@@ -30,6 +30,10 @@ std::vector<std::vector<InventorySlot>>* LootContainer::getInventorySlots() {
     return inventory.getInventorySlots();
 }
 
+const sf::Vector2f LootContainer::getPosition() const {
+    return box.getPosition();
+}
+
 Inventory* LootContainer::getInventory() {
     return &inventory;
 }
@@ -40,6 +44,14 @@ bool LootContainer::isPlayerInRange() const {
 
 bool LootContainer::inRangeSq(double distance) {
     return (range * range) >= distance ? true : false;
+}
+
+template<typename... Args>
+LootContainer* LootContainer::create(Args&&... args) {
+    LootContainer* ptr = new LootContainer(std::forward(args));
+    LootContainer::pool.push_back(ptr);
+
+    return ptr;
 }
 
 void LootContainer::update(const Player& player) {
