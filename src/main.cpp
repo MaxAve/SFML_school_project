@@ -45,7 +45,11 @@ int main(int argc, char** argv) {
         if(argc > 2)
             p = std::string(argv[2]);
 
-        TileMapEditor::start(p, p);
+        std::string p2 = "";
+        if(argc > 3)
+            p2 = std::string(argv[3]);
+
+        TileMapEditor::start(p, p, p2, p2);
 
         return 0;
     }

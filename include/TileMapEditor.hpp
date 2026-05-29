@@ -56,6 +56,8 @@ static sf::IntRect tileRect(int index)
 
 static bool loadTileMap(TileMap& tileMap, const std::string& path)
 {
+    std::cout << "[LOG] Loading " << path << "\n";
+
     std::ifstream in(path, std::ios::binary);
 
     if (!in.is_open())
@@ -279,6 +281,8 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
 
     // ── State ─────────────────────────────────────────────
     TileMap  tileMap;
+    TileMap  tileMap2;
+    bool mainLayer = true;
     int      selectedTile = 0;   // spritesheet index 0-255
     float    zoom         = 1.f;
     sf::Vector2f viewOffset(0.f, 0.f); // canvas pan in world pixels
@@ -300,6 +304,8 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
 
     if(layer1Path.length() > 0)
         loadTileMap(tileMap, layer1Path);
+    if(layer2Path.length() > 0)
+        loadTileMap(tileMap2, layer2Path);
 
     // ── Grid / chunk helper rectangles ───────────────────
     sf::RectangleShape chunkBorder, tileCursor;
@@ -379,7 +385,10 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
                             {
                                 if(x >= 0 && y >= 0)
                                 {
-                                    tileMap[x][y] = selectedTile;
+                                    if(mainLayer)
+                                        tileMap[x][y] = selectedTile;
+                                    else
+                                        tileMap2[x][y] = selectedTile;
                                     topLeftCorner.x = std::min(x, topLeftCorner.x);
                                     topLeftCorner.y = std::min(y, topLeftCorner.y);
                                     bottomRightCorner.x = std::max(x, bottomRightCorner.x);
@@ -395,11 +404,12 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
             {
                 if(keyPressed->scancode == sf::Keyboard::Scan::S)
                 {
-                    if(layer1PathSave.length() > 0)
+                    if(layer1PathSave.length() > 0 && layer2PathSave.length() > 0)
                     {
                         //layer1PathSave += "2";
-                        std::cout << "[LOG] Saving map as " << layer1PathSave << "\n";
+                        std::cout << "[LOG] Saving map as " << layer1PathSave << ", " << layer2PathSave << "\n";
                         saveTileMap(tileMap, layer1PathSave);
+                        saveTileMap(tileMap2, layer2PathSave);
                     }
                     else
                     {
@@ -471,7 +481,10 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
             TileCoord tc = screenToTile(mousePos);
             if(tc.x >= 0 && tc.y >= 0)
             {
-                tileMap[tc.x][tc.y] = selectedTile;
+                if(mainLayer)
+                    tileMap[tc.x][tc.y] = selectedTile;
+                else
+                    tileMap2[tc.x][tc.y] = selectedTile;
                 topLeftCorner.x = std::min(tc.x, topLeftCorner.x);
                 topLeftCorner.y = std::min(tc.y, topLeftCorner.y);
                 bottomRightCorner.x = std::max(tc.x, bottomRightCorner.x);
@@ -486,6 +499,12 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::B)) {
             rectangleMode = false;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) {
+            mainLayer = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) {
+            mainLayer = false;
         }
 
         // ── Draw ──────────────────────────────────────────
@@ -551,6 +570,20 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
             }
 
             for (auto& [tx, col] : tileMap)
+            {
+                for (auto& [ty, idx] : col)
+                {
+                    if (tx < tx0 || tx > tx1 || ty < ty0 || ty > ty1) continue;
+                    tileSprite.setTextureRect(tileRect(idx));
+                    tileSprite.setScale({ tileSize / TILE_PX, tileSize / TILE_PX });
+                    float sx = canvasLeft + viewOffset.x + tx * tileSize;
+                    float sy = viewOffset.y              + ty * tileSize;
+                    tileSprite.setPosition({ sx, sy });
+                    window.draw(tileSprite);
+                }
+            }
+
+            for (auto& [tx, col] : tileMap2)
             {
                 for (auto& [ty, idx] : col)
                 {
@@ -631,7 +664,7 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
                 "LMB (sheet) = select\n"
                 "LMB (canvas) = place\n"
                 "RMB drag = pan\n"
-                "Wheel = zoom\nB = bush mode (normal)\nR = rectangle mode", 11u);
+                "Wheel = zoom\nB = bush mode (normal)\nR = rectangle mode\n1 = Layer 1 (main)\n2 = Layer 2", 11u);
             help.setFillColor(sf::Color(110, 110, 130));
             help.setPosition({ SHEET_OFFSET_X, SHEET_OFFSET_Y + UI_SHEET_PX + 75.f });
             window.draw(help);
