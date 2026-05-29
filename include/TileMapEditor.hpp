@@ -283,6 +283,7 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
     TileMap  tileMap;
     TileMap  tileMap2;
     bool mainLayer = true;
+    bool viewMode = false;
     int      selectedTile = 0;   // spritesheet index 0-255
     float    zoom         = 1.f;
     sf::Vector2f viewOffset(0.f, 0.f); // canvas pan in world pixels
@@ -402,6 +403,11 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
 
             if(const auto* keyPressed = ev->getIf<sf::Event::KeyPressed>())
             {
+                if(keyPressed->scancode == sf::Keyboard::Scan::V)
+                {
+                    std::cout << "[LOG] Toggle view mode = " << viewMode << "\n";
+                    viewMode = !viewMode;
+                }
                 if(keyPressed->scancode == sf::Keyboard::Scan::S)
                 {
                     if(layer1PathSave.length() > 0 && layer2PathSave.length() > 0)
@@ -579,6 +585,9 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
                     float sx = canvasLeft + viewOffset.x + tx * tileSize;
                     float sy = viewOffset.y              + ty * tileSize;
                     tileSprite.setPosition({ sx, sy });
+                    tileSprite.setColor(sf::Color(255, 255, 255, 255));
+                    if(!viewMode && !mainLayer)
+                        tileSprite.setColor(sf::Color(255, 255, 255, 127));
                     window.draw(tileSprite);
                 }
             }
@@ -593,6 +602,9 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
                     float sx = canvasLeft + viewOffset.x + tx * tileSize;
                     float sy = viewOffset.y              + ty * tileSize;
                     tileSprite.setPosition({ sx, sy });
+                    tileSprite.setColor(sf::Color(255, 255, 255, 255));
+                    if(!viewMode && mainLayer)
+                        tileSprite.setColor(sf::Color(255, 255, 255, 127));
                     window.draw(tileSprite);
                 }
             }
@@ -664,7 +676,7 @@ static int start(std::string layer1Path="", std::string layer1PathSave="", std::
                 "LMB (sheet) = select\n"
                 "LMB (canvas) = place\n"
                 "RMB drag = pan\n"
-                "Wheel = zoom\nB = bush mode (normal)\nR = rectangle mode\n1 = Layer 1 (main)\n2 = Layer 2", 11u);
+                "Wheel = zoom\nB = bush mode (normal)\nR = rectangle mode\n1 = Layer 1 (main)\n2 = Layer 2\nV = View mode", 14u);
             help.setFillColor(sf::Color(110, 110, 130));
             help.setPosition({ SHEET_OFFSET_X, SHEET_OFFSET_Y + UI_SHEET_PX + 75.f });
             window.draw(help);
