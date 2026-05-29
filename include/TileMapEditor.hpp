@@ -42,8 +42,6 @@ inline static TileCoord bottomRightCorner = {-9999, -9999};
 inline static bool rectangleMode = false;
 inline static TileCoord rectToolCorner;
 
-inline static mapSizeX = 0;
-inline static mapSizeY = 0;
 
 // Key: world tile position, Value: tile index in the spritesheet (0-255)
 using TileMap = std::unordered_map<int, std::unordered_map<int, int>>;

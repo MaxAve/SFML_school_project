@@ -3,12 +3,14 @@
 
 float LootContainer::promptDistanceFromContainer = 8.f;
 
-LootContainer::LootContainer(sf::Vector2f pos, sf::Vector2f size, float _range)
-    : range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get("gui_hud/q_key_prompt")) {
+std::vector<LootContainer*> LootContainer::pool;
 
-    box.setSize(size);
+LootContainer::LootContainer(size_t _type, sf::Vector2f _pos, sf::Vector2f _size, float _range)
+    : type{_type}, range{_range}, inventory({10, 3}, "Lootbox"), prompt(*Textures::get("gui_hud/q_key_prompt")) {
+
+    box.setSize(_size);
     box.setOrigin(box.getLocalBounds().getCenter());
-    box.setPosition(pos);
+    box.setPosition(_pos);
     box.setOutlineThickness(3.f);
     box.setFillColor(sf::Color::Cyan);
 
@@ -28,6 +30,10 @@ double LootContainer::getDistanceTo(const sf::Vector2f coord) {
 
 std::vector<std::vector<InventorySlot>>* LootContainer::getInventorySlots() {
     return inventory.getInventorySlots();
+}
+
+const sf::Vector2f LootContainer::getPosition() const {
+    return box.getPosition();
 }
 
 Inventory* LootContainer::getInventory() {

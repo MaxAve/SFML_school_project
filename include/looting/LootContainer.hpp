@@ -16,7 +16,11 @@ class LootContainer {
 
 public:
 
-    LootContainer(sf::Vector2f _pos, sf::Vector2f _size, float _range);
+    static std::vector<LootContainer*> pool;
+
+    size_t type;
+
+    LootContainer(size_t _type, sf::Vector2f _pos, sf::Vector2f _size, float _range);
 
     // ! returns distance as square
     double getDistanceToSq(const sf::Vector2f);
@@ -28,7 +32,13 @@ public:
     // ! arg is distance as square
     bool inRangeSq(double);
 
+    // in addition to constructor, adds the created obj to the pool
+    template<typename... Args>
+    static LootContainer* create(Args&&... args);
+
     bool isPlayerInRange() const;
+
+    const sf::Vector2f getPosition() const;
 
     Inventory* getInventory();
 
@@ -36,3 +46,12 @@ public:
 
     void draw();
 };
+
+// template function together with header
+template <typename... Args>
+LootContainer* LootContainer::create(Args&&... args) {
+    LootContainer* ptr = new LootContainer(args...);
+    LootContainer::pool.push_back(ptr);
+
+    return ptr;
+}

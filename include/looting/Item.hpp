@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 enum class ItemType {
+    NONE,
     SMALL_CALIBER_AMMO,
     SHOTGUN_AMMO,
     LARGE_CALIBER_AMMO,

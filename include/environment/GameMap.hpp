@@ -12,6 +12,10 @@ public:
 
     sf::Vector2f firstPos; // upper left corner
 
+    // adds the stuff saved in the files to pools
+    static void loadEnvironment(const std::string& path);
+
+    static void saveEnvironment(const std::string& path);
 
     GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _chunksWidth, size_t _chunksHeight);
     GameMap(size_t _chunksWidth, size_t _chunksHeight);
