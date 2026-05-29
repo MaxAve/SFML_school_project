@@ -7,7 +7,7 @@
 GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _mapWidth, size_t _mapHeight) : firstPos{_firstPos}, mapWidth{_mapWidth}, mapHeight{_mapHeight} {
     // generateMap();
     // loadChunksToFile(chunks1L, _path1L);
-    // loadChunksToFile(chunks2L, _path2L);
+    //loadChunksToFile(chunks2L, _path2L);
 
     loadChunksFromFile(chunks1L, _path1L);
     loadChunksFromFile(chunks2L, _path2L);
@@ -137,24 +137,36 @@ void GameMap::loadChunksToFile(const std::vector<TileMapChunk>& chunks, const st
 }
 
 void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader) {
-    const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
-    sf::View windowView = target.getView();
-    sf::Vector2f viewCenter = windowView.getCenter();
-    sf::Vector2f viewSize = windowView.getSize();
+    // TODO this is broken
 
-    sf::Vector2f upperLeftView = viewCenter - viewSize / 2.f;
-    sf::Vector2f bottomRightView = viewCenter + viewSize / 2.f;
+    // const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
+    // sf::View windowView = target.getView();
+    // sf::Vector2f viewCenter = windowView.getCenter();
+    // sf::Vector2f viewSize = windowView.getSize();
 
-    size_t fromX = std::max(0.f, upperLeftView.x / chunkSize.x);
-    size_t toX = std::min(mapWidth, static_cast<size_t>(bottomRightView.x / chunkSize.x) + 1);
-    size_t fromY = std::max(0.f, upperLeftView.y / chunkSize.y);
-    size_t toY = std::min(mapHeight, static_cast<size_t>(bottomRightView.y / chunkSize.y) + 1);
+    // sf::Vector2f upperLeftView = viewCenter - viewSize / 2.f;
+    // sf::Vector2f bottomRightView = viewCenter + viewSize / 2.f;
 
-    for (size_t y = fromY; y < toY; ++y) {
-        size_t idk = mapWidth * y;
-        for (size_t x = fromX; x < toX; ++x) {
-            chunks1L[x + idk].draw(target, shader);
-            chunks2L[x + idk].draw(target, shader);
-        }
+    // size_t fromX = std::max(0.f, upperLeftView.x / chunkSize.x);
+    // size_t toX = std::min(mapWidth, static_cast<size_t>(bottomRightView.x / chunkSize.x) + 1);
+    // size_t fromY = std::max(0.f, upperLeftView.y / chunkSize.y);
+    // size_t toY = std::min(mapHeight, static_cast<size_t>(bottomRightView.y / chunkSize.y) + 1);
+
+    // for (size_t y = fromY; y < toY; ++y) {
+    //     size_t idk = mapWidth * y;
+    //     for (size_t x = fromX; x < toX; ++x) {
+    //         chunks1L[x + idk].draw(target, shader);
+    //         chunks2L[x + idk].draw(target, shader);
+    //     }
+    // }
+
+    for(int i = 0; i < chunks1L.size(); i++)
+    {
+        chunks1L[i].draw(target, shader);
+    }
+
+    for(int i = 0; i < chunks2L.size(); i++)
+    {
+        chunks2L[i].draw(target, shader);
     }
 }
