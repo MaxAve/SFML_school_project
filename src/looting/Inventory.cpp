@@ -23,3 +23,15 @@ std::vector<std::vector<InventorySlot>>* Inventory::getInventorySlots() {
 void Inventory::setItem(sf::Vector2u slot, Item* item) {
     inventorySlots[slot.x][slot.y].setItem(item);
 }
+
+sf::Vector2i Inventory::findEmptySlot() {
+    for (size_t row = 0; row < inventorySize.x; ++row) {
+        for (size_t line = 0; line < inventorySize.y; ++line) {
+            if (!inventorySlots[row][line].getItem()) {
+                return {static_cast<int>(row), static_cast<int>(line)};
+            }
+        }
+    }
+
+    return {-1, -1};
+}

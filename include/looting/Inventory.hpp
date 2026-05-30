@@ -19,5 +19,7 @@ public:
     std::vector<std::vector<InventorySlot>>* getInventorySlots();
     std::string getTitle() const;
 
+    sf::Vector2i findEmptySlot();
+
     void setItem(sf::Vector2u slot, Item* item);
 };

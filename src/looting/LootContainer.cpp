@@ -1,5 +1,11 @@
 #include "looting/LootContainer.hpp"
+#include "core/Physics.hpp"
 #include "resources/Textures.hpp"
+
+#define FLOATING_AMPLITUDE 7.5f
+#define FLOATING_FREQUENCY 0.5f
+#define FLOATING_PERIOD 1.f / FLOATING_FREQUENCY
+#define M_PI 3.14159265358979323846
 
 float LootContainer::promptDistanceFromContainer = 8.f;
 
@@ -17,6 +23,7 @@ LootContainer::LootContainer(size_t _type, sf::Vector2f _pos, sf::Vector2f _size
     prompt.setScale({3.f, 3.f});
     prompt.setOrigin(prompt.getLocalBounds().getCenter() + sf::Vector2f{0, prompt.getLocalBounds().size.y / 2});
     prompt.setPosition(box.getPosition() - sf::Vector2f{0, box.getGlobalBounds().size.y / 2 + promptDistanceFromContainer});
+    promptDefPos = prompt.getPosition();
 }
 
 double LootContainer::getDistanceToSq(const sf::Vector2f coord) {
@@ -60,6 +67,25 @@ void LootContainer::update(const Player& player) {
         box.setOutlineColor(sf::Color::Yellow);
     } else {
         box.setOutlineColor(sf::Color::Transparent);
+    }
+
+    // prompt animation
+    if (playerInRange) {
+        totalTime += Physics::deltaTime;
+
+        if (totalTime >= FLOATING_PERIOD) {
+            totalTime -= FLOATING_PERIOD;
+        }
+
+        float deltaS = FLOATING_AMPLITUDE * sin(2 * M_PI * FLOATING_FREQUENCY * totalTime);
+
+        prompt.setPosition(promptDefPos + sf::Vector2f{0.f, deltaS});
+    }
+}
+
+void LootContainer::updateAll(const Player& player) {
+    for (auto* it : pool) {
+        it->update(player);
     }
 }
 

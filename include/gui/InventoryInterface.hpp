@@ -1,5 +1,6 @@
 #pragma once
 #include "core/Window.hpp"
+#include "looting/DroppedItem.hpp"
 #include "gui/GuiParameters.hpp"
 #include "gui/InventorySlotGui.hpp"
 #include "gui/ItemLabel.hpp"
@@ -36,7 +37,7 @@ public:
 
     InventorySlotGui* findHoveredSlot();
 
-    void handleLMB(sf::Vector2f mousePos);
+    void handleLMB(sf::Vector2f mousePos, sf::Vector2f playerPos);
 
     void handleRMB(sf::Vector2f mousePos);
 

@@ -59,11 +59,17 @@ InventorySlotGui* InventoryInterface::findHoveredSlot() {
     return nullptr;
 }
 
-void InventoryInterface::handleLMB(sf::Vector2f mousePos) {
+void InventoryInterface::handleLMB(sf::Vector2f mousePos, sf::Vector2f playerPos) {
     Item* selectedItem = nullptr;
     InventorySlotGui* targetSlot = findHoveredSlot();
 
-    if (!targetSlot) {
+    if (!targetSlot && !carriedItem) {
+        return;
+    } else if (!targetSlot) {
+        DroppedItem::create(carriedItem, playerPos);
+        carriedItem = nullptr;
+        carriedItemSprite.reset();
+
         return;
     }
 
