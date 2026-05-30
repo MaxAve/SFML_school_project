@@ -2,6 +2,7 @@
 #include "resources/Textures.hpp"
 #include <SFML/Graphics.hpp>
 #include <unordered_set>
+#include <cstring>
 
 #define CHUNK_WIDTH 16
 #define CHUNK_HEIGHT 16
