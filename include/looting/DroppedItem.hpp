@@ -2,26 +2,35 @@
 #include "core/Window.hpp"
 #include "looting/Item.hpp"
 #include <SFML/Graphics.hpp>
+#include "entities/Player.hpp"
 
 class DroppedItem {
     Item* item;
     sf::Sprite sprite;
+    bool readyForPickup = false;
 
     float totalTime;
+    float pickupCountdown;
 
 public:
     static std::vector<DroppedItem*> pool;
 
     DroppedItem(Item*, sf::Vector2f pos);
 
-    // TODO: DroppedItem* popItem()
+    Item* popItem();
+
+    Item* getItem();
+
+    bool isPlayerInRange(sf::Vector2f playerPos) const;
+
+    bool isReadyForPickup() const;
 
     template <typename... Args>
     static DroppedItem* create(Args... args);
 
-    void update();
+    void update(Player& player);
 
-    static void updateAll();
+    static void updateAll(Player& player);
 
     void draw();
 

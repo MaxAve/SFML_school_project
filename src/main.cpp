@@ -381,7 +381,7 @@ int main(int argc, char** argv) {
         player.update();
         Zombie::updateAll();
         Particle::updateAll();
-        DroppedItem::updateAll();
+        DroppedItem::updateAll(player);
 
         // TODO: optimization needed to support many lootboxes
         LootContainer::pool[0]->update(player);
