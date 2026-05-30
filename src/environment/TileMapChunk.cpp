@@ -4,8 +4,11 @@ sf::Texture TileMapChunk::tilesetAtlas;
 
 TileMapChunk::TileMapChunk(sf::Vector2i position)
 {
+    this->position = sf::Vector2f(position);
     this->mesh.setPrimitiveType(sf::PrimitiveType::Triangles);
     this->mesh.resize(CHUNK_WIDTH * CHUNK_HEIGHT * 6);
+
+    memset(this->hitbox, 0, 256);
 
     for (unsigned int i = 0; i < CHUNK_WIDTH; ++i)
     {
@@ -50,16 +53,42 @@ bool TileMapChunk::updateTextures()
             quad[3].texCoords = sf::Vector2f((tu + 1) * TILE_SIZE, (tv + 1) * TILE_SIZE);
             quad[4].texCoords = sf::Vector2f((tu + 1) * TILE_SIZE, tv * TILE_SIZE);
             quad[5].texCoords = sf::Vector2f(tu * TILE_SIZE, (tv + 1) * TILE_SIZE);
+
+            // Update hitbox
+            if(TileMapChunk::tilesWithHitbox.find(tileNumber) != TileMapChunk::tilesWithHitbox.end())
+            {
+                this->hitbox[j][i] = 1;
+            }
         }
     }
 
     return true;
 }
 
-void TileMapChunk::draw(sf::RenderWindow& window, sf::Shader& shader)
+void TileMapChunk::draw(sf::RenderWindow& window, sf::Shader& shader, bool drawHitboxes)
 {
     sf::RenderStates states;
     states.texture = &TileMapChunk::tilesetAtlas;
     states.shader = &shader;
     window.draw(this->mesh, states);
+
+    if(drawHitboxes)
+    {
+        sf::RectangleShape hitboxIndicator(sf::Vector2f(TILE_SIZE*SCALE, TILE_SIZE*SCALE));
+        hitboxIndicator.setFillColor(sf::Color(255, 0, 0, 100));
+        hitboxIndicator.setOutlineColor(sf::Color(255, 0, 0));
+        hitboxIndicator.setOutlineThickness(1);
+        hitboxIndicator.setPosition(sf::Vector2f(-1000, -1000));
+        for(int y = 0; y < CHUNK_SIZE; y++)
+        {
+            for(int x = 0; x < CHUNK_SIZE; x++)
+            {
+                if(this->hitbox[y][x])
+                {
+                    hitboxIndicator.setPosition(sf::Vector2f(this->position.x + x * TILE_SIZE * SCALE, this->position.y + y * TILE_SIZE * SCALE));
+                    window.draw(hitboxIndicator);
+                }
+            }
+        }
+    }
 }

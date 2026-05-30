@@ -27,5 +27,5 @@ public:
 
     void loadChunksToFile(const std::vector<TileMapChunk>& chunks, const std::string& path);
 
-    void draw(sf::RenderWindow& target, sf::Shader& shader);
+    void draw(sf::RenderWindow& target, sf::Shader& shader, sf::Vector2f playerPos, bool debugMode);
 };

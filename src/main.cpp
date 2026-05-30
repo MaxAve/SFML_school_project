@@ -65,6 +65,7 @@ int main(int argc, char** argv) {
     Textures::initTextures();
     Fonts::initFonts();
     sf::Clock deltaClock;
+    bool debugMode = true;
 
     LOG("setup window");
     float cameraShakeRange = 0.0f;
@@ -109,6 +110,7 @@ int main(int argc, char** argv) {
 
     LOG("initializing player");
     Player player(window);
+    player.setPosition(sf::Vector2f(1000, 1000));
     LOG("creating playerHealthbar");
     PlayerHealthBar playerHealthBar({500, 40}, 100);
     LOG("creating HotbarGui");
@@ -169,7 +171,7 @@ int main(int argc, char** argv) {
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    int nzombies = 10;
+    int nzombies = 0;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
@@ -196,6 +198,8 @@ int main(int argc, char** argv) {
     if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
         bulletMeter.initSprites(player.equippedItem->getData()->magSize);
 
+    sf::Vector2f playerVelocity(0,0);
+
     // Game loop
     LOG("Starting game loop");
     while (window.isOpen()) {
@@ -218,6 +222,12 @@ int main(int argc, char** argv) {
                 hotbarGui.setPosition({(newSize.x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
                                        newSize.y - GuiParameters::slotSizeF - 7.5f});
             } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+                if(keyPressed->scancode == sf::Keyboard::Scan::F3)
+                {
+                    std::cout << "[LOG] Toggle debug mode\n";
+                    debugMode = !debugMode;
+                }
+
                 /*
                 Key press events
                 */
@@ -280,16 +290,20 @@ int main(int argc, char** argv) {
             // Player movement
             if (!fadeActive) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-                    player.move({-player.speed * Physics::deltaTime, 0});
+                    playerVelocity.x = -player.speed;
+                    //player.move({-player.speed * Physics::deltaTime, 0}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-                    player.move({player.speed * Physics::deltaTime, 0});
+                    playerVelocity.x = player.speed;
+                    //player.move({player.speed * Physics::deltaTime, 0}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-                    player.move({0, -player.speed * Physics::deltaTime});
+                    playerVelocity.y = -player.speed;
+                    //player.move({0, -player.speed * Physics::deltaTime}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-                    player.move({0, player.speed * Physics::deltaTime});
+                    playerVelocity.y = player.speed;
+                    //player.move({0, player.speed * Physics::deltaTime}, &mainMap);
                 }
             }
 
@@ -359,6 +373,10 @@ int main(int argc, char** argv) {
         // shader.setUniform("lightSources[1].range", 100.f);
         // shader.setUniform("lightSources[1].intensity", 5.0f);
 
+        player.move(playerVelocity * Physics::deltaTime, &mainMap);
+        playerVelocity.x = 0;
+        playerVelocity.y = 0;
+
         // Update physics
         Bullet::updateAll();
         player.update();
@@ -408,7 +426,7 @@ int main(int argc, char** argv) {
         // draw Camera (View)
         window.setView(player.view);
 
-        mainMap.draw(window, shader);
+        mainMap.draw(window, shader, player.sprite.getPosition(), debugMode);
 
         LootContainer::drawAll();
         Structure::drawAll();
@@ -423,6 +441,13 @@ int main(int argc, char** argv) {
         // Zombie::drawAll(window);
         // player.draw(window);
         // player.hitbox.debugDraw(window);
+
+        if(debugMode)
+        {
+            player.hitbox.debugDraw(window);
+            player.envHitbox.debugDraw(window, sf::Color::Yellow);
+        }
+
         testHitbox.debugDraw(window);
         Particle::drawOnlyActive(window);
         DamageIndicatorText::drawAll(window);
