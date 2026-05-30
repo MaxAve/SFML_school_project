@@ -178,18 +178,18 @@ int main(int argc, char** argv) {
 
     // Environment TEST
     LOG("TEST: Environment stuff");
-    Door* doorA = new Door(0, Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
-    Door* doorB = new Door(1, Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
+    // Door* doorA = new Door(0, Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
+    // Door* doorB = new Door(1, Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
 
-    // LootContainer chest(0, player.hitbox.position, {100.f, 75.f}, 125.f);
-    LootContainer* chest = LootContainer::create(0, player.hitbox.position, sf::Vector2f{100.f, 75.f}, 125.f);
+    // // LootContainer chest(0, player.hitbox.position, {100.f, 75.f}, 125.f);
+    // LootContainer* chest = LootContainer::create(0, player.hitbox.position, sf::Vector2f{100.f, 75.f}, 125.f);
 
-    doorA->targetDoor = doorB;
-    doorB->targetDoor = doorA;
+    // doorA->targetDoor = doorB;
+    // doorB->targetDoor = doorA;
 
-    Structure* structure = Structure::create(0, sf::Vector2f{900, 750});
+    // Structure* structure = Structure::create(0, sf::Vector2f{900, 750});
 
-    // GameMap::loadEnvironment("map/environment.bin");
+    GameMap::loadEnvironment("map/environment.bin");
 
     // TODO this is so that the item that the player equips on game start gets registered. Remove this later
     player.equippedItem = hotbarGui.getSelectedItem();
