@@ -45,6 +45,8 @@ public:
     void update(const Player& player);
 
     void draw();
+
+    static void drawAll();
 };
 
 // template function together with header
