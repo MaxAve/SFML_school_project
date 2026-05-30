@@ -61,11 +61,15 @@ void SharedInventoryInterface::setCarriedItemSprite(sf::Texture* tex) {
     carriedItemSprite->setOrigin(carriedItemSprite->getLocalBounds().getCenter());
 }
 
-void SharedInventoryInterface::handleLMB(sf::Vector2f mousePos) {
+void SharedInventoryInterface::handleLMB(sf::Vector2f mousePos, sf::Vector2f playerPos) {
     InventorySlotGui* targetSlot = findHoveredSlot();
     Item* selectedItem = nullptr;
 
     if (!targetSlot) {
+        DroppedItem::create(carriedItem, playerPos);
+        carriedItem = nullptr;
+        carriedItemSprite.reset();
+
         return;
     }
 

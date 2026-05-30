@@ -33,7 +33,7 @@ public:
 
     void setCarriedItemSprite(sf::Texture*);
 
-    void handleLMB(sf::Vector2f mousePos);
+    void handleLMB(sf::Vector2f mousePos, sf::Vector2f);
 
     void handleRMB(sf::Vector2f mousePos);
 

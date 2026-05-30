@@ -266,7 +266,7 @@ int main(int argc, char** argv) {
 
                 else if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
-                    sharedInventoryInterface.handleLMB(mousePos);
+                    sharedInventoryInterface.handleLMB(mousePos, player.hitbox.position);
                 }
 
                 // else if (mouseButtonPressed->button == sf::Mouse::Button::Right && inventoryToggled) {
