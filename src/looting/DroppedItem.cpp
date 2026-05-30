@@ -17,16 +17,12 @@
 std::vector<DroppedItem*> DroppedItem::pool;
 
 DroppedItem::DroppedItem(Item* item_, sf::Vector2f pos_) : pickupCountdown{COUNTDOWN}, totalTime{0.f}, item{item_}, sprite(*(item->getTexture())) {
-    LOG("DroppedItem(...)");
-
     sf::Vector2f textureSize = (sf::Vector2f)item->getTexture()->getSize();
     float targetSize = ITEM_SIZE;
     float scaleFactor = targetSize * 0.9f / std::max(textureSize.x, textureSize.y);
     sprite.setScale({scaleFactor, scaleFactor});
     sprite.setOrigin(sprite.getLocalBounds().getCenter());
     sprite.setPosition(pos_);
-
-    LOG("DroppedItem(...)");
 }
 
 bool DroppedItem::isPlayerInRange(sf::Vector2f playerPos) const {
@@ -70,7 +66,7 @@ void DroppedItem::update(Player& player) {
     if (pickupCountdown <= 0.f && isPlayerInRange(player.hitbox.position)) {
         sf::Vector2i emptySlot = player.inventory.findEmptySlot();
         if (emptySlot != sf::Vector2i{-1, -1}) {
-            player.inventory.setItem(sf::Vector2u{emptySlot.x, emptySlot.y}, popItem());
+            player.inventory.setItem(sf::Vector2u{static_cast<unsigned int>(emptySlot.x), static_cast<unsigned int>(emptySlot.y)}, popItem());
         }
     }
     // hover animation

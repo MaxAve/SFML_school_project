@@ -11,7 +11,6 @@
 ### Features (high priority):
 
 - **Deniel:**
-    - [ ] Make items droppable
 - **Maks:**
     - [ ] Gun recoil animation
 
