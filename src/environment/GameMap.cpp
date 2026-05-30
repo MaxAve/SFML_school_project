@@ -225,8 +225,8 @@ void GameMap::generateMap() {
             static_cast<int>(firstPos.x + chunkSize.x * (i % mapWidth)),
             static_cast<int>(firstPos.y + chunkSize.y * (i / mapWidth))});
 
-        fillTiles(chunks1L[i], 0);
-        fillTiles(chunks2L[i], 96); // 96 air
+        fillTiles(chunks1L[i], 16);
+        fillTiles(chunks2L[i], 241); // 96 air
     }
 
     for (int x = 0; x < 16; x++)
@@ -320,13 +320,15 @@ void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader) {
     // sf::Vector2f viewCenter = windowView.getCenter();
     // sf::Vector2f viewSize = windowView.getSize();
 
-    // sf::Vector2f upperLeftView = viewCenter - viewSize / 2.f;
-    // sf::Vector2f bottomRightView = viewCenter + viewSize / 2.f;
+    // sf::Vector2f upperLeftView = viewCenter - viewSize / 2.f;   // coords of upper left corner
+    // sf::Vector2f bottomRightView = viewCenter + viewSize / 2.f; // coords of bottom right corner
 
     // size_t fromX = std::max(0.f, upperLeftView.x / chunkSize.x);
     // size_t toX = std::min(mapWidth, static_cast<size_t>(bottomRightView.x / chunkSize.x) + 1);
     // size_t fromY = std::max(0.f, upperLeftView.y / chunkSize.y);
     // size_t toY = std::min(mapHeight, static_cast<size_t>(bottomRightView.y / chunkSize.y) + 1);
+
+    // LOG(fromX << ' ' << fromY << ' ' << toX << ' ' << toY);
 
     // for (size_t y = fromY; y < toY; ++y) {
     //     size_t idk = mapWidth * y;
