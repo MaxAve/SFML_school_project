@@ -7,6 +7,7 @@
 #include "entities/Zombie.hpp"
 #include "environment/Door.hpp"
 #include "environment/GameMap.hpp"
+#include "environment/Structure.hpp"
 #include "environment/TileMapChunk.hpp"
 #include "fx/DamageIndicatorText.hpp"
 #include "gui/BulletMeter.hpp"
@@ -42,11 +43,11 @@ int main(int argc, char** argv) {
         LOG("Entering edit mode");
 
         std::string p = "";
-        if(argc > 2)
+        if (argc > 2)
             p = std::string(argv[2]);
 
         std::string p2 = "";
-        if(argc > 3)
+        if (argc > 3)
             p2 = std::string(argv[3]);
 
         TileMapEditor::start(p, p, p2, p2);
@@ -123,7 +124,7 @@ int main(int argc, char** argv) {
     SharedInventoryInterface sharedInventoryInterface({1025.f, 700.f}, {(float)window.getSize().x / 2, (float)window.getSize().y / 2}, &player.inventory, &player.hotbar, nullptr);
     bool sharedInventoryToggled = false;
     float rmbCooldownTimer = 0.f;
-    const float RMB_DELAY = 0.10f; 
+    const float RMB_DELAY = 0.10f;
 
     float lastBulletReloadDelay = .0f;
 
@@ -177,8 +178,8 @@ int main(int argc, char** argv) {
 
     Hitbox testHitbox({300, 500}, {100, 100}, true);
 
-    // // Environment TEST
-    // LOG("TEST: Environment stuff");
+    // Environment TEST
+    LOG("TEST: Environment stuff");
     // Door* doorA = new Door(0, Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
     // Door* doorB = new Door(1, Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
 
@@ -187,6 +188,8 @@ int main(int argc, char** argv) {
 
     // doorA->targetDoor = doorB;
     // doorB->targetDoor = doorA;
+
+    // Structure* structure = Structure::create(0, sf::Vector2f{900, 750});
 
     GameMap::loadEnvironment("map/environment.bin");
 
@@ -425,9 +428,11 @@ int main(int argc, char** argv) {
 
         mainMap.draw(window, shader, player.sprite.getPosition(), debugMode);
 
-        LootContainer::pool[0]->draw();
-        for (auto& it : Door::pool)
+        LootContainer::drawAll();
+        Structure::drawAll();
+        for (auto& it : Door::pool) {
             it->debugDraw(window);
+        }
         Particle::drawOnlyNonActive(window);
         Bullet::drawAll(window);
 

@@ -1,5 +1,6 @@
 #include "environment/GameMap.hpp"
 #include "environment/Door.hpp"
+#include "environment/Structure.hpp"
 #include "looting/LootContainer.hpp"
 #include <fstream>
 
@@ -18,10 +19,13 @@ void GameMap::loadEnvironment(const std::string& path) {
 
     Door::pool.clear();
     LootContainer::pool.clear();
+    Structure::pool.clear();
 
     // door: constructor already adds to the pool
     // Lootbox: .create(...) handles constructor + pool
-    // TODO: implement for structure
+    // same for Structure
+
+    LOG("Loading doors");
 
     size_t doorCount = 0;
     std::vector<size_t> targetDoorIds;
@@ -49,6 +53,8 @@ void GameMap::loadEnvironment(const std::string& path) {
             Door::pool[i]->targetDoor = Door::pool[j];
         }
     }
+
+    LOG("Loading lootboxes");
 
     size_t lootboxCount = 0;
     in.read(reinterpret_cast<char*>(&lootboxCount), sizeof(size_t));
@@ -85,6 +91,20 @@ void GameMap::loadEnvironment(const std::string& path) {
         }
     }
 
+    LOG("Loading structures");
+
+    size_t structureCount = 0;
+    in.read(reinterpret_cast<char*>(&structureCount), sizeof(size_t));
+    for (size_t i = 0; i < structureCount; ++i) {
+        size_t type = 0;
+        sf::Vector2f pos;
+
+        in.read(reinterpret_cast<char*>(&type), sizeof(size_t));
+        in.read(reinterpret_cast<char*>(&pos), sizeof(sf::Vector2f));
+
+        Structure::create(type, pos);
+    }
+
     in.close();
 
     LOG("Environment loaded from " << path);
@@ -100,7 +120,8 @@ void GameMap::saveEnvironment(const std::string& path) {
         return;
     }
 
-    LOG("Loading doors");
+    LOG("Saving doors");
+
     size_t doorCount = Door::pool.size();
     out.write(reinterpret_cast<const char*>(&doorCount), sizeof(size_t));
     for (auto* door : Door::pool) {
@@ -110,7 +131,8 @@ void GameMap::saveEnvironment(const std::string& path) {
         out.write(reinterpret_cast<const char*>(&door->hitbox.position), sizeof(sf::Vector2f)); // position
         out.write(reinterpret_cast<const char*>(&door->hitbox.size), sizeof(sf::Vector2f));     // size
     }
-    LOG("Loading lootboxes");
+
+    LOG("Saving lootboxes");
 
     size_t lootboxCount = LootContainer::pool.size();
     out.write(reinterpret_cast<const char*>(&lootboxCount), sizeof(size_t));
@@ -123,7 +145,6 @@ void GameMap::saveEnvironment(const std::string& path) {
         size_t rowCnt = inventorySlots.size();
         out.write(reinterpret_cast<const char*>(&rowCnt), sizeof(size_t));
 
-        LOG("Loading rows");
         for (auto& row : inventorySlots) {
             size_t yCnt = row.size();
             out.write(reinterpret_cast<const char*>(&yCnt), sizeof(size_t));
@@ -145,7 +166,17 @@ void GameMap::saveEnvironment(const std::string& path) {
         }
     }
 
-    // TODO: save Structures
+    LOG("Saving structures");
+
+    size_t structureCount = Structure::pool.size();
+    out.write(reinterpret_cast<const char*>(&structureCount), sizeof(size_t));
+    for (auto* structure : Structure::pool) {
+        size_t type = structure->getType();
+        sf::Vector2f pos = structure->getPosition();
+
+        out.write(reinterpret_cast<const char*>(&type), sizeof(size_t));
+        out.write(reinterpret_cast<const char*>(&pos), sizeof(sf::Vector2f));
+    }
 
     out.close();
 
@@ -155,7 +186,7 @@ void GameMap::saveEnvironment(const std::string& path) {
 GameMap::GameMap(sf::Vector2f _firstPos, const std::string& _path1L, const std::string& _path2L, size_t _mapWidth, size_t _mapHeight) : firstPos{_firstPos}, mapWidth{_mapWidth}, mapHeight{_mapHeight} {
     // generateMap();
     // loadChunksToFile(chunks1L, _path1L);
-    //loadChunksToFile(chunks2L, _path2L);
+    // loadChunksToFile(chunks2L, _path2L);
 
     loadChunksFromFile(chunks1L, _path1L);
     loadChunksFromFile(chunks2L, _path2L);
@@ -194,8 +225,8 @@ void GameMap::generateMap() {
             static_cast<int>(firstPos.x + chunkSize.x * (i % mapWidth)),
             static_cast<int>(firstPos.y + chunkSize.y * (i / mapWidth))});
 
-        fillTiles(chunks1L[i], 0);
-        fillTiles(chunks2L[i], 96); // 96 air
+        fillTiles(chunks1L[i], 16);
+        fillTiles(chunks2L[i], 241); // 96 air
     }
 
     for (int x = 0; x < 16; x++)
@@ -287,13 +318,15 @@ void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader, sf::Vector2f pl
     // sf::Vector2f viewCenter = windowView.getCenter();
     // sf::Vector2f viewSize = windowView.getSize();
 
-    // sf::Vector2f upperLeftView = viewCenter - viewSize / 2.f;
-    // sf::Vector2f bottomRightView = viewCenter + viewSize / 2.f;
+    // sf::Vector2f upperLeftView = viewCenter - viewSize / 2.f;   // coords of upper left corner
+    // sf::Vector2f bottomRightView = viewCenter + viewSize / 2.f; // coords of bottom right corner
 
     // size_t fromX = std::max(0.f, upperLeftView.x / chunkSize.x);
     // size_t toX = std::min(mapWidth, static_cast<size_t>(bottomRightView.x / chunkSize.x) + 1);
     // size_t fromY = std::max(0.f, upperLeftView.y / chunkSize.y);
     // size_t toY = std::min(mapHeight, static_cast<size_t>(bottomRightView.y / chunkSize.y) + 1);
+
+    // LOG(fromX << ' ' << fromY << ' ' << toX << ' ' << toY);
 
     // for (size_t y = fromY; y < toY; ++y) {
     //     size_t idk = mapWidth * y;

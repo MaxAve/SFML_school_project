@@ -70,3 +70,9 @@ void LootContainer::draw() {
         window.draw(prompt);
     }
 }
+
+void LootContainer::drawAll() {
+    for (auto& lc : pool) {
+        lc->draw();
+    }
+}
