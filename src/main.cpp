@@ -183,8 +183,7 @@ int main(int argc, char** argv) {
     // Door* doorA = new Door(0, Hitbox(sf::Vector2f(200, 200), sf::Vector2f(80, 200)));
     // Door* doorB = new Door(1, Hitbox(sf::Vector2f(700, 200), sf::Vector2f(80, 200)));
 
-    // // LootContainer chest(0, player.hitbox.position, {100.f, 75.f}, 125.f);
-    // LootContainer* chest = LootContainer::create(0, player.hitbox.position, sf::Vector2f{100.f, 75.f}, 125.f);
+    // LootContainer* chest = LootContainer::create(0, player.hitbox.position + sf::Vector2f{300.f, 0.f}, sf::Vector2f{100.f, 75.f}, 125.f);
 
     // doorA->targetDoor = doorB;
     // doorB->targetDoor = doorA;
@@ -262,7 +261,7 @@ int main(int argc, char** argv) {
                 // handle inventory mouse press
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left && inventoryToggled) {
                     sf::Vector2f mousePos = static_cast<sf::Vector2f>(Window::getMousePos());
-                    inventoryInterface.handleLMB(mousePos);
+                    inventoryInterface.handleLMB(mousePos, player.hitbox.position);
                 }
 
                 else if (mouseButtonPressed->button == sf::Mouse::Button::Left && sharedInventoryToggled) {
@@ -382,6 +381,7 @@ int main(int argc, char** argv) {
         player.update();
         Zombie::updateAll();
         Particle::updateAll();
+        DroppedItem::updateAll();
 
         // TODO: optimization needed to support many lootboxes
         LootContainer::pool[0]->update(player);
@@ -435,6 +435,7 @@ int main(int argc, char** argv) {
         }
         Particle::drawOnlyNonActive(window);
         Bullet::drawAll(window);
+        DroppedItem::drawAll();
 
         EntityRenderer::drawAll(window);
 

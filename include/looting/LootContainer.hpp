@@ -1,8 +1,8 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include "entities/Player.hpp"
-#include <vector>
 #include "InventorySlot.hpp"
+#include "entities/Player.hpp"
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 class LootContainer {
     static float promptDistanceFromContainer;
@@ -11,11 +11,12 @@ class LootContainer {
     sf::RectangleShape box;
     bool playerInRange = false;
     sf::Sprite prompt;
+    float totalTime = 0;
+    sf::Vector2f promptDefPos;
 
     Inventory inventory;
 
 public:
-
     static std::vector<LootContainer*> pool;
 
     size_t type;
@@ -33,7 +34,7 @@ public:
     bool inRangeSq(double);
 
     // in addition to constructor, adds the created obj to the pool
-    template<typename... Args>
+    template <typename... Args>
     static LootContainer* create(Args&&... args);
 
     bool isPlayerInRange() const;
@@ -43,6 +44,8 @@ public:
     Inventory* getInventory();
 
     void update(const Player& player);
+
+    void updateAll(const Player& player);
 
     void draw();
 
