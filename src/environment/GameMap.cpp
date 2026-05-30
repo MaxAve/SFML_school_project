@@ -340,7 +340,7 @@ void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader, sf::Vector2f pl
     {
         sf::Vector2f cp(chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
         sf::Vector2f dist = cp - playerPos;
-        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
+        if(dist.x*dist.x + dist.y*dist.y < 2500 * 2500)
             chunks1L[i].draw(target, shader, debugMode);
     }
 
@@ -348,7 +348,7 @@ void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader, sf::Vector2f pl
     {
         sf::Vector2f cp(chunks2L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, chunks2L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
         sf::Vector2f dist = cp - playerPos;
-        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
+        if(dist.x*dist.x + dist.y*dist.y < 2500 * 2500)
             chunks2L[i].draw(target, shader, debugMode);
     }
 }
