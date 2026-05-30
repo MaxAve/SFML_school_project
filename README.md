@@ -7,15 +7,20 @@
 - implement tracer for flying bullets
 - armoring (like in minecraft)
 
-
 ### Features (high priority):
 
 - **Deniel:**
+    - [ ] implement armoring (like in mc)
+    - [ ] implement sounds
+        - [ ] find sound effects
+        - [ ] make music playable
 - **Maks:**
     - [ ] Gun recoil animation
+    - [ ] armor textures
 
 ### Extra (low priority):
 - **Deniel:**
-    - [ ] Create a tool for making custom tile maps (or maybe find an existing one?)
+    - [ ] main menu
+    - [ ] pause menu
 - **Maks:**
     - [ ] Pixel art
