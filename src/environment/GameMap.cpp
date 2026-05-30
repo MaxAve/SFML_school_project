@@ -281,9 +281,7 @@ void GameMap::loadChunksToFile(const std::vector<TileMapChunk>& chunks, const st
     out.close();
 }
 
-void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader) {
-    // TODO this is broken
-
+void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader, sf::Vector2f playerPos, bool debugMode) {
     // const sf::Vector2f chunkSize = {TILE_SIZE * CHUNK_WIDTH * SCALE, TILE_SIZE * CHUNK_HEIGHT * SCALE};
     // sf::View windowView = target.getView();
     // sf::Vector2f viewCenter = windowView.getCenter();
@@ -307,11 +305,17 @@ void GameMap::draw(sf::RenderWindow& target, sf::Shader& shader) {
 
     for(int i = 0; i < chunks1L.size(); i++)
     {
-        chunks1L[i].draw(target, shader);
+        sf::Vector2f cp(chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
+        sf::Vector2f dist = cp - playerPos;
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
+            chunks1L[i].draw(target, shader, debugMode);
     }
 
     for(int i = 0; i < chunks2L.size(); i++)
     {
-        chunks2L[i].draw(target, shader);
+        sf::Vector2f cp(chunks2L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, chunks2L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
+        sf::Vector2f dist = cp - playerPos;
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
+            chunks2L[i].draw(target, shader, debugMode);
     }
 }

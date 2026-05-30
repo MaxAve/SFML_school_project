@@ -6,6 +6,7 @@
 #include "looting/Inventory.hpp"
 #include "core/Hitbox.hpp"
 #include "looting/Hotbar.hpp"
+#include "environment/GameMap.hpp"
 #include <iostream>
 
 #ifndef M_PI
@@ -19,10 +20,11 @@ public:
     sf::Vector2f velocity;
     sf::View view;
     float speed;
-    Inventory inventory; 
+    Inventory inventory;
     Hotbar hotbar;
     bool reloading;
-    Hitbox hitbox;
+    Hitbox hitbox; // Used for collisions with enemies
+    Hitbox envHitbox; // Used for collisions with the map. This hitbox is supposed to be smaller than the other one
     Item* equippedItem;
 
 	sf::RectangleShape gunSprite; // Replace with sprite
@@ -32,5 +34,5 @@ public:
 	void update();
     void draw(sf::RenderWindow& window);
     void setPosition(sf::Vector2f pos);
-    void move(sf::Vector2f delta);
+    void move(sf::Vector2f delta, const GameMap* map);
 };

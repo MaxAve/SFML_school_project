@@ -31,7 +31,6 @@ static constexpr float ZOOM_MAX = 8.f;
 static constexpr float ZOOM_STEP = 1.15f;
 
 static constexpr int EMPTY_TILE = 96;
-static constexpr int CHUNK_SIZE = 16;
 
 // ── types ─────────────────────────────────────────────────
 struct TileCoord { int x, y; };

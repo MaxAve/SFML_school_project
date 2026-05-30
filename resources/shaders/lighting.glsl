@@ -11,7 +11,7 @@ uniform vec2 resolution;
 uniform Light lightSources[64];
 uniform int amountLightSources;
 
-const vec3 vignetteColorMultiplier = vec3(0.45, 0.4, 0.5);
+const vec3 vignetteColorMultiplier = vec3(0.4, 0.3, 0.3);
 
 void main(void)
 {

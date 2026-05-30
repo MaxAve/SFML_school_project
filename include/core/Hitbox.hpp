@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "environment/TileMapChunk.hpp"
 
 class Hitbox
 {
@@ -18,5 +19,6 @@ public:
     Hitbox(sf::Vector2f position, sf::Vector2f size, bool isSolid=false);
     bool touching(Hitbox* other);
     bool withinBounds(sf::Vector2f point);
-    void debugDraw(sf::RenderWindow& window);
+    void debugDraw(sf::RenderWindow& window, sf::Color color=sf::Color::Red);
+    bool touching(TileMapChunk* chunk);
 };
