@@ -388,7 +388,7 @@ int main(int argc, char** argv) {
         Bullet::updateAll();
         player.update();
         sf::Listener::setPosition({player.hitbox.position.x, player.hitbox.position.y, 0.f});
-        Zombie::updateAll(player.hitbox.position);
+        Zombie::updateAll(player.hitbox.position, &mainMap);
         Particle::updateAll();
         DroppedItem::updateAll(player);
 

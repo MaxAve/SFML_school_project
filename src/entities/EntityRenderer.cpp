@@ -54,7 +54,10 @@ void EntityRenderer::drawAll(sf::RenderWindow& window, bool drawHitboxes)
         {
             ((Zombie*)EntityRenderer::entities[i].second)->draw(window);
             if(drawHitboxes)
+            {
                 ((Zombie*)EntityRenderer::entities[i].second)->hitbox.debugDraw(window, sf::Color::Green);
+                ((Zombie*)EntityRenderer::entities[i].second)->envHitbox.debugDraw(window, sf::Color::Yellow);
+            }
         }
     }
 }

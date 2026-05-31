@@ -268,11 +268,11 @@ void Player::move(sf::Vector2f delta, const GameMap* map)
         // }
     //}
 
-    this->hitbox.position = this->sprite.getPosition();
-    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+    // this->hitbox.position = this->sprite.getPosition();
+    // this->hitbox.debugSprite.setPosition(this->hitbox.position);
 
-    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y * 0.8f};
-    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
+    // this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y * 0.8f};
+    // this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
 
     if (delta != sf::Vector2f{0.f, 0.f}) {
         if (stepCountdown <= 0.f) {
