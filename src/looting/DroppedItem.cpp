@@ -1,4 +1,5 @@
 #include "looting/DroppedItem.hpp"
+#include "resources/AudioManager.hpp"
 #include "core/Physics.hpp"
 #include <cmath>
 #include <iostream>
@@ -62,11 +63,13 @@ void DroppedItem::update(Player& player) {
     if (pickupCountdown > 0.f) {
         pickupCountdown -= Physics::deltaTime;
     }
-
+    
+    // pick up item
     if (pickupCountdown <= 0.f && isPlayerInRange(player.hitbox.position)) {
         sf::Vector2i emptySlot = player.inventory.findEmptySlot();
         if (emptySlot != sf::Vector2i{-1, -1}) {
             player.inventory.setItem(sf::Vector2u{static_cast<unsigned int>(emptySlot.x), static_cast<unsigned int>(emptySlot.y)}, popItem());
+            AudioManager::playSound("pickup_sound");
         }
     }
     // hover animation

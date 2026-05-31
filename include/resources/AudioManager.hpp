@@ -18,6 +18,7 @@ void init();
 void playSound(const std::string&);
 
 void playMusic(const std::string&);
+void playRandomMusic();
 void stopMusic();
 
 void playBackground(const std::string&);

@@ -1,5 +1,6 @@
 #include "resources/AudioManager.hpp"
 #include <iostream>
+#include <random>
 #define LOG(message) std::cout << message << std::endl
 
 std::unordered_map<std::string, sf::SoundBuffer> AudioManager::soundBuffer;
@@ -46,10 +47,13 @@ void AudioManager::init() {
             continue;
         }
         stringToSound.insert({sound, sf::Sound(soundBuffer.at(sound))});
-        // stringToSound.at(sound).setVolume(5.f);
+        auto it = stringToSound.find(sound);
+        it->second.setRelativeToListener(true);
+        it->second.setPosition({0.f, 0.f, 0.f});
     }
     // reduce volumes
     stringToSound.at("footstep").setVolume(5.f);
+    stringToSound.at("pickup_sound").setVolume(30.f);
     for (const auto& sound : sounds) {
         std::string prefix = "shot_";
         if (sound.substr(0, prefix.length()) == prefix) {
@@ -65,6 +69,9 @@ void AudioManager::init() {
             delete ptr;
             continue;
         }
+        ptr->setLooping(true);
+        ptr->setRelativeToListener(true);
+        ptr->setPosition({0.f, 0.f, 0.f});
         stringToBackground.insert({sound, ptr});
     }
 
@@ -78,9 +85,14 @@ void AudioManager::init() {
             delete ptr;
             continue;
         }
+        ptr->setRelativeToListener(true);
+        ptr->setPosition({0.f, 0.f, 0.f});
         stringToMusic.insert({music, ptr});
     }
 }
+
+// the function from main, sorry for this ugly way
+float randomFloat(float, float);
 
 void AudioManager::playSound(const std::string& soundName) {
     auto it = stringToSound.find(soundName);
@@ -89,6 +101,8 @@ void AudioManager::playSound(const std::string& soundName) {
         LOG("Sound not found: " + soundName);
         return;
     }
+
+    it->second.setPitch(randomFloat(0.8f, 1.f));
 
     it->second.play();
 }
@@ -107,8 +121,29 @@ void AudioManager::playMusic(const std::string& musicName) {
 
     curMusic = it->second;
 
-    curMusic->setVolume(40.0f);
+    curMusic->setVolume(75.0f);
     curMusic->play();
+}
+
+void AudioManager::playRandomMusic() {
+    if (curMusic) {
+        curMusic->stop();
+        curMusic = nullptr;
+    }
+
+    // bit faster than vector
+    std::array<std::string, 6> musicNames{
+        "Bück Dich Cover (Action)",
+        "Cheap House Of The Rising Sun",
+        "Untitled 1",
+        "Untitled 2",
+        "Untitled 3",
+        "Untitled 4"};
+
+    size_t randIdx = static_cast<size_t>(randomFloat(0, musicNames.size())); // sorry about that
+
+    LOG("playRandMusic()");
+    playMusic(musicNames[randIdx]);
 }
 
 void AudioManager::stopMusic() {

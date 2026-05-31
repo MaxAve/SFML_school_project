@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    int nzombies = 0;
+    int nzombies = 5;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({(float)(rand() % 800), 0}, &player);
     }
@@ -201,7 +201,8 @@ int main(int argc, char** argv) {
 
     sf::Vector2f playerVelocity(0, 0);
 
-    AudioManager::playBackground("background_day");
+    AudioManager::playBackground("background_night");
+    AudioManager::playRandomMusic();
 
     // Game loop
     LOG("Starting game loop");
@@ -346,6 +347,7 @@ int main(int argc, char** argv) {
                 bulletMeter.currentBullets += 1;
                 bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
                 lastBulletReloadDelay = .0f;
+                AudioManager::playSound("reload_bullet");
                 if (bulletMeter.currentBullets == bulletMeter.maxBullets) {
                     player.reloading = false;
                     for (int i = 0; i < bulletMeter.maxBullets; i++) {
@@ -385,7 +387,8 @@ int main(int argc, char** argv) {
         // Update physics
         Bullet::updateAll();
         player.update();
-        Zombie::updateAll();
+        sf::Listener::setPosition({ player.hitbox.position.x, player.hitbox.position.y, 0.f });
+        Zombie::updateAll(player.hitbox.position);
         Particle::updateAll();
         DroppedItem::updateAll(player);
 

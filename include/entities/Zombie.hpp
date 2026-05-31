@@ -10,6 +10,7 @@
 #include "gui/HealthBar.hpp"
 #include "fx/Particle.hpp"
 #include "core/Hitbox.hpp"
+#include "resources/AudioManager.hpp"
 
 class Zombie
 {
@@ -18,8 +19,12 @@ public:
     inline const static float MIN_CROWD_DISTANCE = 80.0f;
     inline const static float CROWD_DISPLACMENET_STRENGTH = 0.2f;
     static void pushAwayFromOthers(); // Get pushed away from other zombies to make sure they don't converge to the same spot
-    static void updateAll();
+    static void updateAll(sf::Vector2f);
     static void drawAll(sf::RenderWindow& window);
+
+    // sound
+    sf::Sound sound;
+    float soundTimer = 0.f;
 
     sf::RectangleShape sprite;
     sf::Vector2f velocity;
@@ -31,7 +36,10 @@ public:
     Hitbox hitbox;
 
     Zombie(sf::Vector2f position, Player* targetPlayer);
-    void update();
+    void update(sf::Vector2f playerPos);
+    
+    void makeRandomSound(sf::Vector2f playerPos);
+
     void draw(sf::RenderWindow& window);
     sf::Vector2f getHitboxPosition();
 };
