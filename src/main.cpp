@@ -95,6 +95,14 @@ void runMainMenu(GameState& gameState) {
         }
 
         window.clear();
+    LOG("initializing time, physics, textures, fonts, audio");
+    srand(time(NULL));
+    Physics::init();
+    Textures::initTextures();
+    Fonts::initFonts();
+    AudioManager::init();
+    sf::Clock deltaClock;
+    bool debugMode = false;
 
         window.setView(defaultView);
 

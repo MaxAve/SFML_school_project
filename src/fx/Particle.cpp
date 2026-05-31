@@ -44,6 +44,7 @@ void Particle::updateAll()
 
 void Particle::spawnBloodParticles(sf::Vector2f position, int amount, int speedRange)
 {
+    std::cout << "[LOG] Spawning " << amount << " blood particles\n";
     for(int i = 0; i < amount; i++)
     {
         new Particle(position, {(float)((rand() % speedRange) - speedRange/2), (float)(rand() % speedRange) - speedRange/2}, {22 + (float)(rand() % 5), 22 + (float)(rand() % 5)}, sf::Color(150 - (rand() % 20), 0, 0, 200 + (rand() % 56)), 1500, 0.3, 3);
