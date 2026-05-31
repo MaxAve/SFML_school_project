@@ -47,6 +47,8 @@ enum class GameState {
 };
 
 void runMainMenu(GameState& gameState) {
+    bool debugMode = false;
+
     enum class Page {
         MAIN,
         CREDITS, // TODO
@@ -95,14 +97,6 @@ void runMainMenu(GameState& gameState) {
         }
 
         window.clear();
-    LOG("initializing time, physics, textures, fonts, audio");
-    srand(time(NULL));
-    Physics::init();
-    Textures::initTextures();
-    Fonts::initFonts();
-    AudioManager::init();
-    sf::Clock deltaClock;
-    bool debugMode = false;
 
         window.setView(defaultView);
 
@@ -474,7 +468,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
             Bullet::updateAll();
             player.update();
             sf::Listener::setPosition({player.hitbox.position.x, player.hitbox.position.y, 0.f});
-            Zombie::updateAll(player.hitbox.position);
+            Zombie::updateAll(player.hitbox.position, &mainMap);
             Particle::updateAll();
             DroppedItem::updateAll(player);
 
