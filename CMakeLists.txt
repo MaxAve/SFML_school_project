@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(game LANGUAGES CXX)
 
-set(SFML_STATIC_LIBRARIES ON)
+#set(SFML_STATIC_LIBRARIES ON)
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/lib/cmake/SFML")
 find_package(SFML 3 CONFIG REQUIRED COMPONENTS System Window Graphics Audio)
 
