@@ -44,67 +44,118 @@ void Player::setPosition(sf::Vector2f pos)
 void Player::move(sf::Vector2f delta, const GameMap* map)
 {
     // First, move the player, then check if it collides with anything
-    this->sprite.move(delta);
+    this->sprite.move({delta.x, 0});
+
+    this->hitbox.position = this->sprite.getPosition();
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+
+    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y - this->envHitbox.size.y};
+    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
 
     // Check for collisions with chunks
     for(int i = 0; i < map->chunks1L.size(); i++)
     {
-        sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
-        sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
+        const sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
+        const sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
         
         if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500) // Ignore chunks that are far away
         {
-            bool collision = false; // Set collision to true to stop checking other tiles since if we already collide with a tile, we dont need to check any other tiles
-
-            // Iterate over every tile in the chunk, check if it has a hitbox, and then check if the player is colliding with said hitbox
-            for(int x = 0; x < CHUNK_SIZE; x++)
+            for (int x = 0; x < CHUNK_SIZE; x++)
             {
-                if(collision)
-                    break;
-                for(int y = 0; y < CHUNK_SIZE; y++)
+                for (int y = 0; y < CHUNK_SIZE; y++)
                 {
-                    if(collision)
-                        break;
+                    if(!map->chunks1L[i].hitbox[y][x])
+                        continue;
 
-                    // Check for collision if this tile has a hitbox
-                    if(map->chunks1L[i].hitbox[y][x])
+                    const sf::Vector2f tilePos(map->chunks1L[i].position.x + x * TILE_SIZE * SCALE, map->chunks1L[i].position.y + y * TILE_SIZE * SCALE);
+
+                    const float tileLeft   = map->chunks1L[i].position.x + x * TILE_SIZE * SCALE;
+                    const float tileTop    = map->chunks1L[i].position.y + y * TILE_SIZE * SCALE;
+                    const float tileRight  = tileLeft + TILE_SIZE * SCALE;
+                    const float tileBottom = tileTop  + TILE_SIZE * SCALE;
+
+                    const float playerLeft   = this->envHitbox.position.x;
+                    const float playerTop    = this->envHitbox.position.y;
+                    const float playerRight  = playerLeft + this->envHitbox.size.x;
+                    const float playerBottom = playerTop  + this->envHitbox.size.y;
+
+                    if (playerRight <= tileLeft || playerLeft >= tileRight ||
+                        playerBottom <= tileTop || playerTop >= tileBottom)
+                        continue;
+
+                    if(delta.x > 0)
                     {
-                        // Tile world position
-                        const sf::Vector2f p(map->chunks1L[i].position.x + x * TILE_SIZE * SCALE, map->chunks1L[i].position.y + y * TILE_SIZE * SCALE);
-
-                        // Check for collision
-                        if((this->envHitbox.position.x + this->envHitbox.size.x) >= p.x && (this->envHitbox.position.x + this->envHitbox.size.x) <= (p.x + TILE_SIZE * SCALE)
-                        && (this->envHitbox.position.y + this->envHitbox.size.y) >= p.y && this->envHitbox.position.y <= (p.y + TILE_SIZE * SCALE)
-                        )
-                        {
-                            // TODO this isnt working properly
-                            // This is supposed to make it so that if the player touches a tile, they are moved to the EDGE of the tile's hitbox
-                            if(delta.x > 0)
-                            {
-                                this->sprite.setPosition({p.x - this->envHitbox.size.x, this->sprite.getPosition().y});
-                                collision = true;
-                            }
-                            if(delta.y > 0)
-                            {
-                                this->sprite.setPosition({this->sprite.getPosition().x, p.y - this->sprite.getSize().y});
-                                collision = true;
-                            }
-                            if(delta.x < 0)
-                            {
-                                this->sprite.setPosition({p.x, this->sprite.getPosition().y});
-                                collision = true;
-                            }
-                            if(delta.y < 0)
-                            {
-                                this->sprite.setPosition({this->sprite.getPosition().x, p.y});
-                                collision = true;
-                            }
-                        }
+                        delta.x = 0;
+                        this->sprite.setPosition({tilePos.x - this->sprite.getSize().x, this->sprite.getPosition().y});
+                    } else if(delta.x < 0)
+                    {
+                        delta.x = 0;
+                        this->sprite.setPosition({tilePos.x + TILE_SIZE * SCALE, this->sprite.getPosition().y});
                     }
                 }
             }
         }
     }
+
+    // TODO this is scuffed
+    this->sprite.move({0, delta.y});
+
+    this->hitbox.position = this->sprite.getPosition();
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+
+    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y - this->envHitbox.size.y};
+    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
+
+    // Check for collisions with chunks
+    for(int i = 0; i < map->chunks1L.size(); i++)
+    {
+        const sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
+        const sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
+        
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500) // Ignore chunks that are far away
+        {
+            for (int x = 0; x < CHUNK_SIZE; x++)
+            {
+                for (int y = 0; y < CHUNK_SIZE; y++)
+                {
+                    if(!map->chunks1L[i].hitbox[y][x])
+                        continue;
+
+                    const sf::Vector2f tilePos(map->chunks1L[i].position.x + x * TILE_SIZE * SCALE, map->chunks1L[i].position.y + y * TILE_SIZE * SCALE);
+
+                    const float tileLeft   = map->chunks1L[i].position.x + x * TILE_SIZE * SCALE;
+                    const float tileTop    = map->chunks1L[i].position.y + y * TILE_SIZE * SCALE;
+                    const float tileRight  = tileLeft + TILE_SIZE * SCALE;
+                    const float tileBottom = tileTop  + TILE_SIZE * SCALE;
+
+                    const float playerLeft   = this->envHitbox.position.x;
+                    const float playerTop    = this->envHitbox.position.y;
+                    const float playerRight  = playerLeft + this->envHitbox.size.x;
+                    const float playerBottom = playerTop  + this->envHitbox.size.y;
+
+                    if (playerRight <= tileLeft || playerLeft >= tileRight ||
+                        playerBottom <= tileTop || playerTop >= tileBottom)
+                        continue;
+
+                    if(delta.y > 0)
+                    {
+                        delta.y = 0;
+                        this->sprite.setPosition({this->sprite.getPosition().x, tilePos.y - this->hitbox.size.y});
+                    } else if(delta.y < 0)
+                    {
+                        delta.y = 0;
+                        this->sprite.setPosition({this->sprite.getPosition().x, tilePos.y + TILE_SIZE * SCALE - (this->hitbox.size.y - this->envHitbox.size.y)});
+                    }
+                }
+            }
+        }
+    }
+
+    this->hitbox.position = this->sprite.getPosition();
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+
+    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y - this->envHitbox.size.y};
+    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
 
     //for(int i = 0; i < Hitbox::solidHitboxPool.size(); i++)
     //{
@@ -124,10 +175,4 @@ void Player::move(sf::Vector2f delta, const GameMap* map)
         //         this->sprite.setPosition({this->sprite.getPosition().x, hb->position.y - this->hitbox.size.y - 1});
         // }
     //}
-
-    this->hitbox.position = this->sprite.getPosition();
-    this->hitbox.debugSprite.setPosition(this->hitbox.position);
-
-    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y * 0.8f};
-    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
 }

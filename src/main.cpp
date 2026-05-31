@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
 
     LOG("initializing player");
     Player player(window);
-    player.setPosition(sf::Vector2f(1000, 1000));
+    player.setPosition(sf::Vector2f(1500, 1000));
     LOG("creating playerHealthbar");
     PlayerHealthBar playerHealthBar({500, 40}, 100);
     LOG("creating HotbarGui");
