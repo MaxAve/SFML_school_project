@@ -387,7 +387,7 @@ int main(int argc, char** argv) {
         // Update physics
         Bullet::updateAll();
         player.update();
-        sf::Listener::setPosition({ player.hitbox.position.x, player.hitbox.position.y, 0.f });
+        sf::Listener::setPosition({player.hitbox.position.x, player.hitbox.position.y, 0.f});
         Zombie::updateAll(player.hitbox.position);
         Particle::updateAll();
         DroppedItem::updateAll(player);
@@ -470,17 +470,15 @@ int main(int argc, char** argv) {
         if (!inventoryToggled && !sharedInventoryToggled) {
             hotbarGui.draw();
         }
-
+        window.draw(selectedItemLabel);
         if (inventoryToggled) {
             inventoryInterface.draw();
+            ItemLabel::draw(window);
         }
         if (sharedInventoryToggled) {
             sharedInventoryInterface.draw();
+            ItemLabel::draw(window);
         }
-
-        window.draw(selectedItemLabel);
-
-        ItemLabel::draw(window);
 
         if (fadeActive) {
             if (fadeValue < fadeTarget)
