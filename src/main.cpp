@@ -456,7 +456,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                     // Set player's equipped item
                     player.equippedItem = hotbarGui.getSelectedItem();
                     if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
-                        bulletMeter.initSprites(player.equippedItem->magSize); // Initialize/reset bullet meter if the player equipped a gun
+                        bulletMeter.initSprites(player.equippedItem->getData()->magCapacity); // Initialize/reset bullet meter if the player equipped a gun
                 }
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (gameState == GameState::PAUSE) {
@@ -536,9 +536,9 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
 
                         // Remove 1 bullet from the bullet meter
                         if (bulletMeter.currentBullets > 0) {
-                            bulletMeter.setCurrentBullets(bulletMeter.currentBullets - 1);
-                            bulletMeter.ejectBullet(bulletMeter.maxBullets - bulletMeter.currentBullets - 1);
-                            if (bulletMeter.currentBullets <= 0) {
+                            bulletMeter.setCurrentBullets(player.equippedItem->magSize);
+                            bulletMeter.ejectBullet(bulletMeter.maxBullets - player.equippedItem->magSize - 1);
+                            if (player.equippedItem <= 0) {
                                 player.reloading = true;
                             }
                         }
