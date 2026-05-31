@@ -13,7 +13,7 @@
     - [ ] main menu
     - [ ] pause menu
     - [ ] implement sounds
-        - [ ] find sound effects
+        - [ ] integrate sound effects
         - [ ] make music playable
 - **Maks:**
     - [ ] Gun recoil animation
