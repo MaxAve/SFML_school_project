@@ -246,3 +246,12 @@ void InventoryInterface::draw() {
             window.draw(amountOfCarriedItem);
     }
 }
+
+void InventoryInterface::dropCarriedItem(sf::Vector2f playerPos) {
+    if (!carriedItem) {
+        return;
+    }
+    DroppedItem::create(carriedItem, playerPos);
+    carriedItem = nullptr;
+    carriedItemSprite.reset();
+}

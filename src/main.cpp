@@ -424,8 +424,14 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                         LOG("Game Resumed");
                     }
                 } else if (keyPressed->scancode == sf::Keyboard::Scan::I && !sharedInventoryToggled && !fadeActive) {
+                    if (inventoryToggled) {
+                        inventoryInterface.dropCarriedItem(player.hitbox.position);
+                    }
                     inventoryToggled = !inventoryToggled;
                 } else if (keyPressed->scancode == sf::Keyboard::Scan::Q && sharedInventoryInterface.getOtherInventory() && !inventoryToggled && !fadeActive) {
+                    if (sharedInventoryToggled) {
+                        sharedInventoryInterface.dropCarriedItem(player.hitbox.position);
+                    }
                     sharedInventoryToggled = !sharedInventoryToggled;
                 } else if (keyPressed->scancode == sf::Keyboard::Scan::X && !sharedInventoryToggled && !inventoryToggled) {
                     // Entering doors (teleports player to the door's target door)
@@ -590,12 +596,13 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
             Zombie::updateAll(player.hitbox.position, &mainMap);
             Particle::updateAll();
             DroppedItem::updateAll(player);
+            LootContainer::updateAll(player);
 
-            // TODO: optimization needed to support many lootboxes
-            LootContainer::pool[0]->update(player);
-            if (LootContainer::pool[0]->isPlayerInRange()) {
-                sharedInventoryInterface.setOtherInventory(LootContainer::pool[0]->getInventory());
-            } else {
+            for (auto* lc : LootContainer::pool) {
+                if (lc->isPlayerInRange()) {
+                    sharedInventoryInterface.setOtherInventory(lc->getInventory());
+                    break;
+                }
                 sharedInventoryInterface.setOtherInventory(nullptr);
             }
 
@@ -641,7 +648,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
         mainMap.draw(window, shader, player.sprite.getPosition(), debugMode);
 
         LootContainer::drawAll();
-        //Structure::drawAll();
+        // Structure::drawAll();
         for (auto& it : Door::pool) {
             it->debugDraw(window);
         }

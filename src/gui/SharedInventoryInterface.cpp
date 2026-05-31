@@ -397,3 +397,12 @@ void SharedInventoryInterface::draw() {
             window.draw(amountOfCarriedItem);
     }
 }
+
+void SharedInventoryInterface::dropCarriedItem(sf::Vector2f playerPos) {
+    if (!carriedItem) {
+        return;
+    }
+    DroppedItem::create(carriedItem, playerPos);
+    carriedItem = nullptr;
+    carriedItemSprite.reset();
+}
