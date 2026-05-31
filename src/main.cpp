@@ -355,7 +355,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
     // TODO this is so that the item that the player equips on game start gets registered. Remove this later
     player.equippedItem = hotbarGui.getSelectedItem();
     if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
-        bulletMeter.initSprites(player.equippedItem->getData()->magSize);
+        bulletMeter.initSprites(player.equippedItem->magSize);
 
     sf::Vector2f playerVelocity(0, 0);
 
@@ -455,7 +455,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                     // Set player's equipped item
                     player.equippedItem = hotbarGui.getSelectedItem();
                     if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
-                        bulletMeter.initSprites(player.equippedItem->getData()->magSize); // Initialize/reset bullet meter if the player equipped a gun
+                        bulletMeter.initSprites(player.equippedItem->magSize); // Initialize/reset bullet meter if the player equipped a gun
                 }
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (gameState == GameState::PAUSE) {
@@ -516,6 +516,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                         float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                         Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2},
                                                2000, angle, player.equippedItem->getData()->damage);
+                        player.equippedItem->magSize--;
                         switch (player.equippedItem->getType()) {
                         case ItemType::GUN_AR:
                             AudioManager::playSound("shot_ar");

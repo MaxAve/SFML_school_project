@@ -31,16 +31,16 @@ enum class AmmoType {
 typedef struct ItemData {
     std::string name;
     std::string description;
-    bool canDealMeleeDamage;  // true if the item is a close-range weapon like a knife
-    bool isGun;               // true if the item is a gun (what a surpise)
-    bool isHealthPack;        // true if the item can be used to heal the player
-    int damage;               // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
-    float useRate;            // how many times the item can be used per second (= fire rate for guns)
-    std::string texturePath;  // texture to use when displaying the item
-    size_t maximalAmount;     // Amount of this item that can be stacked in a single inventory slot
-    int magSize;              // Magazine size (guns)
-    float reloadTime;         // Reload time for a single bullet (guns)
-    AmmoType ammoType;        // Caliber required for reloading (guns)
+    bool canDealMeleeDamage; // true if the item is a close-range weapon like a knife
+    bool isGun;              // true if the item is a gun (what a surpise)
+    bool isHealthPack;       // true if the item can be used to heal the player
+    int damage;              // Note: if ```isHealthPack``` is true, this attribute will be used to determine how much health the player gains
+    float useRate;           // how many times the item can be used per second (= fire rate for guns)
+    std::string texturePath; // texture to use when displaying the item
+    size_t maximalAmount;    // Amount of this item that can be stacked in a single inventory slot
+    int magCapacity;         // Magazine capacity (guns)
+    float reloadTime;        // Reload time for a single bullet (guns)
+    AmmoType ammoType;       // Caliber required for reloading (guns)
 } ItemData_s;
 
 class Item {
@@ -51,6 +51,8 @@ class Item {
     static std::unordered_map<ItemType, ItemData> typeToData;
 
 public:
+    int magSize = 0; // actuall ammo amount
+
     Item() = default;
 
     Item(ItemType type, size_t amount);
@@ -77,7 +79,7 @@ public:
 
     size_t getAmount() const;
 
-    int getMagSize() const;
+    int getMagCapacity() const;
 
     void setAmount(size_t val);
 
