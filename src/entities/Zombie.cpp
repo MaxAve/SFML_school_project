@@ -23,8 +23,8 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer) : soundTimer{randomF
     this->envHitbox.debugSprite.setFillColor(sf::Color::Transparent);
     this->envHitbox.debugSprite.setSize(this->envHitbox.size);
 
-    // Each zombie has a 10% chance to spawn as a fast zombie
-    if(rand() % 10 != 0)
+    // Each zombie has a 20% chance to spawn as a fast zombie
+    if(rand() % 5 != 0)
     {
         this->animation = Animation("resources/textures/spritesheets/zombie1.png", {4, 4, 1, 0}, 4, {32, 32});
     }
@@ -73,7 +73,7 @@ void Zombie::updateAll(sf::Vector2f playerPos, const GameMap* map) {
     Zombie::pushAwayFromOthers();
     for (int i = 0; i < Zombie::pool.size(); i++) {
         Zombie::pool[i]->update(playerPos, map);
-        if (Zombie::pool[i]->healthBar.currentHealth == 0) {
+        if (Zombie::pool[i]->healthBar.currentHealth <= 0) {
             Particle::spawnBloodParticles(Zombie::pool[i]->sprite.getPosition(), 35, 500);
             Zombie::pool.erase(Zombie::pool.begin() + i);
             i--;

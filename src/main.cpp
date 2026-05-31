@@ -22,6 +22,7 @@
 #include "resources/AudioManager.hpp"
 #include "resources/Fonts.hpp"
 #include "resources/Textures.hpp"
+#include "core/EntitySpawner.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -197,9 +198,9 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    new Zombie({800, 1000}, &player);
-    new Zombie({800, 900}, &player);
-    new Zombie({800, 800}, &player);
+    //new Zombie({800, 1000}, &player);
+    //new Zombie({800, 900}, &player);
+    //new Zombie({800, 800}, &player);
 
     Hitbox testHitbox({300, 500}, {100, 100}, true);
 
@@ -253,6 +254,8 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
     transparentForeground.setFillColor(sf::Color(20, 20, 20, 230));
     transparentForeground.setOrigin(transparentForeground.getLocalBounds().getCenter());
     transparentForeground.setPosition(center);
+
+    float spawnTimer = 0.0f;
 
     AudioManager::playBackground("background_night");
     AudioManager::playRandomMusic(); // Game loop
@@ -509,6 +512,14 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                 button.update(static_cast<sf::Vector2f>(Window::getMousePos()));
             }
         }
+
+        if(spawnTimer <= 0.0f)
+        {
+            EntitySpawner::attemptSpawnZombiesWithinPlayerRadius(&player, &mainMap);
+            spawnTimer = 3.0f;
+        }
+        spawnTimer -= Physics::deltaTime;
+
         /*
         Draw everything
         */
