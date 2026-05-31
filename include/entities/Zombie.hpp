@@ -29,6 +29,7 @@ public:
     // sound
     sf::Sound sound;
     float soundTimer = 0.f;
+    float attackTimer = 0.0f;
 
     sf::Sprite sprite;
     Animation animation;

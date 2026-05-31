@@ -260,6 +260,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
     player.setPosition(sf::Vector2f(1500, 1000));
     LOG("creating playerHealthbar");
     PlayerHealthBar playerHealthBar({500, 40}, 100);
+    player.hpbar = &playerHealthBar;
     LOG("creating HotbarGui");
     HotbarGui hotbarGui(&player.hotbar, {((float)window.getSize().x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
                                          (float)window.getSize().y - GuiParameters::slotSizeF - 7.5f});

@@ -303,7 +303,7 @@ void Zombie::update(sf::Vector2f playerPos, const GameMap* map) {
         this->velocity.x = std::cos(angle) * this->speed;
         this->velocity.y = std::sin(angle) * this->speed;
 
-        if(this->animation.getCurrentCycle() == 0)
+        if(this->animation.getCurrentCycle() == 0 && this->hurtTimer <= 0.0001f)
             this->animation.setAnimationCycle(1);
 
         this->isAggro = true;
@@ -340,15 +340,34 @@ void Zombie::update(sf::Vector2f playerPos, const GameMap* map) {
         }
         if(this->hurtTimer <= 0.0001f)
         {
-            this->animation.setAnimationCycle(1);
+            if(attackTimer > 0.0f)
+                this->animation.setAnimationCycle(0);
+            else
+                this->animation.setAnimationCycle(1);
             this->sprite.setColor(sf::Color(255, 255, 255, 255));
         }
     }
 
-    if (Utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f) {
+    if (Utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f && attackTimer < 0.001f) {
         this->move({
             (this->velocity.x + this->displacementVelocity.x + this->bulletPushVelocity.x) * Physics::deltaTime,
             (this->velocity.y + this->displacementVelocity.y + this->bulletPushVelocity.y) * Physics::deltaTime}, map);
+    }
+    else
+    {
+        if(attackTimer < 0.001f)
+        {
+            this->targetPlayer->hpbar->changeHealth(-12);
+            attackTimer = 2.0f;
+            this->animation.setAnimationCycle(0);
+        }
+    }
+
+    if(attackTimer > 0.0f)
+    {
+        attackTimer -= Physics::deltaTime;
+        if(attackTimer <= 0.0f)
+            this->animation.setAnimationCycle(1);
     }
 
     soundTimer -= Physics::deltaTime;

@@ -7,6 +7,7 @@
 #include "core/Hitbox.hpp"
 #include "looting/Hotbar.hpp"
 #include "environment/GameMap.hpp"
+#include "gui/PlayerHealthBar.hpp"
 #include <iostream>
 
 #ifndef M_PI
@@ -26,6 +27,7 @@ public:
     Hitbox hitbox; // Used for collisions with enemies
     Hitbox envHitbox; // Used for collisions with the map. This hitbox is supposed to be smaller than the other one
     Item* equippedItem;
+    PlayerHealthBar* hpbar;
 
     // walking sound stuff
     float stepCountdown = 0.f;

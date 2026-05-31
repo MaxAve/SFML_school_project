@@ -6,6 +6,7 @@
 #define STEP_COUNTDOWN 0.45f
 
 Player::Player(sf::RenderWindow& window) : inventory({10, 3}, "Player"), hotbar(5) {
+    this->hpbar = nullptr;
     this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
     this->sprite.setFillColor(sf::Color::Blue);
     this->sprite.setPosition({window.getSize().x / 2 - 25.f, window.getSize().y / 2 - 50.f});

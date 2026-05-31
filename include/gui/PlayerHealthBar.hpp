@@ -6,6 +6,7 @@
 class PlayerHealthBar {
     HealthBar healthBar;
     const unsigned maxHealth;
+    sf::Vector2f size;
 
 public:
     PlayerHealthBar(sf::Vector2f _size,unsigned _maxHealth);

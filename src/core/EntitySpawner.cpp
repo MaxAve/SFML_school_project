@@ -24,7 +24,7 @@ void EntitySpawner::attemptSpawnZombiesWithinPlayerRadius(Player* player, GameMa
         
         if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2000) // Ignore chunks that are far away + only every 4th chunk will have zombies
         {
-            if((rand() % 5 == 0))
+            if((rand() % 3 == 0))
             {
                 std::cout << "[LOG] Attempting to spawn enemies in chunk " << map->chunks2L[i].position.x << "," << map->chunks2L[i].position.y << "\n";
                 if(map->chunks2L[i].enemiesSpawned)
