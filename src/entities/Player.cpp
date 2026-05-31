@@ -43,17 +43,20 @@ void Player::setPosition(sf::Vector2f pos)
 
 void Player::move(sf::Vector2f delta, const GameMap* map)
 {
+    // First, move the player, then check if it collides with anything
     this->sprite.move(delta);
 
+    // Check for collisions with chunks
     for(int i = 0; i < map->chunks1L.size(); i++)
     {
-        sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
-        sf::Vector2f dist = cp - this->sprite.getPosition();
+        sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
+        sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
         
-        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500) // Ignore chunks that are far away
         {
-            bool collision = false;
+            bool collision = false; // Set collision to true to stop checking other tiles since if we already collide with a tile, we dont need to check any other tiles
 
+            // Iterate over every tile in the chunk, check if it has a hitbox, and then check if the player is colliding with said hitbox
             for(int x = 0; x < CHUNK_SIZE; x++)
             {
                 if(collision)
@@ -63,14 +66,19 @@ void Player::move(sf::Vector2f delta, const GameMap* map)
                     if(collision)
                         break;
 
+                    // Check for collision if this tile has a hitbox
                     if(map->chunks1L[i].hitbox[y][x])
                     {
+                        // Tile world position
                         const sf::Vector2f p(map->chunks1L[i].position.x + x * TILE_SIZE * SCALE, map->chunks1L[i].position.y + y * TILE_SIZE * SCALE);
 
+                        // Check for collision
                         if((this->envHitbox.position.x + this->envHitbox.size.x) >= p.x && (this->envHitbox.position.x + this->envHitbox.size.x) <= (p.x + TILE_SIZE * SCALE)
                         && (this->envHitbox.position.y + this->envHitbox.size.y) >= p.y && this->envHitbox.position.y <= (p.y + TILE_SIZE * SCALE)
                         )
                         {
+                            // TODO this isnt working properly
+                            // This is supposed to make it so that if the player touches a tile, they are moved to the EDGE of the tile's hitbox
                             if(delta.x > 0)
                             {
                                 this->sprite.setPosition({p.x - this->envHitbox.size.x, this->sprite.getPosition().y});
@@ -97,30 +105,6 @@ void Player::move(sf::Vector2f delta, const GameMap* map)
             }
         }
     }
-
-    // for(int i = 0; i < map->chunks2L.size(); i++)
-    // {
-    //     sf::Vector2f cp(map->chunks2L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks2L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
-    //     sf::Vector2f dist = cp - this->sprite.getPosition();
-    //     if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
-    //     {
-    //         for(int x = 0; x < CHUNK_SIZE; x++)
-    //         {
-    //             for(int y = 0; y < CHUNK_SIZE; y++)
-    //             {
-    //                 if(map->chunks1L[i].hitbox[y][x])
-    //                 {
-    //                     Hitbox hb(sf::Vector2f(map->chunks1L[i].position.x + (float)(x * TILE_SIZE * SCALE), map->chunks1L[i].position.y  + (float)(y * TILE_SIZE * SCALE)), sf::Vector2f(TILE_SIZE * SCALE, TILE_SIZE * SCALE));
-
-    //                     if(this->envHitbox.touching(&hb))
-    //                     {
-    //                         std::cout << "waaaaa " << x << "\n";
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
     //for(int i = 0; i < Hitbox::solidHitboxPool.size(); i++)
     //{
