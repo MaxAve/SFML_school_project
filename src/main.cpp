@@ -249,7 +249,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
             gameState = GameState::MAIN_MENU;
         })};
     sf::RectangleShape transparentForeground(newSize);
-    transparentForeground.setFillColor(GuiParameters::foregroundColor);
+    transparentForeground.setFillColor(sf::Color(20, 20, 20, 230));
     transparentForeground.setOrigin(transparentForeground.getLocalBounds().getCenter());
     transparentForeground.setPosition(center);
 
