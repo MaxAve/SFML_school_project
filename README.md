@@ -10,11 +10,7 @@
 ### Features (high priority):
 
 - **Deniel:**
-    - [ ] main menu
-    - [X] pause menu
-    - [X] implement sounds
-        - [X] integrate sound effects
-        - [X] make music playable
+ - [ ] try fix bugs
 - **Maks:**
     - [ ] Gun recoil animation
     - [ ] armor textures
