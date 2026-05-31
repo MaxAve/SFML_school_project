@@ -4,6 +4,7 @@ sf::Texture TileMapChunk::tilesetAtlas;
 
 TileMapChunk::TileMapChunk(sf::Vector2i position)
 {
+    this->enemiesSpawned = false;
     this->position = sf::Vector2f(position);
     this->mesh.setPrimitiveType(sf::PrimitiveType::Triangles);
     this->mesh.resize(CHUNK_WIDTH * CHUNK_HEIGHT * 6);

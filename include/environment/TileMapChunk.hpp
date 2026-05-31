@@ -20,6 +20,8 @@ public:
         115, 116, 129, 130, 131, 132, 145, 147, 148, 161, 162, 163, // Fence
     };
 
+    bool enemiesSpawned;
+
     int tiles[CHUNK_HEIGHT][CHUNK_WIDTH]; // Tile IDs (0-255)
     bool hitbox[CHUNK_HEIGHT][CHUNK_WIDTH];
     sf::VertexArray mesh;

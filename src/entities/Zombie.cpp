@@ -5,8 +5,8 @@ std::vector<Zombie*> Zombie::pool;
 float randomFloat(float, float);
 
 Zombie::Zombie(sf::Vector2f position, Player* targetPlayer) : soundTimer{randomFloat(1.f, 10.f)}, sound(AudioManager::soundBuffer.at("zombie_1")), texture("resources/textures/spritesheets/zombie1.png"), sprite(texture) {
-    this->speed = 100.0f + (float)(rand() % 50);
     this->velocity = sf::Vector2f(0, 0);
+    this->speed = 100.0f + (float)(rand() % 50);
     this->displacementVelocity = sf::Vector2f(0, 0);
     this->bulletPushVelocity = sf::Vector2f(0, 0);
     this->targetPlayer = targetPlayer;
@@ -23,7 +23,17 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer) : soundTimer{randomF
     this->envHitbox.debugSprite.setFillColor(sf::Color::Transparent);
     this->envHitbox.debugSprite.setSize(this->envHitbox.size);
 
-    this->animation = Animation("resources/textures/spritesheets/zombie1.png", {4, 4, 1, 0}, 4, {32, 32});
+    // Each zombie has a 10% chance to spawn as a fast zombie
+    if(rand() % 10 != 0)
+    {
+        this->animation = Animation("resources/textures/spritesheets/zombie1.png", {4, 4, 1, 0}, 4, {32, 32});
+    }
+    else
+    {
+        this->animation = Animation("resources/textures/spritesheets/zombie2.png", {4, 4, 1, 0}, 8, {32, 32});
+        this->speed *= 3.f;
+        this->healthBar = HealthBar(200);
+    }
 
     this->sprite = sf::Sprite(animation.spriteSheet);
     animation.setDefaultSprite(&(this->sprite));
