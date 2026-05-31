@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
     Fonts::initFonts();
     AudioManager::init();
     sf::Clock deltaClock;
-    bool debugMode = true;
+    bool debugMode = false;
 
     LOG("setup window");
     float cameraShakeRange = 0.0f;
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    int nzombies = 10;
+    int nzombies = 1;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({1500, 1000}, &player);
     }

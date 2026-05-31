@@ -22,12 +22,14 @@ public:
     static void pushAwayFromOthers(); // Get pushed away from other zombies to make sure they don't converge to the same spot
     static void updateAll(sf::Vector2f);
     static void drawAll(sf::RenderWindow& window);
+    float hurtTimer; // The zombie will be unable to move and will display a specific animation for a short amount of time after getting hit
+    float timeSinceBlink; // Zombie will blick while the hurt timer is running
 
     // sound
     sf::Sound sound;
     float soundTimer = 0.f;
 
-    sf::RectangleShape sprite;
+    sf::Sprite sprite;
     Animation animation;
 
     sf::Vector2f velocity;
@@ -45,4 +47,7 @@ public:
 
     void draw(sf::RenderWindow& window);
     sf::Vector2f getHitboxPosition();
+
+private:
+    sf::Texture texture;
 };

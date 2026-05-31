@@ -4,20 +4,31 @@ std::vector<Zombie*> Zombie::pool;
 
 float randomFloat(float, float);
 
-Zombie::Zombie(sf::Vector2f position, Player* targetPlayer) : soundTimer{randomFloat(1.f, 10.f)}, sound(AudioManager::soundBuffer.at("zombie_1")) {
-    this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
-    this->sprite.setPosition(position);
-    this->sprite.setFillColor(sf::Color(255, 100, 100));
-    this->sprite.setOutlineThickness(2.0f);
-    this->sprite.setOutlineColor(sf::Color(100, 0, 0));
+Zombie::Zombie(sf::Vector2f position, Player* targetPlayer) : soundTimer{randomFloat(1.f, 10.f)}, sound(AudioManager::soundBuffer.at("zombie_1")), texture("resources/textures/spritesheets/zombie1.png"), sprite(texture) {
+    // this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
+    // this->sprite.setPosition(position);
+    // this->sprite.setFillColor(sf::Color(255, 100, 100));
+    // this->sprite.setOutlineThickness(2.0f);
+    // this->sprite.setOutlineColor(sf::Color(100, 0, 0));
 
-    this->speed = 200.0f + (float)(rand() % 50);
+    this->speed = 100.0f + (float)(rand() % 50);
     this->velocity = sf::Vector2f(0, 0);
     this->displacementVelocity = sf::Vector2f(0, 0);
     this->bulletPushVelocity = sf::Vector2f(0, 0);
     this->targetPlayer = targetPlayer;
     this->healthBar = HealthBar(100);
     this->hitbox = Hitbox(sf::Vector2f(50.f, 100.f));
+    this->hurtTimer = 0.0f;
+
+    this->animation = Animation("resources/textures/spritesheets/zombie1.png", {4, 4, 1, 0}, 4, {32, 32});
+
+    this->sprite = sf::Sprite(animation.spriteSheet);
+    animation.setDefaultSprite(&(this->sprite));
+    this->sprite.setPosition(position);
+    this->sprite.setScale({4, 4});
+    this->sprite.setOrigin({16, 0});
+
+    animation.setAnimationCycle(1);
 
     Zombie::pool.push_back(this);
 
@@ -77,6 +88,28 @@ void Zombie::update(sf::Vector2f playerPos) {
     if (std::abs(this->bulletPushVelocity.y) < 0.01f)
         this->bulletPushVelocity.y = 0.0f;
 
+    if(this->hurtTimer > 0.0001f)
+    {
+        this->velocity.x = 0;
+        this->velocity.y = 0;
+        this->animation.setAnimationCycle(2);
+        this->hurtTimer -= Physics::deltaTime;
+        this->timeSinceBlink -= Physics::deltaTime;
+        if(this->timeSinceBlink <= 0.0001f)
+        {
+            this->timeSinceBlink = 0.05f;
+            if(this->sprite.getColor().a == 255)
+                this->sprite.setColor(sf::Color(255, 255, 255, 100));
+            else
+                this->sprite.setColor(sf::Color(255, 255, 255, 255));
+        }
+        if(this->hurtTimer <= 0.0001f)
+        {
+            this->animation.setAnimationCycle(1);
+            this->sprite.setColor(sf::Color(255, 255, 255, 255));
+        }
+    }
+
     if (Utils::distance(this->sprite.getPosition(), this->targetPlayer->sprite.getPosition()) > 60.0f) {
         this->sprite.move({(this->velocity.x + this->displacementVelocity.x + this->bulletPushVelocity.x) * Physics::deltaTime,
                            (this->velocity.y + this->displacementVelocity.y + this->bulletPushVelocity.y) * Physics::deltaTime});
@@ -91,6 +124,13 @@ void Zombie::update(sf::Vector2f playerPos) {
         makeRandomSound(playerPos);
         soundTimer = randomFloat(5.f, 15.0f);
     }
+
+    this->animation.update(&(this->sprite), Physics::deltaTime);
+
+    if(this->targetPlayer->sprite.getPosition().x < this->sprite.getPosition().x)
+        this->sprite.setScale({-std::abs(this->sprite.getScale().x), this->sprite.getScale().y});
+    else
+        this->sprite.setScale({std::abs(this->sprite.getScale().x), this->sprite.getScale().y});
 }
 
 void Zombie::makeRandomSound(sf::Vector2f playerPos) {
@@ -114,5 +154,6 @@ void Zombie::draw(sf::RenderWindow& window) {
 }
 
 sf::Vector2f Zombie::getHitboxPosition() {
-    return {this->sprite.getSize().x / 2 + this->sprite.getPosition().x, this->sprite.getSize().y / 2 + this->sprite.getPosition().y};
+    // TODO improve later
+    return {64 + this->sprite.getPosition().x, 64 + this->sprite.getPosition().y};
 }

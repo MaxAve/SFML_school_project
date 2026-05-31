@@ -41,6 +41,7 @@ void Bullet::update()
 			if(crit)
 				this->damage *= 2;
 			Zombie::pool[i]->healthBar.setHealth(Zombie::pool[i]->healthBar.currentHealth - this->damage);
+			Zombie::pool[i]->hurtTimer = 0.5f;
 			new DamageIndicatorText(sf::Vector2f(Zombie::pool[i]->sprite.getPosition().x + (float)((rand() % 40)) - 10.f, Zombie::pool[i]->sprite.getPosition().y + (float)((rand() % 40)) - 10.f), damage, crit);
 			Zombie::pool[i]->bulletPushVelocity = this->velocity / 5.f;
 			this->distanceTraveled = 1000000000;
