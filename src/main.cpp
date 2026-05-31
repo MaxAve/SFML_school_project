@@ -355,7 +355,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
         // Update shader resolution
         shader.setUniform("resolution", sf::Vector2f(window.getSize()));
 
-        if (gameState != GameState::PAUSE) {
+        if (gameState != GameState::PAUSE && gameState != GameState::MAIN_MENU) { // != MAIN_MENU to avoid shooting when leaving the game
             // game outside of inventory
             if (!inventoryToggled && !sharedInventoryToggled) {
                 // Player movement
