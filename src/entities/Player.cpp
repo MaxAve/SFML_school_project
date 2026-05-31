@@ -1,5 +1,9 @@
 #include "entities/Player.hpp"
+#include "core/Physics.hpp"
+#include "resources/AudioManager.hpp"
 #define LOG(message) std::cout << message << std::endl
+
+#define STEP_COUNTDOWN 0.45f
 
 Player::Player(sf::RenderWindow& window) : inventory({10, 3}, "Player"), hotbar(5) {
     this->sprite = sf::RectangleShape(sf::Vector2f(50.f, 100.f));
@@ -146,4 +150,16 @@ void Player::move(sf::Vector2f delta, const GameMap* map)
 
     this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y * 0.8f};
     this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
+
+    if (delta != sf::Vector2f{0.f, 0.f}) {
+        if (stepCountdown <= 0.f) {
+            stepCountdown = STEP_COUNTDOWN;
+            AudioManager::playSound("footstep");
+        } else {
+            stepCountdown -= Physics::deltaTime;
+        }
+    } else {
+        stepCountdown = 0.f;
+    }
+
 }

@@ -307,6 +307,19 @@ int main(int argc, char** argv) {
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                     Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2},
                                            2000, angle, player.equippedItem->getData()->damage);
+                    switch (player.equippedItem->getType()) {
+                    case ItemType::GUN_AR:
+                        AudioManager::playSound("shot_ar");
+                        break;
+                    case ItemType::GUN_REVOLVER:
+                        AudioManager::playSound("shot_pistol");
+                        break;
+                    case ItemType::GUN_SMG:
+                        AudioManager::playSound("shot_ar");
+                        break;
+                    default:
+                        AudioManager::playSound("shot_ar");
+                    }
                     timeSinceLastShot = 0.0f;
                     cameraShakeRange = 3.0f;
 

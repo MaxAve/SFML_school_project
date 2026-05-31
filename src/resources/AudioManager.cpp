@@ -26,7 +26,7 @@ void AudioManager::init() {
         "zombie_2"};
 
     std::vector<std::string> musics{
-        "Bück Dich Cover (Action)",
+        "Bück Dich Cover (Action)",
         "Cheap House Of The Rising Sun",
         "Untitled 1",
         "Untitled 2",
@@ -46,6 +46,15 @@ void AudioManager::init() {
             continue;
         }
         stringToSound.insert({sound, sf::Sound(soundBuffer.at(sound))});
+        // stringToSound.at(sound).setVolume(5.f);
+    }
+    // reduce volumes
+    stringToSound.at("footstep").setVolume(5.f);
+    for (const auto& sound : sounds) {
+        std::string prefix = "shot_";
+        if (sound.substr(0, prefix.length()) == prefix) {
+            stringToSound.at(sound).setVolume(25.f);
+        }
     }
 
     for (const auto& sound : backgroundSounds) {

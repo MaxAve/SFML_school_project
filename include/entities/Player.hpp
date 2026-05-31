@@ -27,6 +27,9 @@ public:
     Hitbox envHitbox; // Used for collisions with the map. This hitbox is supposed to be smaller than the other one
     Item* equippedItem;
 
+    // walking sound stuff
+    float stepCountdown = 0.f;
+
 	sf::RectangleShape gunSprite; // Replace with sprite
 
     Player(sf::RenderWindow& window);
