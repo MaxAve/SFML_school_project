@@ -3,7 +3,7 @@ project(game LANGUAGES CXX)
 
 set(SFML_STATIC_LIBRARIES ON)
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/lib/cmake/SFML")
-find_package(SFML 3 CONFIG REQUIRED COMPONENTS System Window Graphics)
+find_package(SFML 3 CONFIG REQUIRED COMPONENTS System Window Graphics Audio)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
@@ -13,4 +13,4 @@ add_executable(game ${SOURCES}
 
 target_include_directories(game PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics)
+target_link_libraries(game PRIVATE SFML::System SFML::Window SFML::Graphics SFML::Audio)

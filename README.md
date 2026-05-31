@@ -12,9 +12,9 @@
 - **Deniel:**
     - [ ] main menu
     - [ ] pause menu
-    - [ ] implement sounds
-        - [ ] integrate sound effects
-        - [ ] make music playable
+    - [X] implement sounds
+        - [X] integrate sound effects
+        - [X] make music playable
 - **Maks:**
     - [ ] Gun recoil animation
     - [ ] armor textures

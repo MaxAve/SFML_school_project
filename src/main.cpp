@@ -18,6 +18,7 @@
 #include "gui/SharedInventoryInterface.hpp"
 #include "looting/Inventory.hpp"
 #include "looting/LootContainer.hpp"
+#include "resources/AudioManager.hpp"
 #include "resources/Fonts.hpp"
 #include "resources/Textures.hpp"
 #include <SFML/Graphics.hpp>
@@ -59,11 +60,12 @@ int main(int argc, char** argv) {
 
     LOG("main()");
 
-    LOG("initializing time, physics, textures, fonts");
+    LOG("initializing time, physics, textures, fonts, audio");
     srand(time(NULL));
     Physics::init();
     Textures::initTextures();
     Fonts::initFonts();
+    AudioManager::init();
     sf::Clock deltaClock;
     bool debugMode = true;
 
@@ -197,7 +199,10 @@ int main(int argc, char** argv) {
     if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
         bulletMeter.initSprites(player.equippedItem->getData()->magSize);
 
-    sf::Vector2f playerVelocity(0,0);
+    sf::Vector2f playerVelocity(0, 0);
+
+    AudioManager::playBackground("background_night");
+    AudioManager::playRandomMusic();
 
     // Game loop
     LOG("Starting game loop");
@@ -221,8 +226,7 @@ int main(int argc, char** argv) {
                 hotbarGui.setPosition({(newSize.x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
                                        newSize.y - GuiParameters::slotSizeF - 7.5f});
             } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-                if(keyPressed->scancode == sf::Keyboard::Scan::F3)
-                {
+                if (keyPressed->scancode == sf::Keyboard::Scan::F3) {
                     std::cout << "[LOG] Toggle debug mode\n";
                     debugMode = !debugMode;
                 }
@@ -280,19 +284,19 @@ int main(int argc, char** argv) {
             if (!fadeActive) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                     playerVelocity.x = -player.speed;
-                    //player.move({-player.speed * Physics::deltaTime, 0}, &mainMap);
+                    // player.move({-player.speed * Physics::deltaTime, 0}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
                     playerVelocity.x = player.speed;
-                    //player.move({player.speed * Physics::deltaTime, 0}, &mainMap);
+                    // player.move({player.speed * Physics::deltaTime, 0}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
                     playerVelocity.y = -player.speed;
-                    //player.move({0, -player.speed * Physics::deltaTime}, &mainMap);
+                    // player.move({0, -player.speed * Physics::deltaTime}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
                     playerVelocity.y = player.speed;
-                    //player.move({0, player.speed * Physics::deltaTime}, &mainMap);
+                    // player.move({0, player.speed * Physics::deltaTime}, &mainMap);
                 }
             }
 
@@ -304,6 +308,19 @@ int main(int argc, char** argv) {
                     float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
                     Bullet* b = new Bullet({player.sprite.getPosition().x + player.sprite.getSize().x / 2, player.sprite.getPosition().y + player.sprite.getSize().y / 2},
                                            2000, angle, player.equippedItem->getData()->damage);
+                    switch (player.equippedItem->getType()) {
+                    case ItemType::GUN_AR:
+                        AudioManager::playSound("shot_ar");
+                        break;
+                    case ItemType::GUN_REVOLVER:
+                        AudioManager::playSound("shot_pistol");
+                        break;
+                    case ItemType::GUN_SMG:
+                        AudioManager::playSound("shot_ar");
+                        break;
+                    default:
+                        AudioManager::playSound("shot_ar");
+                    }
                     timeSinceLastShot = 0.0f;
                     cameraShakeRange = 3.0f;
 
@@ -330,6 +347,7 @@ int main(int argc, char** argv) {
                 bulletMeter.currentBullets += 1;
                 bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
                 lastBulletReloadDelay = .0f;
+                AudioManager::playSound("reload_bullet");
                 if (bulletMeter.currentBullets == bulletMeter.maxBullets) {
                     player.reloading = false;
                     for (int i = 0; i < bulletMeter.maxBullets; i++) {
@@ -369,7 +387,8 @@ int main(int argc, char** argv) {
         // Update physics
         Bullet::updateAll();
         player.update();
-        Zombie::updateAll();
+        sf::Listener::setPosition({ player.hitbox.position.x, player.hitbox.position.y, 0.f });
+        Zombie::updateAll(player.hitbox.position);
         Particle::updateAll();
         DroppedItem::updateAll(player);
 
