@@ -22,6 +22,7 @@ void initTextures() {
         "items/gun_ar",
         "items/gun_revolver",
         "gui_hud/q_key_prompt",
+        "gui_hud/title",
     };
 
     for (int i = 0; i < textureNames.size(); i++) {

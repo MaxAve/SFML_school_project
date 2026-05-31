@@ -11,7 +11,7 @@
 
 - **Deniel:**
     - [ ] main menu
-    - [ ] pause menu
+    - [X] pause menu
     - [X] implement sounds
         - [X] integrate sound effects
         - [X] make music playable

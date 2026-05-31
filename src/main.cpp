@@ -27,8 +27,8 @@
 #include <random>
 #include <string.h>
 
-#define LOG(message) std::cout << "[LOG] " message << std::endl
-#define ERR(message) std::cout << "[ERR] " message << std::endl
+#define LOG(message) std::cout << "[LOG] " << message << std::endl
+#define ERR(message) std::cout << "[ERR] " << message << std::endl
 
 float randomFloat(float min, float max) {
     static std::random_device rd;  // seed
@@ -46,25 +46,81 @@ enum class GameState {
     GAME_OVER,
 };
 
-void runMainMenu(GameState& gameState) {
+void runMainMenu(GameState& gameState, sf::Clock& deltaClock) {
     bool debugMode = false;
 
     enum class Page {
         MAIN,
-        CREDITS, // TODO
+        CREDITS,
     };
+
+    Page curPage = Page::MAIN;
 
     sf::Vector2f center = window.getView().getCenter();
     sf::Vector2f buttonSize = {500.f, 75.f};
     sf::Vector2f gapSize = {0.f, 30.f}; // gap between buttons
 
+    sf::Text versionText(Fonts::pixel, "Version: Pre-Pre-Alpha-demo-beta-0.1", 20U);
+    versionText.setFillColor(sf::Color::White);
+    versionText.setOrigin(versionText.getLocalBounds().size);
+    versionText.setPosition(center + window.getView().getSize() / 2.f + sf::Vector2f{-5.f, -10.f});
+
     // for main Page
-    std::array<Button, 2> buttons{
+    const float TITLE_AMPLITUDE = 10.f;
+    const float TITLE_FREQUENCY = 0.5f;
+    const float TITLE_PERIOD = 1 / TITLE_FREQUENCY;
+    float totalTime = 0.f;
+    sf::Vector2f basePosition = center + sf::Vector2f{0.f, -100.f};
+
+    std::array<std::string, 5> randPopUp{
+        "Also try C++!", // TODO: ai generated, make own
+        "Pixel perfect!",
+        "Watch out for zombies!",
+        "SFML powered!",
+        "Pre-Pre-Alpha-Approved!"};
+
+    sf::Text popUpText(Fonts::pixel, randPopUp[randomFloat(0.f, randPopUp.size() - 1)], 25U);
+    popUpText.setFillColor(sf::Color::Yellow);
+    popUpText.setRotation(sf::degrees(-20.f));
+    popUpText.setOrigin({popUpText.getLocalBounds().getCenter().x, popUpText.getLocalBounds().getCenter().y});
+
+    sf::Sprite gameTitle(*Textures::get("gui_hud/title"));
+    gameTitle.setScale({4.f, 4.f});
+    gameTitle.setOrigin({gameTitle.getLocalBounds().getCenter().x, gameTitle.getLocalBounds().size.y});
+    gameTitle.setPosition(basePosition);
+
+    std::array<Button, 3> mainButtons{
         Button(center, buttonSize, "Start Game", [&gameState]() {
             gameState = GameState::GAME;
         }),
-        Button(center + sf::Vector2f{0.f, gapSize.y} + sf::Vector2f{0.f, buttonSize.y * 1}, buttonSize, "Quit Game", [&gameState]() {
+        Button(center + sf::Vector2f{0.f, gapSize.y * 1} + sf::Vector2f{0.f, buttonSize.y * 1}, buttonSize, "Show Credits", [&]() {
+            curPage = Page::CREDITS;
+        }),
+        Button(center + sf::Vector2f{0.f, gapSize.y * 2} + sf::Vector2f{0.f, buttonSize.y * 2}, buttonSize, "Quit Game", [&gameState]() {
             gameState = GameState::EXITING;
+        })};
+
+    // for credits page
+    std::string creditsStr = R"(
+    Programmers: MaxAve, spartancmd
+    2D Artist: MaxAve
+    Musician: spartancmd
+    Sound Designer: spartancmd
+    Texture Integrator: MaxAve, spartancmd
+    TileMap-Editor creator: MaxAve
+    TileMap-Editor operator: MaxAve
+    Looting designer: spartancmd
+    Testers: spartancmd, MaxAve
+    )";
+
+    sf::Text creditsText(Fonts::pixel, creditsStr, 30U);
+    creditsText.setFillColor(sf::Color::White);
+    creditsText.setOrigin({creditsText.getLocalBounds().getCenter().x, creditsText.getLocalBounds().size.y});
+    creditsText.setPosition(center + sf::Vector2f{0.f, (buttonSize.y + gapSize.y) * 2} + sf::Vector2f{0.f, -60.f}); // relativ to "back" button
+
+    std::array<Button, 1> creditButtons{
+        Button(center + sf::Vector2f{0.f, gapSize.y * 2} + sf::Vector2f{0.f, buttonSize.y * 2}, buttonSize, "Back", [&]() {
+            curPage = Page::MAIN;
         })};
 
     while (gameState == GameState::MAIN_MENU) {
@@ -73,14 +129,24 @@ void runMainMenu(GameState& gameState) {
                 gameState = GameState::EXITING;
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
-                    for (auto& button : buttons) {
-                        if (!button.isHovered()) {
-                            continue;
+                    if (curPage == Page::MAIN)
+                        for (auto& button : mainButtons) {
+                            if (!button.isHovered()) {
+                                continue;
+                            }
+                            button.setHovered(false);
+                            button.run();
+                            break;
                         }
-                        button.setHovered(false);
-                        button.run();
-                        break;
-                    }
+                    else if (curPage == Page::CREDITS)
+                        for (auto& button : creditButtons) {
+                            if (!button.isHovered()) {
+                                continue;
+                            }
+                            button.setHovered(false);
+                            button.run();
+                            break;
+                        }
                 }
             } else if (event->is<sf::Event::Resized>()) {
                 sf::Vector2f newSize = {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)};
@@ -90,23 +156,77 @@ void runMainMenu(GameState& gameState) {
                 defaultView.setCenter({newSize.x / 2, newSize.y / 2});
                 center = defaultView.getCenter();
 
-                for (size_t i = 0; i < buttons.size(); ++i) {
-                    buttons[i].setPosition(center + sf::Vector2f{0.f, i * (buttonSize.y + gapSize.y)});
+                for (size_t i = 0; i < mainButtons.size(); ++i) {
+                    mainButtons[i].setPosition(center + sf::Vector2f{0.f, i * (buttonSize.y + gapSize.y)});
                 }
+                creditButtons[0].setPosition(center + sf::Vector2f{0.f, 2 * (buttonSize.y + gapSize.y)});
+
+                creditsText.setPosition(center + sf::Vector2f{0.f, (buttonSize.y + gapSize.y) * 2} + sf::Vector2f{0.f, -60.f});
+
+                basePosition = center + sf::Vector2f{0.f, -100.f};
+                gameTitle.setPosition(basePosition);
+
+                versionText.setPosition(center + defaultView.getSize() / 2.f + sf::Vector2f{-5.f, -10.f});
             }
         }
 
-        window.clear();
+        window.clear(sf::Color(106, 73, 49));
 
         window.setView(defaultView);
 
-        for (auto& button : buttons) {
-            button.update(static_cast<sf::Vector2f>(Window::getMousePos()));
+        switch (curPage) {
+        case Page::MAIN: {
+            totalTime += Physics::deltaTime;
+            float deltaS = TITLE_AMPLITUDE * cos(2 * M_PI * TITLE_FREQUENCY * totalTime);
+            gameTitle.setPosition(basePosition + sf::Vector2f{0.f, deltaS});
+
+            if (totalTime >= TITLE_PERIOD) {
+                totalTime -= TITLE_PERIOD;
+            }
+
+            float scale = 1.0f + 0.12f * std::sin(totalTime * 9.f);
+            popUpText.setScale({scale, scale});
+
+            float halfTitleWidth = gameTitle.getGlobalBounds().size.x / 2.f;
+            popUpText.setPosition(gameTitle.getPosition() + sf::Vector2f{halfTitleWidth - 20.f, -15.f});
+
+            if (totalTime >= TITLE_PERIOD) {
+                totalTime -= TITLE_PERIOD;
+            }
+
+            for (auto& button : mainButtons) {
+                button.update(static_cast<sf::Vector2f>(Window::getMousePos()));
+            }
+
+            window.draw(gameTitle);
+            window.draw(popUpText);
+
+            for (auto& button : mainButtons) {
+                button.draw();
+            }
+
+            break;
+        }
+        case Page::CREDITS: {
+            window.draw(creditsText);
+
+            for (auto& button : creditButtons) {
+                button.update(static_cast<sf::Vector2f>(Window::getMousePos()));
+            }
+
+            for (auto& button : creditButtons) {
+                button.draw();
+            }
+            break;
+        }
+        default:
+            curPage = Page::MAIN;
         }
 
-        for (auto& button : buttons) {
-            button.draw();
-        }
+        window.draw(versionText);
+
+        sf::Time dt = deltaClock.restart();
+        Physics::deltaTime = dt.asSeconds();
 
         window.display();
     }
@@ -581,7 +701,6 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
             window.draw(fadeRect);
         }
 
-
         if (gameState == GameState::PAUSE) {
             window.draw(transparentForeground);
             for (auto& button : pauseButtons) {
@@ -603,7 +722,6 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
     AudioManager::stopMusic();
     AudioManager::stopBackground();
     // TODO: delete allocated stuff etc.
-
 }
 
 int main(int argc, char** argv) {
@@ -664,7 +782,7 @@ int main(int argc, char** argv) {
         switch (gameState) {
         case GameState::MAIN_MENU:
             LOG("runMainMenu()");
-            runMainMenu(gameState);
+            runMainMenu(gameState, deltaClock);
             break;
         case GameState::GAME:
             LOG("runGameplay()");
@@ -672,6 +790,7 @@ int main(int argc, char** argv) {
             break;
         default:
             LOG("default");
+            gameState = GameState::MAIN_MENU;
             return 1;
         }
     }
