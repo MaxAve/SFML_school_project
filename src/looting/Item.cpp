@@ -21,7 +21,7 @@ std::unordered_map<ItemType, ItemData> Item::typeToData{
                               false, true, false, 40, 4.f, "items/gun_revolver", 1, 6, 0.5, AmmoType::SMALL}},
 };
 
-Item::Item(ItemType _type, size_t _amount) : data{typeToData.at(_type)} {
+Item::Item(ItemType _type, size_t _amount) : data{typeToData.at(_type)}, magSize{data.magCapacity} {
     type = _type;
     setAmount(_amount);
 }
@@ -50,8 +50,8 @@ size_t Item::getAmount() const {
     return amount;
 }
 
-int Item::getMagSize() const {
-    return data.magSize;
+int Item::getMagCapacity() const {
+    return data.magCapacity;
 }
 
 void Item::setAmount(size_t val) {
