@@ -538,7 +538,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                         if (bulletMeter.currentBullets > 0) {
                             bulletMeter.setCurrentBullets(player.equippedItem->magSize);
                             bulletMeter.ejectBullet(bulletMeter.maxBullets - player.equippedItem->magSize - 1);
-                            if (player.equippedItem <= 0) {
+                            if (player.equippedItem->magSize <= 0) {
                                 player.reloading = true;
                             }
                         }
