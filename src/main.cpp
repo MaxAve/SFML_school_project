@@ -511,7 +511,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
 
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
                     // Shooting
-                    if (player.equippedItem != nullptr && timeSinceLastShot >= (1.0f / player.equippedItem->getData()->useRate) && !player.reloading) {
+                    if (player.equippedItem != nullptr && timeSinceLastShot >= (1.0f / player.equippedItem->getData()->useRate) && player.equippedItem->magSize  && !player.reloading) {
                         // Calculate firing angle and spawn new bullet instance
                         sf::Vector2i mousePos = Window::getMousePos();
                         float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
