@@ -45,7 +45,7 @@ public:
 
     void update(const Player& player);
 
-    void updateAll(const Player& player);
+    static void updateAll(const Player& player);
 
     void draw();
 

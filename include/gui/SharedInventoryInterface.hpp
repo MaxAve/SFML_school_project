@@ -35,6 +35,8 @@ public:
 
     void handleLMB(sf::Vector2f mousePos, sf::Vector2f);
 
+    void dropCarriedItem(sf::Vector2f playerPos);
+
     void handleRMB(sf::Vector2f mousePos);
 
     void resizeForeground(sf::Vector2f);
