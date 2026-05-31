@@ -10,6 +10,7 @@
 #include "gui/HealthBar.hpp"
 #include "fx/Particle.hpp"
 #include "core/Hitbox.hpp"
+#include "core/Animation.hpp"
 
 class Zombie
 {
@@ -22,6 +23,8 @@ public:
     static void drawAll(sf::RenderWindow& window);
 
     sf::RectangleShape sprite;
+    Animation animation;
+
     sf::Vector2f velocity;
     sf::Vector2f displacementVelocity;
     sf::Vector2f bulletPushVelocity; // This velocity is used exclusively for when this zombie gets pushed by a bullet

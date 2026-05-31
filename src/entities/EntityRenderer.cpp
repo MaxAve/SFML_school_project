@@ -37,17 +37,24 @@ void EntityRenderer::sortEntities(Player* player, std::vector<Zombie*>& zombiePo
     });
 }
 
-void EntityRenderer::drawAll(sf::RenderWindow& window)
+void EntityRenderer::drawAll(sf::RenderWindow& window, bool drawHitboxes)
 {
     for(int i = 0; i < EntityRenderer::entities.size(); i++)
     {
         if(EntityRenderer::entities[i].first == EntityType::PLAYER)
         {
             ((Player*)EntityRenderer::entities[i].second)->draw(window);
+            if(drawHitboxes)
+            {
+                ((Player*)EntityRenderer::entities[i].second)->hitbox.debugDraw(window);
+                ((Player*)EntityRenderer::entities[i].second)->envHitbox.debugDraw(window, sf::Color::Yellow);
+            }
         }
         else if(EntityRenderer::entities[i].first == EntityType::ZOMBIE)
         {
             ((Zombie*)EntityRenderer::entities[i].second)->draw(window);
+            if(drawHitboxes)
+                ((Zombie*)EntityRenderer::entities[i].second)->hitbox.debugDraw(window, sf::Color::Green);
         }
     }
 }
