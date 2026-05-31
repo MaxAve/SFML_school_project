@@ -18,6 +18,7 @@
 #include "gui/SharedInventoryInterface.hpp"
 #include "looting/Inventory.hpp"
 #include "looting/LootContainer.hpp"
+#include "resources/AudioManager.hpp"
 #include "resources/Fonts.hpp"
 #include "resources/Textures.hpp"
 #include <SFML/Graphics.hpp>
@@ -59,11 +60,12 @@ int main(int argc, char** argv) {
 
     LOG("main()");
 
-    LOG("initializing time, physics, textures, fonts");
+    LOG("initializing time, physics, textures, fonts, audio");
     srand(time(NULL));
     Physics::init();
     Textures::initTextures();
     Fonts::initFonts();
+    AudioManager::init();
     sf::Clock deltaClock;
     bool debugMode = true;
 
@@ -197,7 +199,9 @@ int main(int argc, char** argv) {
     if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
         bulletMeter.initSprites(player.equippedItem->getData()->magSize);
 
-    sf::Vector2f playerVelocity(0,0);
+    sf::Vector2f playerVelocity(0, 0);
+
+    AudioManager::playBackground("background_day");
 
     // Game loop
     LOG("Starting game loop");
@@ -221,8 +225,7 @@ int main(int argc, char** argv) {
                 hotbarGui.setPosition({(newSize.x - GuiParameters::slotSizeF * player.hotbar.getSize()) / 2.f,
                                        newSize.y - GuiParameters::slotSizeF - 7.5f});
             } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-                if(keyPressed->scancode == sf::Keyboard::Scan::F3)
-                {
+                if (keyPressed->scancode == sf::Keyboard::Scan::F3) {
                     std::cout << "[LOG] Toggle debug mode\n";
                     debugMode = !debugMode;
                 }
@@ -280,19 +283,19 @@ int main(int argc, char** argv) {
             if (!fadeActive) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
                     playerVelocity.x = -player.speed;
-                    //player.move({-player.speed * Physics::deltaTime, 0}, &mainMap);
+                    // player.move({-player.speed * Physics::deltaTime, 0}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
                     playerVelocity.x = player.speed;
-                    //player.move({player.speed * Physics::deltaTime, 0}, &mainMap);
+                    // player.move({player.speed * Physics::deltaTime, 0}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
                     playerVelocity.y = -player.speed;
-                    //player.move({0, -player.speed * Physics::deltaTime}, &mainMap);
+                    // player.move({0, -player.speed * Physics::deltaTime}, &mainMap);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
                     playerVelocity.y = player.speed;
-                    //player.move({0, player.speed * Physics::deltaTime}, &mainMap);
+                    // player.move({0, player.speed * Physics::deltaTime}, &mainMap);
                 }
             }
 
@@ -433,8 +436,7 @@ int main(int argc, char** argv) {
         // player.draw(window);
         // player.hitbox.debugDraw(window);
 
-        if(debugMode)
-        {
+        if (debugMode) {
             player.hitbox.debugDraw(window);
             player.envHitbox.debugDraw(window, sf::Color::Yellow);
         }
