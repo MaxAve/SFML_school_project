@@ -13,7 +13,7 @@ Player::Player(sf::RenderWindow& window) : inventory({10, 3}, "Player"), hotbar(
     this->speed = 300.0f;
     this->reloading = false;
     this->hitbox = Hitbox(this->sprite.getPosition(), this->sprite.getSize());
-    this->envHitbox = Hitbox(this->sprite.getPosition(), {this->sprite.getSize().x, this->sprite.getSize().y / 5.f});
+    this->envHitbox = Hitbox(this->sprite.getPosition(), {this->sprite.getSize().x, this->sprite.getSize().y * 0.1f});
     this->equippedItem = nullptr;
 
     this->gunSprite = sf::RectangleShape(sf::Vector2f(70.f, 30.f));
@@ -47,84 +47,207 @@ void Player::setPosition(sf::Vector2f pos)
 
 void Player::move(sf::Vector2f delta, const GameMap* map)
 {
-    this->sprite.move(delta);
+    // First, move the player, then check if it collides with anything
+    this->sprite.move({delta.x, 0});
 
+    this->hitbox.position = this->sprite.getPosition();
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+
+    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y - this->envHitbox.size.y};
+    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
+
+    // Check for collisions with chunks
     for(int i = 0; i < map->chunks1L.size(); i++)
     {
-        sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
-        sf::Vector2f dist = cp - this->sprite.getPosition();
+        const sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
+        const sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
         
-        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500) // Ignore chunks that are far away
         {
-            bool collision = false;
-
-            for(int x = 0; x < CHUNK_SIZE; x++)
+            for (int x = 0; x < CHUNK_SIZE; x++)
             {
-                if(collision)
-                    break;
-                for(int y = 0; y < CHUNK_SIZE; y++)
+                for (int y = 0; y < CHUNK_SIZE; y++)
                 {
-                    if(collision)
-                        break;
+                    if(!map->chunks1L[i].hitbox[y][x])
+                        continue;
 
-                    if(map->chunks1L[i].hitbox[y][x])
+                    const sf::Vector2f tilePos(map->chunks1L[i].position.x + x * TILE_SIZE * SCALE, map->chunks1L[i].position.y + y * TILE_SIZE * SCALE);
+
+                    const float tileLeft   = map->chunks1L[i].position.x + x * TILE_SIZE * SCALE;
+                    const float tileTop    = map->chunks1L[i].position.y + y * TILE_SIZE * SCALE;
+                    const float tileRight  = tileLeft + TILE_SIZE * SCALE;
+                    const float tileBottom = tileTop  + TILE_SIZE * SCALE;
+
+                    const float playerLeft   = this->envHitbox.position.x;
+                    const float playerTop    = this->envHitbox.position.y;
+                    const float playerRight  = playerLeft + this->envHitbox.size.x;
+                    const float playerBottom = playerTop  + this->envHitbox.size.y;
+
+                    if (playerRight <= tileLeft || playerLeft >= tileRight ||
+                        playerBottom <= tileTop || playerTop >= tileBottom)
+                        continue;
+
+                    if(delta.x > 0)
                     {
-                        const sf::Vector2f p(map->chunks1L[i].position.x + x * TILE_SIZE * SCALE, map->chunks1L[i].position.y + y * TILE_SIZE * SCALE);
-
-                        if((this->envHitbox.position.x + this->envHitbox.size.x) >= p.x && (this->envHitbox.position.x + this->envHitbox.size.x) <= (p.x + TILE_SIZE * SCALE)
-                        && (this->envHitbox.position.y + this->envHitbox.size.y) >= p.y && this->envHitbox.position.y <= (p.y + TILE_SIZE * SCALE)
-                        )
-                        {
-                            if(delta.x > 0)
-                            {
-                                this->sprite.setPosition({p.x - this->envHitbox.size.x, this->sprite.getPosition().y});
-                                collision = true;
-                            }
-                            if(delta.y > 0)
-                            {
-                                this->sprite.setPosition({this->sprite.getPosition().x, p.y - this->sprite.getSize().y});
-                                collision = true;
-                            }
-                            if(delta.x < 0)
-                            {
-                                this->sprite.setPosition({p.x, this->sprite.getPosition().y});
-                                collision = true;
-                            }
-                            if(delta.y < 0)
-                            {
-                                this->sprite.setPosition({this->sprite.getPosition().x, p.y});
-                                collision = true;
-                            }
-                        }
+                        delta.x = 0;
+                        this->sprite.setPosition({tilePos.x - this->sprite.getSize().x, this->sprite.getPosition().y});
+                    } else if(delta.x < 0)
+                    {
+                        delta.x = 0;
+                        this->sprite.setPosition({tilePos.x + TILE_SIZE * SCALE, this->sprite.getPosition().y});
                     }
                 }
             }
         }
     }
 
-    // for(int i = 0; i < map->chunks2L.size(); i++)
-    // {
-    //     sf::Vector2f cp(map->chunks2L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks2L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE);
-    //     sf::Vector2f dist = cp - this->sprite.getPosition();
-    //     if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500)
-    //     {
-    //         for(int x = 0; x < CHUNK_SIZE; x++)
-    //         {
-    //             for(int y = 0; y < CHUNK_SIZE; y++)
-    //             {
-    //                 if(map->chunks1L[i].hitbox[y][x])
-    //                 {
-    //                     Hitbox hb(sf::Vector2f(map->chunks1L[i].position.x + (float)(x * TILE_SIZE * SCALE), map->chunks1L[i].position.y  + (float)(y * TILE_SIZE * SCALE)), sf::Vector2f(TILE_SIZE * SCALE, TILE_SIZE * SCALE));
+    for(int i = 0; i < map->chunks2L.size(); i++)
+    {
+        const sf::Vector2f cp(map->chunks2L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks2L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
+        const sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
+        
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500) // Ignore chunks that are far away
+        {
+            for (int x = 0; x < CHUNK_SIZE; x++)
+            {
+                for (int y = 0; y < CHUNK_SIZE; y++)
+                {
+                    if(!map->chunks2L[i].hitbox[y][x])
+                        continue;
 
-    //                     if(this->envHitbox.touching(&hb))
-    //                     {
-    //                         std::cout << "waaaaa " << x << "\n";
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+                    const sf::Vector2f tilePos(map->chunks2L[i].position.x + x * TILE_SIZE * SCALE, map->chunks2L[i].position.y + y * TILE_SIZE * SCALE);
+
+                    const float tileLeft   = map->chunks2L[i].position.x + x * TILE_SIZE * SCALE;
+                    const float tileTop    = map->chunks2L[i].position.y + y * TILE_SIZE * SCALE;
+                    const float tileRight  = tileLeft + TILE_SIZE * SCALE;
+                    const float tileBottom = tileTop  + TILE_SIZE * SCALE;
+
+                    const float playerLeft   = this->envHitbox.position.x;
+                    const float playerTop    = this->envHitbox.position.y;
+                    const float playerRight  = playerLeft + this->envHitbox.size.x;
+                    const float playerBottom = playerTop  + this->envHitbox.size.y;
+
+                    if (playerRight <= tileLeft || playerLeft >= tileRight ||
+                        playerBottom <= tileTop || playerTop >= tileBottom)
+                        continue;
+
+                    if(delta.x > 0)
+                    {
+                        delta.x = 0;
+                        this->sprite.setPosition({tilePos.x - this->sprite.getSize().x, this->sprite.getPosition().y});
+                    } else if(delta.x < 0)
+                    {
+                        delta.x = 0;
+                        this->sprite.setPosition({tilePos.x + TILE_SIZE * SCALE, this->sprite.getPosition().y});
+                    }
+                }
+            }
+        }
+    }
+
+    // TODO this is scuffed
+    this->sprite.move({0, delta.y});
+
+    this->hitbox.position = this->sprite.getPosition();
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+
+    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y - this->envHitbox.size.y};
+    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
+
+    // Check for collisions with chunks
+    for(int i = 0; i < map->chunks1L.size(); i++)
+    {
+        const sf::Vector2f cp(map->chunks1L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks1L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
+        const sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
+        
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500) // Ignore chunks that are far away
+        {
+            for (int x = 0; x < CHUNK_SIZE; x++)
+            {
+                for (int y = 0; y < CHUNK_SIZE; y++)
+                {
+                    if(!map->chunks1L[i].hitbox[y][x])
+                        continue;
+
+                    const sf::Vector2f tilePos(map->chunks1L[i].position.x + x * TILE_SIZE * SCALE, map->chunks1L[i].position.y + y * TILE_SIZE * SCALE);
+
+                    const float tileLeft   = map->chunks1L[i].position.x + x * TILE_SIZE * SCALE;
+                    const float tileTop    = map->chunks1L[i].position.y + y * TILE_SIZE * SCALE;
+                    const float tileRight  = tileLeft + TILE_SIZE * SCALE;
+                    const float tileBottom = tileTop  + TILE_SIZE * SCALE;
+
+                    const float playerLeft   = this->envHitbox.position.x;
+                    const float playerTop    = this->envHitbox.position.y;
+                    const float playerRight  = playerLeft + this->envHitbox.size.x;
+                    const float playerBottom = playerTop  + this->envHitbox.size.y;
+
+                    if (playerRight <= tileLeft || playerLeft >= tileRight ||
+                        playerBottom <= tileTop || playerTop >= tileBottom)
+                        continue;
+
+                    if(delta.y > 0)
+                    {
+                        delta.y = 0;
+                        this->sprite.setPosition({this->sprite.getPosition().x, tilePos.y - this->hitbox.size.y});
+                    } else if(delta.y < 0)
+                    {
+                        delta.y = 0;
+                        this->sprite.setPosition({this->sprite.getPosition().x, tilePos.y + TILE_SIZE * SCALE - (this->hitbox.size.y - this->envHitbox.size.y)});
+                    }
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i < map->chunks2L.size(); i++)
+    {
+        const sf::Vector2f cp(map->chunks2L[i].position.x + (float)CHUNK_SIZE/2.0 * (float)SCALE, map->chunks2L[i].position.y + (float)CHUNK_SIZE/2.0 * (float)SCALE); // Chunk center positiom
+        const sf::Vector2f dist = cp - this->sprite.getPosition(); // Player distance to chunk
+        
+        if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 2500) // Ignore chunks that are far away
+        {
+            for (int x = 0; x < CHUNK_SIZE; x++)
+            {
+                for (int y = 0; y < CHUNK_SIZE; y++)
+                {
+                    if(!map->chunks2L[i].hitbox[y][x])
+                        continue;
+
+                    const sf::Vector2f tilePos(map->chunks2L[i].position.x + x * TILE_SIZE * SCALE, map->chunks2L[i].position.y + y * TILE_SIZE * SCALE);
+
+                    const float tileLeft   = map->chunks2L[i].position.x + x * TILE_SIZE * SCALE;
+                    const float tileTop    = map->chunks2L[i].position.y + y * TILE_SIZE * SCALE;
+                    const float tileRight  = tileLeft + TILE_SIZE * SCALE;
+                    const float tileBottom = tileTop  + TILE_SIZE * SCALE;
+
+                    const float playerLeft   = this->envHitbox.position.x;
+                    const float playerTop    = this->envHitbox.position.y;
+                    const float playerRight  = playerLeft + this->envHitbox.size.x;
+                    const float playerBottom = playerTop  + this->envHitbox.size.y;
+
+                    if (playerRight <= tileLeft || playerLeft >= tileRight ||
+                        playerBottom <= tileTop || playerTop >= tileBottom)
+                        continue;
+
+                    if(delta.y > 0)
+                    {
+                        delta.y = 0;
+                        this->sprite.setPosition({this->sprite.getPosition().x, tilePos.y - this->hitbox.size.y});
+                    } else if(delta.y < 0)
+                    {
+                        delta.y = 0;
+                        this->sprite.setPosition({this->sprite.getPosition().x, tilePos.y + TILE_SIZE * SCALE - (this->hitbox.size.y - this->envHitbox.size.y)});
+                    }
+                }
+            }
+        }
+    }
+
+    this->hitbox.position = this->sprite.getPosition();
+    this->hitbox.debugSprite.setPosition(this->hitbox.position);
+
+    this->envHitbox.position = {this->hitbox.position.x, this->hitbox.position.y + this->sprite.getSize().y - this->envHitbox.size.y};
+    this->envHitbox.debugSprite.setPosition(this->envHitbox.position);
 
     //for(int i = 0; i < Hitbox::solidHitboxPool.size(); i++)
     //{

@@ -19,5 +19,5 @@ public:
 
     static bool compareEntities(std::pair<EntityType, void*> a, std::pair<EntityType, void*> b);
     static void sortEntities(Player* player, std::vector<Zombie*>& zombiePool);
-    static void drawAll(sf::RenderWindow& window);
+    static void drawAll(sf::RenderWindow& window, bool drawHitboxes=false);
 };

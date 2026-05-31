@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 
     LOG("initializing player");
     Player player(window);
-    player.setPosition(sf::Vector2f(1000, 1000));
+    player.setPosition(sf::Vector2f(1500, 1000));
     LOG("creating playerHealthbar");
     PlayerHealthBar playerHealthBar({500, 40}, 100);
     LOG("creating HotbarGui");
@@ -173,9 +173,9 @@ int main(int argc, char** argv) {
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    int nzombies = 5;
+    int nzombies = 10;
     for (int i = 0; i < nzombies; i++) {
-        new Zombie({(float)(rand() % 800), 0}, &player);
+        new Zombie({1500, 1000}, &player);
     }
 
     Hitbox testHitbox({300, 500}, {100, 100}, true);
@@ -446,16 +446,11 @@ int main(int argc, char** argv) {
         Bullet::drawAll(window);
         DroppedItem::drawAll();
 
-        EntityRenderer::drawAll(window);
+        EntityRenderer::drawAll(window, debugMode);
 
         // Zombie::drawAll(window);
         // player.draw(window);
         // player.hitbox.debugDraw(window);
-
-        if (debugMode) {
-            player.hitbox.debugDraw(window);
-            player.envHitbox.debugDraw(window, sf::Color::Yellow);
-        }
 
         testHitbox.debugDraw(window);
         Particle::drawOnlyActive(window);

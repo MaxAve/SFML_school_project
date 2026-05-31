@@ -11,6 +11,7 @@
 #include "fx/Particle.hpp"
 #include "core/Hitbox.hpp"
 #include "resources/AudioManager.hpp"
+#include "core/Animation.hpp"
 
 class Zombie
 {
@@ -27,6 +28,8 @@ public:
     float soundTimer = 0.f;
 
     sf::RectangleShape sprite;
+    Animation animation;
+
     sf::Vector2f velocity;
     sf::Vector2f displacementVelocity;
     sf::Vector2f bulletPushVelocity; // This velocity is used exclusively for when this zombie gets pushed by a bullet
