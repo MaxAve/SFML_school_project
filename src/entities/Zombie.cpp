@@ -14,6 +14,7 @@ Zombie::Zombie(sf::Vector2f position, Player* targetPlayer) : soundTimer{randomF
     this->hitbox = Hitbox(sf::Vector2f(50.f, 100.f));
     this->envHitbox = Hitbox(this->hitbox.position, {this->hitbox.size.x, this->hitbox.size.y * 0.1f});
     this->hurtTimer = 0.0f;
+    this->isAggro = false;
 
     this->hitbox.debugSprite.setOutlineThickness(1);
     this->hitbox.debugSprite.setFillColor(sf::Color::Transparent);
@@ -284,10 +285,26 @@ void Zombie::move(sf::Vector2f delta, const GameMap* map)
 
 void Zombie::update(sf::Vector2f playerPos, const GameMap* map) {
     // Move towards player
-    float angle = std::atan2(this->targetPlayer->sprite.getPosition().y - this->sprite.getPosition().y,
-                             this->targetPlayer->sprite.getPosition().x - this->sprite.getPosition().x);
-    this->velocity.x = std::cos(angle) * this->speed;
-    this->velocity.y = std::sin(angle) * this->speed;
+    const sf::Vector2f dist = this->sprite.getPosition() - playerPos;
+    if(std::sqrt(dist.x*dist.x + dist.y*dist.y) < 666 || this->isAggro)
+    {
+        float angle = std::atan2(this->targetPlayer->sprite.getPosition().y - this->sprite.getPosition().y,
+                                this->targetPlayer->sprite.getPosition().x - this->sprite.getPosition().x);
+        this->velocity.x = std::cos(angle) * this->speed;
+        this->velocity.y = std::sin(angle) * this->speed;
+
+        if(this->animation.getCurrentCycle() == 0)
+            this->animation.setAnimationCycle(1);
+
+        this->isAggro = true;
+    }
+    else
+    {
+        this->velocity.x = 0;
+        this->velocity.y = 0;
+        if(this->animation.getCurrentCycle() != 0)
+            this->animation.setAnimationCycle(0);
+    }
 
     this->bulletPushVelocity.x /= (1.0f + 5.f * Physics::deltaTime);
     if (std::abs(this->bulletPushVelocity.x) < 0.01f)

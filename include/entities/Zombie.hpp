@@ -24,6 +24,7 @@ public:
     static void drawAll(sf::RenderWindow& window);
     float hurtTimer; // The zombie will be unable to move and will display a specific animation for a short amount of time after getting hit
     float timeSinceBlink; // Zombie will blick while the hurt timer is running
+    bool isAggro;
 
     // sound
     sf::Sound sound;

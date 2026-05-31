@@ -197,10 +197,9 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    int nzombies = 10;
-    for (int i = 0; i < nzombies; i++) {
-        new Zombie({1500, 1000}, &player);
-    }
+    new Zombie({800, 1000}, &player);
+    new Zombie({800, 900}, &player);
+    new Zombie({800, 800}, &player);
 
     Hitbox testHitbox({300, 500}, {100, 100}, true);
 
@@ -522,7 +521,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
         mainMap.draw(window, shader, player.sprite.getPosition(), debugMode);
 
         LootContainer::drawAll();
-        Structure::drawAll();
+        //Structure::drawAll();
         for (auto& it : Door::pool) {
             it->debugDraw(window);
         }
@@ -639,7 +638,7 @@ int main(int argc, char** argv) {
     AudioManager::init();
     ItemLabel::init();
     sf::Clock deltaClock;
-    bool debugMode = true;
+    bool debugMode = false;
 
     LOG("setup window");
     float cameraShakeRange = 0.0f;

@@ -17,8 +17,8 @@ std::unordered_map<ItemType, ItemData> Item::typeToData{
                          false, true, false, 8, 50.f, "items/gun_smg", 1, 40, 0.02, AmmoType::SMALL}},
     {ItemType::GUN_AR, {"Assault Rifle", "Weapon\nDamage: 8\nCrit chance: 15%\nMagazine size: 30\nCaliber: medium\nFire rate: 900/min",
                         false, true, false, 25, 15.f, "items/gun_ar", 1, 30, 0.02, AmmoType::MEDIUM}},
-    {ItemType::GUN_REVOLVER, {"Revolver", "Weapon\nDamage: 70\nCrit chance: 30%\nMagazine size: 6\nCaliber: small\nFire rate: 240/min",
-                              false, true, false, 70, 4.f, "items/gun_revolver", 1, 6, 0.5, AmmoType::SMALL}},
+    {ItemType::GUN_REVOLVER, {"Revolver", "Weapon\nDamage: 40\nCrit chance: 25%\nMagazine size: 6\nCaliber: small\nFire rate: 240/min",
+                              false, true, false, 40, 4.f, "items/gun_revolver", 1, 6, 0.5, AmmoType::SMALL}},
 };
 
 Item::Item(ItemType _type, size_t _amount) : data{typeToData.at(_type)} {

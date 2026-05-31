@@ -23,4 +23,5 @@ public:
     void setAnimationCycle(int cycle);
     void update(sf::Sprite* targetSprite, float dt);
     void setDefaultSprite(sf::Sprite* targetSprite);
+    inline int getCurrentCycle() { return this->currentCycle; }
 };
