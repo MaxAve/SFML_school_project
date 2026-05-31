@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    int nzombies = 1;
+    int nzombies = 10;
     for (int i = 0; i < nzombies; i++) {
         new Zombie({1500, 1000}, &player);
     }
