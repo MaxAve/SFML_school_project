@@ -558,21 +558,16 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                 if (lastBulletReloadDelay > player.equippedItem->getData()->reloadTime) {
                     lastBulletReloadDelay = 0.f;
 
-                    // 1. Increment the gun's actual ammo count
                     player.equippedItem->magSize += 1;
 
-                    // 2. Pass the updated count directly to the bullet meter
-                    // This completely eliminates your negative index calculation crash!
                     bulletMeter.setCurrentBullets(player.equippedItem->magSize);
                     bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
 
                     AudioManager::playSound("reload_bullet");
 
-                    // 3. Check if the gun is full using matching variables
                     if (player.equippedItem->magSize >= player.equippedItem->getMagCapacity()) {
                         player.reloading = false;
 
-                        // Reset the meter UI elements back to full solid crisp white
                         for (int i = 0; i < bulletMeter.maxBullets; i++) {
                             bulletMeter.sprites[i].setFillColor(sf::Color::White);
                             bulletMeter.sprites[i].setOutlineColor(sf::Color(180, 180, 180));

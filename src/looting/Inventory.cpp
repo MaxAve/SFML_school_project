@@ -39,7 +39,7 @@ sf::Vector2i Inventory::findEmptySlot() {
 Item* Inventory::findItem(ItemType itemType) {
     for (auto& row : inventorySlots) {
         for (auto& slot : row) {
-            if (slot.getItem()->getType() != itemType) {
+            if (slot.getItem() && slot.getItem()->getType() != itemType) {
                 continue;
             }
             return slot.getItem();
