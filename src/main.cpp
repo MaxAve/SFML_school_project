@@ -243,7 +243,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
     selectedItemLabel.setFillColor(sf::Color::White);
     selectedItemLabel.setCharacterSize(30);
 
-    GameMap mainMap({0, 0}, "map/map_layer1.bin", "map/map_layer2.bin", 16, 16);
+    GameMap mainMap({0, 0}, "map/l1.bin", "map/l2.bin", 16, 16);
 
     // Values for fading out effect
     sf::RectangleShape fadeRect(sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)));
@@ -257,7 +257,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
 
     LOG("initializing player");
     Player player(window);
-    player.setPosition(sf::Vector2f(1500, 1000));
+    player.setPosition(sf::Vector2f(8621, 5051));
     LOG("creating playerHealthbar");
     PlayerHealthBar playerHealthBar({500, 40}, 100);
     player.hpbar = &playerHealthBar;
