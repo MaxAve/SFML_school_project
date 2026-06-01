@@ -3,6 +3,7 @@
 #include <vector>
 #include "resources/Fonts.hpp"
 #include "core/Physics.hpp"
+#include "looting/Item.hpp"
 
 #define BULLET_SPRITE_WIDTH 10.0f
 #define BULLET_SPRITE_DISTANCE 0.0f
@@ -18,8 +19,8 @@ public:
     std::vector<sf::RectangleShape> sprites;
     std::vector<sf::RectangleShape> ejectedBulletSprites; // animation
 
-    BulletMeter(sf::Vector2f position, int maxBullets);
-    void initSprites(int maxBullets); // Resets the bullet meter
+    BulletMeter(sf::Vector2f position);
+    void initSprites(Item* item); // Resets the bullet meter
     void draw(sf::RenderWindow& window);
     void setCurrentBullets(int newCurrentBullets);
     void updateAnimations();

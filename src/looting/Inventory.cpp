@@ -35,3 +35,15 @@ sf::Vector2i Inventory::findEmptySlot() {
 
     return {-1, -1};
 }
+
+Item* Inventory::findItem(ItemType itemType) {
+    for (auto& row : inventorySlots) {
+        for (auto& slot : row) {
+            if (slot.getItem()->getType() != itemType) {
+                continue;
+            }
+            return slot.getItem();
+        }
+    }
+    return nullptr;
+}

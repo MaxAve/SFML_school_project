@@ -21,5 +21,7 @@ public:
 
     sf::Vector2i findEmptySlot();
 
+    Item* findItem(ItemType);
+
     void setItem(sf::Vector2u slot, Item* item);
 };

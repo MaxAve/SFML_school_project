@@ -1,25 +1,38 @@
 #include "gui/BulletMeter.hpp"
 
-BulletMeter::BulletMeter(sf::Vector2f position, int maxBullets)
+BulletMeter::BulletMeter(sf::Vector2f position)
 {
     this->position = position;
-    this->maxBullets = maxBullets;
-    this->initSprites(maxBullets);
 }
 
-void BulletMeter::initSprites(int maxBullets)
+void BulletMeter::initSprites(Item* item)
 {
-    this->maxBullets = maxBullets;
-    this->currentBullets = maxBullets;
+    if (!item || !item->getData()) return;
+
+    this->maxBullets = item->getData()->magCapacity;
+    this->currentBullets = item->magSize; 
+    
     this->sprites.clear();
+    this->ejectedBulletSprites.clear(); 
+
+    if (maxBullets <= 0) return;
+
+    float width = BAR_WIDTH / static_cast<float>(maxBullets);
+
     for(int i = 0; i < this->maxBullets; i++)
     {
-        float width = BAR_WIDTH / (float)maxBullets;
         this->sprites.push_back(sf::RectangleShape(sf::Vector2f(width, BULLET_SPRITE_HEIGHT)));
         this->sprites[i].setPosition({this->position.x + i * (width + BULLET_SPRITE_DISTANCE), this->position.y});
-        this->sprites[i].setFillColor(sf::Color::White);
+        
+        if (i < (this->maxBullets - this->currentBullets)) {
+            this->sprites[i].setFillColor(sf::Color::Transparent);
+            this->sprites[i].setOutlineColor(sf::Color(80, 80, 80));
+        } else {
+            this->sprites[i].setFillColor(sf::Color::White);
+            this->sprites[i].setOutlineColor(sf::Color(180, 180, 180));
+        }
+        
         this->sprites[i].setOutlineThickness(1);
-        this->sprites[i].setOutlineColor(sf::Color(180, 180, 180));
     }
 }
 

@@ -1,4 +1,5 @@
 #include "TileMapEditor.hpp"
+#include "core/EntitySpawner.hpp"
 #include "core/Physics.hpp"
 #include "core/Window.hpp"
 #include "entities/Bullet.hpp"
@@ -22,7 +23,6 @@
 #include "resources/AudioManager.hpp"
 #include "resources/Fonts.hpp"
 #include "resources/Textures.hpp"
-#include "core/EntitySpawner.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
@@ -312,16 +312,16 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
     // !
 
     LOG("Initializing shoot mechanics");
-    BulletMeter bulletMeter(sf::Vector2f(6, 50), 40);
+    BulletMeter bulletMeter(sf::Vector2f(6, 50));
 
     float timeSinceLastShot = 0.0f;
     int weaponDamage = 0;
 
     // TEST: Spawn zombies
     LOG("Spawning zombies");
-    //new Zombie({800, 1000}, &player);
-    //new Zombie({800, 900}, &player);
-    //new Zombie({800, 800}, &player);
+    // new Zombie({800, 1000}, &player);
+    // new Zombie({800, 900}, &player);
+    // new Zombie({800, 800}, &player);
 
     Hitbox testHitbox({300, 500}, {100, 100}, true);
 
@@ -356,7 +356,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
     // TODO this is so that the item that the player equips on game start gets registered. Remove this later
     player.equippedItem = hotbarGui.getSelectedItem();
     if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
-        bulletMeter.initSprites(player.equippedItem->magSize);
+        bulletMeter.initSprites(player.equippedItem);
 
     sf::Vector2f playerVelocity(0, 0);
 
@@ -455,9 +455,8 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
 
                     // Set player's equipped item
                     player.equippedItem = hotbarGui.getSelectedItem();
-                    if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun)
-                    {
-                        bulletMeter.initSprites(player.equippedItem->getData()->magCapacity); // Initialize/reset bullet meter if the player equipped a gun
+                    if (player.equippedItem != nullptr && player.equippedItem->getData()->isGun) {
+                        bulletMeter.initSprites(player.equippedItem); // Initialize/reset bullet meter if the player equipped a gun
                         bulletMeter.setCurrentBullets(player.equippedItem->magSize);
                     }
                 }
@@ -514,7 +513,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
 
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
                     // Shooting
-                    if (player.equippedItem != nullptr && timeSinceLastShot >= (1.0f / player.equippedItem->getData()->useRate) && player.equippedItem->magSize  && !player.reloading) {
+                    if (player.equippedItem != nullptr && timeSinceLastShot >= (1.0f / player.equippedItem->getData()->useRate) && player.equippedItem->magSize && !player.reloading) {
                         // Calculate firing angle and spawn new bullet instance
                         sf::Vector2i mousePos = Window::getMousePos();
                         float angle = std::atan2(mousePos.y - defaultView.getSize().y / 2, mousePos.x - defaultView.getSize().x / 2);
@@ -557,12 +556,23 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
                 lastBulletReloadDelay += Physics::deltaTime;
 
                 if (lastBulletReloadDelay > player.equippedItem->getData()->reloadTime) {
-                    bulletMeter.currentBullets += 1;
+                    lastBulletReloadDelay = 0.f;
+
+                    // 1. Increment the gun's actual ammo count
+                    player.equippedItem->magSize += 1;
+
+                    // 2. Pass the updated count directly to the bullet meter
+                    // This completely eliminates your negative index calculation crash!
+                    bulletMeter.setCurrentBullets(player.equippedItem->magSize);
                     bulletMeter.sprites[bulletMeter.maxBullets - bulletMeter.currentBullets].setFillColor(sf::Color(255, 255, 255, 180));
-                    lastBulletReloadDelay = .0f;
+
                     AudioManager::playSound("reload_bullet");
-                    if (bulletMeter.currentBullets == bulletMeter.maxBullets) {
+
+                    // 3. Check if the gun is full using matching variables
+                    if (player.equippedItem->magSize >= player.equippedItem->getMagCapacity()) {
                         player.reloading = false;
+
+                        // Reset the meter UI elements back to full solid crisp white
                         for (int i = 0; i < bulletMeter.maxBullets; i++) {
                             bulletMeter.sprites[i].setFillColor(sf::Color::White);
                             bulletMeter.sprites[i].setOutlineColor(sf::Color(180, 180, 180));
@@ -645,8 +655,7 @@ void runGameplay(GameState& gameState, sf::View& defaultView, sf::Shader& shader
             }
         }
 
-        if(spawnTimer <= 0.0f)
-        {
+        if (spawnTimer <= 0.0f) {
             EntitySpawner::attemptSpawnZombiesWithinPlayerRadius(&player, &mainMap);
             spawnTimer = 3.0f;
         }
